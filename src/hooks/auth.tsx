@@ -43,8 +43,8 @@ const AuthProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     async function loadStoragedData(): Promise<void> {
-      const token = await AsyncStorage.getItem('@PrivateNotes:token');
-      const user = await AsyncStorage.getItem('@PrivateNotes:user');
+      const token = await AsyncStorage.getItem('Hidden-Customer:token');
+      const user = await AsyncStorage.getItem('Hidden-Customer:user');
 
       if (token && user) {
         api.defaults.headers.authorization = `Bearer ${token}`;
@@ -59,15 +59,15 @@ const AuthProvider: React.FC = ({ children }) => {
   }, []);
 
   const signIn = useCallback(async ({ email, password }) => {
-    const response = await api.post('sessions', {
+    const response = await api.post('auth', {
       email,
       password,
     });
 
     const { token, user } = response.data;
 
-    await AsyncStorage.setItem('@PrivateNotes:token', token);
-    await AsyncStorage.setItem('@PrivateNotes:user', JSON.stringify(user));
+    await AsyncStorage.setItem('Hidden-Customer:token', token);
+    await AsyncStorage.setItem('Hidden-Customer:user', JSON.stringify(user));
 
     api.defaults.headers.authorization = `Bearer ${token}`;
 
@@ -75,15 +75,15 @@ const AuthProvider: React.FC = ({ children }) => {
   }, []);
 
   const signOut = useCallback(async () => {
-    await AsyncStorage.removeItem('@PrivateNotes:token');
-    await AsyncStorage.removeItem('@PrivateNotes:user');
+    await AsyncStorage.removeItem('Hidden-Customer:token');
+    await AsyncStorage.removeItem('Hidden-Customer:user');
 
     setData({} as AuthState);
   }, []);
 
   const updateUser = useCallback(
     async (user: User) => {
-      await AsyncStorage.setItem('@PrivateNotes:user', JSON.stringify(user));
+      await AsyncStorage.setItem('Hidden-Customer:user', JSON.stringify(user));
 
       setData({
         token: data.token,

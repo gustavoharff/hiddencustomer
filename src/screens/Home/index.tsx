@@ -1,13 +1,20 @@
+import { useNavigation } from '@react-navigation/native';
 import React from 'react';
-import { Text, View } from 'react-native';
+import { Text, TouchableOpacity } from 'react-native';
+import { useAuth } from '../../hooks/auth';
 
-// import { Container } from './styles';
+import { Container } from './styles';
 
 const Home: React.FC = () => {
+  const navigation = useNavigation();
+
   return (
-    <View>
+    <Container>
       <Text>Home</Text>
-    </View>
+      <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+        <Text>Profile</Text>
+      </TouchableOpacity>
+    </Container>
   );
 };
 
