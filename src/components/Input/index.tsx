@@ -81,5 +81,4 @@ const Input: React.ForwardRefRenderFunction<InputRef, InputProps> = (
     </Container>
   );
 };
-
 export default forwardRef(Input);

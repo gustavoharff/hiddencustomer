@@ -1,24 +1,24 @@
 import styled, { css } from 'styled-components/native';
 
+import { COLORS, SPACING } from '../../styles/tokens';
+
 interface ContainerProps {
   isFocused: boolean;
 }
 
 export const Container = styled.View<ContainerProps>`
-  width: 100%;
+  width: 90%;
   height: 40px;
-  padding: 0 10px;
+  padding: ${SPACING.S}px;
   border-bottom-width: 1px;
-  border-color: rgb(0, 91, 126);
+  border-color: ${COLORS.FONT_LIGHT};
   border-style: solid;
-  margin-bottom: 8px;
-  max-width: 350px;
-  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  margin-bottom: ${SPACING.XL}px;
 
   ${props =>
     props.isFocused &&
     css`
-      border-bottom-width: 4px;
+      border-bottom-width: 2px;
     `}
 `;
 
@@ -26,6 +26,6 @@ export const TextInput = styled.TextInput`
   flex: 1;
   font-size: 15px;
   border: 0;
-  color: #fff;
+  color: ${COLORS.FONT};
   font-family: 'Arial';
 `;

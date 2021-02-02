@@ -1,3 +1,22 @@
+import { Dimensions } from 'react-native';
+
+const { height } = Dimensions.get('window');
+
+let reducer = 1;
+if (height < 620) {
+  reducer = 0.8;
+}
+
+const SPACING = {
+  XXS: 2 * reducer,
+  XS: 4 * reducer,
+  S: 8 * reducer,
+  M: 12 * reducer,
+  L: 16 * reducer,
+  XL: 20 * reducer,
+  XXL: 24 * reducer,
+};
+
 const COLORS = {
   WHITE: '#FFFFFF',
   BACKGROUND: '#241F2A',
@@ -22,4 +41,4 @@ const COLORS = {
   DARKEN_15: 'rgba(0,0,0,.15)',
 };
 
-export default COLORS;
+export { COLORS, SPACING };

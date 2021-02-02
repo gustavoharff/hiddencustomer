@@ -11,21 +11,16 @@ import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
 import { ScrollView } from 'react-native-gesture-handler';
 
-// import { useNavigation } from '@react-navigation/native';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 
 import { useAuth } from '../../hooks/auth';
 
-import {
-  Container,
-  HeaderTitle,
-  HeaderContent,
-  InputName,
-  Unform,
-} from './styles';
+import { Container, HeaderTitle, HeaderContent, Unform } from './styles';
 
 import getValidationErrors from '../../utils/getValidationErrors';
+import Logo from '../../components/Logo';
+import { COLORS } from '../../styles/tokens';
 
 interface SignInFormData {
   email: string;
@@ -34,7 +29,6 @@ interface SignInFormData {
 
 const SignIn: React.FC = () => {
   const { signIn } = useAuth();
-  // const navigation = useNavigation();
 
   const formRef = useRef<FormHandles>(null);
   const passwordInputRef = useRef<TextInput>(null);
@@ -63,10 +57,12 @@ const SignIn: React.FC = () => {
 
           formRef.current?.setErrors(errors);
 
+          Alert.alert('Alerta', 'Complete os campos corretamente.');
+
           return;
         }
 
-        Alert.alert('Error', 'Authentication failure');
+        Alert.alert('Erro', 'Erro na autenticação, verifique seus dados.');
       }
     },
     [signIn],
@@ -81,6 +77,7 @@ const SignIn: React.FC = () => {
         keyboardShouldPersistTaps="handled"
       >
         <Container>
+          <Logo size="90px" />
           <View>
             <HeaderTitle>Cliente Oculto</HeaderTitle>
           </View>
@@ -89,31 +86,29 @@ const SignIn: React.FC = () => {
           </View>
 
           <Unform ref={formRef} onSubmit={handleSubmit}>
-            <View style={{ flexDirection: 'row' }}>
-              <InputName>Endereço de e-mail</InputName>
-            </View>
             <Input
               autoCorrect={false}
               autoCapitalize="none"
               keyboardType="email-address"
               name="email"
               returnKeyType="next"
+              placeholder="E-mail"
+              placeholderTextColor={COLORS.FONT_LIGHT}
               onSubmitEditing={() => passwordInputRef.current?.focus()}
             />
 
-            <View style={{ flexDirection: 'row' }}>
-              <InputName>Senha</InputName>
-            </View>
             <Input
               ref={passwordInputRef}
               secureTextEntry
               name="password"
               returnKeyType="send"
+              placeholder="Senha"
+              placeholderTextColor={COLORS.FONT_LIGHT}
               onSubmitEditing={() => formRef.current?.submitForm()}
             />
 
             <Button onPress={() => formRef.current?.submitForm()}>
-              Logn in
+              Entrar
             </Button>
           </Unform>
         </Container>

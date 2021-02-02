@@ -1,16 +1,19 @@
 import { Form } from '@unform/mobile';
 import styled from 'styled-components/native';
+import { COLORS } from '../../styles/tokens';
 
 export const Container = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
-  box-shadow: 4px 1px 2px rgba(0, 0, 0, 0.5);
+
+  background: ${COLORS.BACKGROUND_LIGHT};
 `;
 
 export const HeaderTitle = styled.Text`
   margin-top: 20px;
-  color: #fff;
+  margin-bottom: 20px;
+  color: ${COLORS.FONT};
   font-weight: bold;
   font-size: 18px;
   text-align: left;
@@ -18,20 +21,10 @@ export const HeaderTitle = styled.Text`
 `;
 
 export const HeaderContent = styled.Text`
-  color: #fff;
+  color: ${COLORS.FONT_LIGHT};
   font-size: 18px;
   text-align: left;
   margin-bottom: 20px;
-  font-family: 'Arial';
-`;
-
-export const InputName = styled.Text`
-  color: #fff;
-  width: 100%;
-  max-width: 350px;
-  margin-bottom: 5px;
-  font-size: 15px;
-  text-align: left;
   font-family: 'Arial';
 `;
 

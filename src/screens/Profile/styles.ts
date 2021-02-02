@@ -4,6 +4,7 @@ import { COLORS } from '../../styles/tokens';
 
 export const Container = styled.View`
   flex: 1;
-  justify-content: space-between;
+  justify-content: center;
+  align-items: center;
   background: ${COLORS.BACKGROUND_LIGHT};
 `;
