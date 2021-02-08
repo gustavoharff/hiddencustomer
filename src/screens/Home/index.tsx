@@ -1,18 +1,25 @@
-import { useNavigation } from '@react-navigation/native';
-import React from 'react';
-import { Text, TouchableOpacity } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import Customer from '../../schemas/customer';
+
+import api from '../../services/api';
+
 import BottomButton from '../../components/BottomButton';
+import ItemList from '../../components/ItemList';
 
 import { Container } from './styles';
 
 const Home: React.FC = () => {
-  const navigation = useNavigation();
+  const [customers, setCustomers] = useState<Customer[]>([]);
+
+  useEffect(() => {
+    api.get('customers/me').then(response => {
+      setCustomers(response.data);
+    });
+  }, []);
 
   return (
     <Container>
-      <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
-        <Text>Profile</Text>
-      </TouchableOpacity>
+      <ItemList items={customers} />
       <BottomButton />
     </Container>
   );

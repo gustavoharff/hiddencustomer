@@ -1,11 +1,13 @@
 import React from 'react';
 import Plus from '../Icons/Plus';
 
-import { Container } from './styles';
+import { Container, Button } from './styles';
 
 const BottomButton: React.FC = () => (
   <Container>
-    <Plus />
+    <Button>
+      <Plus />
+    </Button>
   </Container>
 );
 

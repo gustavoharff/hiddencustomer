@@ -16,7 +16,12 @@ interface DrawerListProps {
 const DrawerList: React.FC<DrawerListProps> = ({ items }) => (
   <View>
     {items.map(item => (
-      <DrawerItem Icon={item.icon} title={item.title} onPress={item.onPress} />
+      <DrawerItem
+        key={item.title}
+        Icon={item.icon}
+        title={item.title}
+        onPress={item.onPress}
+      />
     ))}
   </View>
 );
