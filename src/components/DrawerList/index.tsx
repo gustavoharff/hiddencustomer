@@ -7,6 +7,7 @@ interface Item {
   onPress(): void;
   title: string;
   icon: React.FC<{}>;
+  canAccess: boolean;
 }
 
 interface DrawerListProps {
@@ -15,14 +16,17 @@ interface DrawerListProps {
 
 const DrawerList: React.FC<DrawerListProps> = ({ items }) => (
   <View>
-    {items.map(item => (
-      <DrawerItem
-        key={item.title}
-        Icon={item.icon}
-        title={item.title}
-        onPress={item.onPress}
-      />
-    ))}
+    {items.map(
+      item =>
+        item.canAccess && (
+          <DrawerItem
+            key={item.title}
+            Icon={item.icon}
+            title={item.title}
+            onPress={item.onPress}
+          />
+        ),
+    )}
   </View>
 );
 

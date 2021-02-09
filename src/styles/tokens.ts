@@ -17,6 +17,37 @@ const SPACING = {
   XXL: 24 * reducer,
 };
 
+const BODY = {
+  XXS: {
+    SIZE: 8 * reducer,
+    HEIGHT: 12 * reducer,
+  },
+  XS: {
+    SIZE: 11 * reducer,
+    HEIGHT: 16 * reducer,
+  },
+  S: {
+    SIZE: 14 * reducer,
+    HEIGHT: 20 * reducer,
+  },
+  M: {
+    SIZE: 16 * reducer,
+    HEIGHT: 24 * reducer,
+  },
+  L: {
+    SIZE: 20 * reducer,
+    HEIGHT: 24 * reducer,
+  },
+  XL: {
+    SIZE: 24 * reducer,
+    HEIGHT: 28 * reducer,
+  },
+  XXL: {
+    SIZE: 28 * reducer,
+    HEIGHT: 32 * reducer,
+  },
+};
+
 const COLORS = {
   WHITE: '#FFFFFF',
   BACKGROUND: '#241F2A',
@@ -41,4 +72,4 @@ const COLORS = {
   DARKEN_15: 'rgba(0,0,0,.15)',
 };
 
-export { COLORS, SPACING };
+export { COLORS, BODY, SPACING };

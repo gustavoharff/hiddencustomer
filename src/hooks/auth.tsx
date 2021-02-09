@@ -9,12 +9,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import api from '../services/api';
 
-interface User {
-  id: string;
-  name: string;
-  email: string;
-  avatar_url: string;
-}
+import User from '../schemas/user';
 
 interface AuthState {
   token: string;

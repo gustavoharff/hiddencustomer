@@ -8,8 +8,7 @@ interface ContainerProps {
 
 export const Container = styled.View<ContainerProps>`
   width: 90%;
-  height: 40px;
-  padding: ${SPACING.S}px;
+  height: 60px;
   border-bottom-width: 1px;
   border-color: ${COLORS.FONT_LIGHT};
   border-style: solid;
