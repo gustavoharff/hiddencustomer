@@ -12,6 +12,7 @@ import { Container, Title, Text, Unform } from './styles';
 import api from '../../services/api';
 
 import { useCustomers } from '../../hooks/customers';
+import { COLORS } from '../../styles/tokens';
 
 const AddCustomer: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
@@ -59,9 +60,15 @@ const AddCustomer: React.FC = () => {
       >
         <Container>
           <Title>Adicionar cliente</Title>
-          <Text>Adicione um cliente á sua lista de clientes.</Text>
+          <Text>Adicione um cliente à sua lista de clientes.</Text>
           <Unform ref={formRef} onSubmit={handleSubmit}>
-            <Input name="name" />
+            <Input
+              name="name"
+              placeholder="Nome do cliente"
+              placeholderTextColor={COLORS.FONT_LIGHT}
+              returnKeyType="send"
+              onSubmitEditing={() => formRef.current?.submitForm()}
+            />
 
             <Button
               title="Enviar"

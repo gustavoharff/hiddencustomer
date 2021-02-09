@@ -1,5 +1,4 @@
 import React, { useEffect } from 'react';
-import { ScrollView } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 
 import api from '../../services/api';
@@ -7,14 +6,14 @@ import api from '../../services/api';
 import BottomButton from '../../components/BottomButton';
 import ItemList from '../../components/ItemList';
 
-import { Container } from './styles';
 import { useCustomers } from '../../hooks/customers';
 import { useAuth } from '../../hooks/auth';
 
-const Home: React.FC = () => {
-  const navigation = useNavigation();
+import { Container, Header, Title } from './styles';
 
+const Home: React.FC = () => {
   const { customers, setCustomers } = useCustomers();
+  const navigation = useNavigation();
 
   useEffect(() => {
     api.get('customers/me').then(response => {
@@ -26,16 +25,13 @@ const Home: React.FC = () => {
 
   return (
     <>
-      <ScrollView
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{
-          flex: 1,
-        }}
-      >
-        <Container>
-          <ItemList items={customers} />
-        </Container>
-      </ScrollView>
+      <Header>
+        <Title>Clientes</Title>
+      </Header>
+
+      <Container>
+        <ItemList items={customers} setItems={setCustomers} />
+      </Container>
       {user.permission !== 'user' && (
         <BottomButton
           name="plus"

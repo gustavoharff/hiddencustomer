@@ -29,6 +29,7 @@
     "operator-linebreak": "off",
     "arrow-parens": "off",
     "camelcase": "off",
+    "react/jsx-wrap-multilines": "off",
     "prettier/prettier": "error",
     "no-unused-vars": "off",
     "no-use-before-define": "off",

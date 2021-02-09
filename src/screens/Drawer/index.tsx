@@ -27,7 +27,7 @@ const Drawer: React.FC<DrawerContentComponentProps> = ({ navigation }) => {
       },
       {
         title: 'Lançamentos',
-        onPress: () => navigation.navigate('Profile'),
+        onPress: () => navigation.navigate('Releases'),
         icon: Rocket,
         canAccess: true,
       },

@@ -4,7 +4,7 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { COLORS, BODY } from '../../styles/tokens';
 
 export const Container = styled(TouchableOpacity)`
-  width: ${BODY.L.SIZE * 8}px;
+  width: ${BODY.L.SIZE * 16}px;
   margin-top: 10px;
   height: 40px;
   background: ${COLORS.WHITE};
