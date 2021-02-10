@@ -1,36 +1,44 @@
-import React, { useEffect } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
-
-import api from '../../services/api';
 
 import BottomButton from '../../components/BottomButton';
 import ItemList from '../../components/ItemList';
+import ListHeader from '../../components/ListHeader';
 
 import { useCustomers } from '../../hooks/customers';
 import { useAuth } from '../../hooks/auth';
 
-import { Container, Header, Title } from './styles';
+import api from '../../services/api';
+
+import { Container } from './styles';
 
 const Home: React.FC = () => {
   const { customers, setCustomers } = useCustomers();
   const navigation = useNavigation();
 
   useEffect(() => {
-    api.get('customers/me').then(response => {
+    api.get('/customers/me').then(response => {
       setCustomers(response.data);
     });
+  }, [setCustomers]);
+
+  const onRefresh = useCallback(async () => {
+    const response = await api.get('/customers/me');
+    setCustomers(response.data);
   }, [setCustomers]);
 
   const { user } = useAuth();
 
   return (
     <>
-      <Header>
-        <Title>Clientes</Title>
-      </Header>
-
+      <ListHeader title="Clientes" />
       <Container>
-        <ItemList items={customers} setItems={setCustomers} />
+        <ItemList
+          items={customers}
+          setItems={setCustomers}
+          onRefresh={onRefresh}
+          emptyListText="Nenhum cliente cadastrado."
+        />
       </Container>
       {user.permission !== 'user' && (
         <BottomButton

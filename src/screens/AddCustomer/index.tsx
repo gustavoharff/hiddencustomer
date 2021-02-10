@@ -8,11 +8,13 @@ import { useNavigation } from '@react-navigation/native';
 import Input from '../../components/Input';
 import Button from '../../components/Button';
 
-import { Container, Title, Text, Unform } from './styles';
 import api from '../../services/api';
 
 import { useCustomers } from '../../hooks/customers';
+
 import { COLORS } from '../../styles/tokens';
+
+import { Container, Title, Text, Unform } from './styles';
 
 const AddCustomer: React.FC = () => {
   const formRef = useRef<FormHandles>(null);

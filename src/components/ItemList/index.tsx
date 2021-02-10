@@ -1,33 +1,34 @@
 import React, { useState } from 'react';
 import { View, FlatList, RefreshControl } from 'react-native';
-import Customer from '../../schemas/customer';
-import api from '../../services/api';
+import EmptyList from '../EmptyList';
+
 import { Container, Name } from './styles';
 
 interface ItemProps {
-  items: Customer[];
+  items: any[];
   setItems: React.Dispatch<React.SetStateAction<any[]>>;
+  onRefresh: () => Promise<void>;
+  emptyListText: string;
 }
 
-const ItemList: React.FC<ItemProps> = ({ items, setItems }) => {
+const ItemList: React.FC<ItemProps> = ({ items, onRefresh, emptyListText }) => {
   const [refreshing, setRefreshing] = useState(false);
 
-  const onRefresh = async () => {
+  const handleRefresh = async () => {
     setRefreshing(true);
-    const response = await api.get('/customers/me');
-
-    setItems(response.data);
+    await onRefresh();
     setRefreshing(false);
   };
 
   return (
     <View style={{ flex: 1 }}>
       <FlatList
+        ListEmptyComponent={<EmptyList text={emptyListText} />}
         refreshControl={
           <RefreshControl
             tintColor="rgba(255,255,255,0.75)"
             refreshing={refreshing}
-            onRefresh={onRefresh}
+            onRefresh={handleRefresh}
           />
         }
         keyExtractor={(item, index) => `${item.id} - ${index}`}
