@@ -7,7 +7,7 @@ export const Container = styled.View`
   justify-content: center;
   align-items: center;
 
-  background: ${COLORS.BACKGROUND_LIGHT};
+  background: ${COLORS.BACKGROUND_DARK};
 `;
 
 export const HeaderTitle = styled.Text`

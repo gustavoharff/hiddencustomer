@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 
 import BottomButton from '../../components/BottomButton';
-import ItemList from '../../components/ItemList';
+import CustomersList from '../../components/CustomersList';
 import ListHeader from '../../components/ListHeader';
 
 import { useCustomers } from '../../hooks/customers';
@@ -33,7 +33,7 @@ const Home: React.FC = () => {
     <>
       <ListHeader title="Clientes" />
       <Container>
-        <ItemList
+        <CustomersList
           items={customers}
           setItems={setCustomers}
           onRefresh={onRefresh}

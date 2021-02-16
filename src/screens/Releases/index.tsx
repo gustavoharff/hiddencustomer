@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useCallback, useEffect } from 'react';
 
 import BottomButton from '../../components/BottomButton';
-import ItemList from '../../components/ItemList';
+import ReleasesList from '../../components/ReleasesList';
 import ListHeader from '../../components/ListHeader';
 import { useAuth } from '../../hooks/auth';
 import api from '../../services/api';
@@ -29,7 +29,7 @@ const Releases: React.FC = () => {
     <>
       <ListHeader title="Lançamentos" />
       <Container>
-        <ItemList
+        <ReleasesList
           items={releases}
           setItems={setReleases}
           onRefresh={onRefresh}

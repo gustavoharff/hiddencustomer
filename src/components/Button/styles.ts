@@ -1,12 +1,13 @@
 import styled from 'styled-components/native';
 import { shade } from 'polished';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import { COLORS, BODY } from '../../styles/tokens';
+import { RectButton } from 'react-native-gesture-handler';
 
-export const Container = styled(TouchableOpacity)`
-  width: ${BODY.L.SIZE * 16}px;
+import { COLORS, BODY, SPACING } from '../../styles/tokens';
+
+export const Container = styled(RectButton)`
+  width: 90%;
   margin-top: 10px;
-  height: 40px;
+  height: ${SPACING.XXL * 2}px;
   background: ${COLORS.WHITE};
   border-radius: ${BODY.S.HEIGHT}px;
   border: 1px solid ${shade(0.2, COLORS.WHITE)};
@@ -17,5 +18,5 @@ export const Container = styled(TouchableOpacity)`
 export const ButtonText = styled.Text`
   color: ${COLORS.BACKGROUND_DARK};
   font-family: 'Arial';
-  font-weight: 500;
+  font-weight: bold;
 `;
