@@ -12,7 +12,7 @@ import Logo from '../components/Logo';
 
 const ProfileNavigator = createStackNavigator();
 
-const ProfileNavigation: React.FC = () => (
+const ProfileRoutes: React.FC = () => (
   <ProfileNavigator.Navigator
     screenOptions={({ navigation }) => ({
       cardStyle: {
@@ -37,4 +37,4 @@ const ProfileNavigation: React.FC = () => (
   </ProfileNavigator.Navigator>
 );
 
-export default ProfileNavigation;
+export { ProfileRoutes };

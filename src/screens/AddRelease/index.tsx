@@ -17,7 +17,7 @@ import ListHeader from '../../components/ListHeader';
 import Button from '../../components/Button';
 import Input from '../../components/Input';
 
-import { Container, Unform, Title } from './styles';
+import { Container, Unform } from './styles';
 import api from '../../services/api';
 import { useReleases } from '../../hooks/releases';
 
@@ -35,6 +35,11 @@ const AddRelease: React.FC = () => {
 
   const handleSubmit = useCallback(
     async data => {
+      if (!selectedValue) {
+        Alert.alert('Atenção', 'Selecione algum cliente!');
+        return;
+      }
+
       try {
         formRef.current?.setErrors({});
 

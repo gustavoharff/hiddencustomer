@@ -20,7 +20,7 @@ export const Container = styled.View<ContainerProps>`
   ${props =>
     props.isFocused &&
     css`
-      border-bottom-width: 2px;
+      border-width: 2px;
     `}
 `;
 

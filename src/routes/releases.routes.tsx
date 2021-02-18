@@ -6,15 +6,15 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Logo from '../components/Logo';
 
-import Home from '../screens/Home';
-import AddCustomer from '../screens/AddCustomer';
+import Releases from '../screens/Releases';
+import AddRelease from '../screens/AddRelease';
 
 import { COLORS, SPACING } from '../styles/tokens';
 
-const HomeNavigator = createStackNavigator();
+const ReleasesNavigator = createStackNavigator();
 
-const HomeNavigation: React.FC = () => (
-  <HomeNavigator.Navigator
+const ReleasesRoutes: React.FC = () => (
+  <ReleasesNavigator.Navigator
     mode="modal"
     screenOptions={({ navigation }) => ({
       cardStyle: {
@@ -35,21 +35,21 @@ const HomeNavigation: React.FC = () => (
       },
     })}
   >
-    <HomeNavigator.Screen name="Home" component={Home} />
-    <HomeNavigator.Screen
-      name="AddCustomer"
-      component={AddCustomer}
+    <ReleasesNavigator.Screen name="Releases" component={Releases} />
+    <ReleasesNavigator.Screen
+      name="AddRelease"
+      component={AddRelease}
       options={({ navigation }) => ({
         headerLeft: () => (
           <View style={{ marginLeft: SPACING.S }}>
-            <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+            <TouchableOpacity onPress={() => navigation.navigate('Releases')}>
               <Icon name="close" color={COLORS.FONT} size={SPACING.L * 2} />
             </TouchableOpacity>
           </View>
         ),
       })}
     />
-  </HomeNavigator.Navigator>
+  </ReleasesNavigator.Navigator>
 );
 
-export default HomeNavigation;
+export { ReleasesRoutes };

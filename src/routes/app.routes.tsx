@@ -3,10 +3,10 @@ import { Dimensions } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
 import Drawer from '../screens/Drawer';
 
-import HomeNavigation from './HomeNavigation';
-import ProfileNavigation from './ProfileNavigation';
-import AdministrationNavigation from './AdministrationNavigation';
-import ReleasesNavigation from './ReleasesNavigation';
+import { HomeRoutes } from './home.routes';
+import { ProfileRoutes } from './profile.routes';
+import { AdministrationRoutes } from './administration.routes';
+import { ReleasesRoutes } from './releases.routes';
 
 const { width } = Dimensions.get('window');
 
@@ -20,13 +20,13 @@ const DrawerNavigation: React.FC = () => (
     drawerStyle={{ width: width * 0.8 }}
     drawerContent={props => <Drawer {...props} />}
   >
-    <DrawerNavigator.Screen name="Home" component={HomeNavigation} />
-    <DrawerNavigator.Screen name="Profile" component={ProfileNavigation} />
+    <DrawerNavigator.Screen name="Home" component={HomeRoutes} />
+    <DrawerNavigator.Screen name="Profile" component={ProfileRoutes} />
     <DrawerNavigator.Screen
       name="Administration"
-      component={AdministrationNavigation}
+      component={AdministrationRoutes}
     />
-    <DrawerNavigator.Screen name="Releases" component={ReleasesNavigation} />
+    <DrawerNavigator.Screen name="Releases" component={ReleasesRoutes} />
   </DrawerNavigator.Navigator>
 );
 

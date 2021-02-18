@@ -1,27 +1,48 @@
 import React, { useCallback, useState } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
+import produce from 'immer';
 import moment from 'moment';
 import 'moment/locale/pt-br';
 
-import Customer from '../../schemas/customer';
+import DeleteItem from '../DeleteItem';
+
+import { Customer } from '../../schemas/customer';
 
 import EmptyList from '../EmptyList';
 
-import { Container, UpdatedAt, Name, UpdatedAtText } from './styles';
-import DeleteItem from '../DeleteItem';
+import api from '../../services/api';
 
-interface ItemProps {
-  items: Customer[];
-  setItems: React.Dispatch<React.SetStateAction<Customer[]>>;
+import { Container, UpdatedAt, Name, UpdatedAtText } from './styles';
+
+interface CustomersListProps {
+  customers: Customer[];
+  setCustomers: React.Dispatch<React.SetStateAction<Customer[]>>;
   onRefresh: () => Promise<void>;
   emptyListText: string;
 }
 
-const ItemList: React.FC<ItemProps> = ({ items, onRefresh, emptyListText }) => {
+const CustomersList: React.FC<CustomersListProps> = ({
+  customers,
+  setCustomers,
+  onRefresh,
+  emptyListText,
+}) => {
   const [refreshing, setRefreshing] = useState(false);
   const [row] = useState<Array<any>>([]);
   const [prevOpenedRow, setPrevOpenedRow] = useState<any>();
+  const [selectedCustomer, setSelectedCustomer] = useState<Customer>(
+    {} as Customer,
+  );
+
+  const handleDelete = useCallback(async () => {
+    await api.delete(`/customers/${selectedCustomer.id}`);
+    setCustomers(
+      produce(customers, drafts =>
+        drafts.filter(draft => draft.id !== selectedCustomer.id),
+      ),
+    );
+  }, [selectedCustomer, setCustomers, customers]);
 
   const onDeleteItem = useCallback(() => {
     Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
@@ -30,9 +51,9 @@ const ItemList: React.FC<ItemProps> = ({ items, onRefresh, emptyListText }) => {
         onPress: () => prevOpenedRow.close(),
         style: 'cancel',
       },
-      { text: 'Sim', onPress: () => console.log('OK Pressed') },
+      { text: 'Sim', onPress: () => handleDelete() },
     ]);
-  }, [prevOpenedRow]);
+  }, [prevOpenedRow, handleDelete]);
 
   const closeRow = useCallback(
     index => {
@@ -62,8 +83,8 @@ const ItemList: React.FC<ItemProps> = ({ items, onRefresh, emptyListText }) => {
           />
         }
         keyExtractor={(item, index) => `${item.id} - ${index}`}
-        data={items}
-        renderItem={({ item, index }) => (
+        data={customers}
+        renderItem={({ item: customer, index }) => (
           <Swipeable
             ref={ref => (row[index] = ref)} // eslint-disable-line
             friction={1.5}
@@ -71,14 +92,20 @@ const ItemList: React.FC<ItemProps> = ({ items, onRefresh, emptyListText }) => {
             renderRightActions={() => <DeleteItem onPress={onDeleteItem} />}
             activeOffsetX={-1}
             activeOffsetY={500}
-            onSwipeableOpen={() => closeRow(index)}
+            onSwipeableOpen={() => {
+              closeRow(index);
+              setSelectedCustomer(customer);
+            }}
           >
             <Container>
-              <Name>{item.name}</Name>
+              <Name>{customer.name}</Name>
               <UpdatedAt>
                 <UpdatedAtText>
                   Atualizado{' '}
-                  {moment(item.updated_at).utc(true).locale('pt-br').fromNow()}
+                  {moment(customer.updated_at)
+                    .utc(true)
+                    .locale('pt-br')
+                    .fromNow()}
                 </UpdatedAtText>
                 <UpdatedAtText />
               </UpdatedAt>
@@ -90,4 +117,4 @@ const ItemList: React.FC<ItemProps> = ({ items, onRefresh, emptyListText }) => {
   );
 };
 
-export default ItemList;
+export { CustomersList };

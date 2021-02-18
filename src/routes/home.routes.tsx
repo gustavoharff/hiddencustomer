@@ -6,14 +6,16 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Logo from '../components/Logo';
 
-import Administration from '../screens/Administration';
+import Home from '../screens/Home';
+import AddCustomer from '../screens/AddCustomer';
 
 import { COLORS, SPACING } from '../styles/tokens';
 
-const AdministrationNavigator = createStackNavigator();
+const HomeNavigator = createStackNavigator();
 
-const AdministrationNavigation: React.FC = () => (
-  <AdministrationNavigator.Navigator
+const HomeRoutes: React.FC = () => (
+  <HomeNavigator.Navigator
+    mode="modal"
     screenOptions={({ navigation }) => ({
       cardStyle: {
         backgroundColor: COLORS.BACKGROUND,
@@ -33,11 +35,21 @@ const AdministrationNavigation: React.FC = () => (
       },
     })}
   >
-    <AdministrationNavigator.Screen
-      name="Administration"
-      component={Administration}
+    <HomeNavigator.Screen name="Home" component={Home} />
+    <HomeNavigator.Screen
+      name="AddCustomer"
+      component={AddCustomer}
+      options={({ navigation }) => ({
+        headerLeft: () => (
+          <View style={{ marginLeft: SPACING.S }}>
+            <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+              <Icon name="close" color={COLORS.FONT} size={SPACING.L * 2} />
+            </TouchableOpacity>
+          </View>
+        ),
+      })}
     />
-  </AdministrationNavigator.Navigator>
+  </HomeNavigator.Navigator>
 );
 
-export default AdministrationNavigation;
+export { HomeRoutes };

@@ -6,16 +6,14 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import Logo from '../components/Logo';
 
-import Releases from '../screens/Releases';
-import AddRelease from '../screens/AddRelease';
+import Administration from '../screens/Administration';
 
 import { COLORS, SPACING } from '../styles/tokens';
 
-const ReleasesNavigator = createStackNavigator();
+const AdministrationNavigator = createStackNavigator();
 
-const ReleasesNavigation: React.FC = () => (
-  <ReleasesNavigator.Navigator
-    mode="modal"
+const AdministrationRoutes: React.FC = () => (
+  <AdministrationNavigator.Navigator
     screenOptions={({ navigation }) => ({
       cardStyle: {
         backgroundColor: COLORS.BACKGROUND,
@@ -35,21 +33,11 @@ const ReleasesNavigation: React.FC = () => (
       },
     })}
   >
-    <ReleasesNavigator.Screen name="Releases" component={Releases} />
-    <ReleasesNavigator.Screen
-      name="AddRelease"
-      component={AddRelease}
-      options={({ navigation }) => ({
-        headerLeft: () => (
-          <View style={{ marginLeft: SPACING.S }}>
-            <TouchableOpacity onPress={() => navigation.navigate('Releases')}>
-              <Icon name="close" color={COLORS.FONT} size={SPACING.L * 2} />
-            </TouchableOpacity>
-          </View>
-        ),
-      })}
+    <AdministrationNavigator.Screen
+      name="Administration"
+      component={Administration}
     />
-  </ReleasesNavigator.Navigator>
+  </AdministrationNavigator.Navigator>
 );
 
-export default ReleasesNavigation;
+export { AdministrationRoutes };

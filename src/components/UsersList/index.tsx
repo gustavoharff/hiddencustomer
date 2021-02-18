@@ -1,46 +1,51 @@
 import React, { useCallback, useState } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
-import produce from 'immer';
 import moment from 'moment';
+import produce from 'immer';
 import 'moment/locale/pt-br';
-
-import Release from '../../schemas/release';
+import User from '../../schemas/user';
 
 import EmptyList from '../EmptyList';
-
-import { Container, Name, UpdatedAt, UpdatedAtText } from './styles';
+import {
+  Container,
+  UpdatedAt,
+  Name,
+  Email,
+  UpdatedAtText,
+  Content,
+} from './styles';
 import DeleteItem from '../DeleteItem';
 import api from '../../services/api';
+import Avatar from '../Avatar';
+import { SPACING } from '../../styles/tokens';
 
-interface ReleasesListProps {
-  releases: Release[];
-  setReleases: React.Dispatch<React.SetStateAction<Release[]>>;
+interface UsersListProps {
+  users: User[];
+  setUsers: React.Dispatch<React.SetStateAction<User[]>>;
   onRefresh: () => Promise<void>;
   emptyListText: string;
 }
 
-const ReleasesList: React.FC<ReleasesListProps> = ({
-  releases,
-  setReleases,
+const UsersList: React.FC<UsersListProps> = ({
+  users,
+  setUsers,
   onRefresh,
   emptyListText,
 }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [row] = useState<Array<any>>([]);
   const [prevOpenedRow, setPrevOpenedRow] = useState<any>();
-  const [selectedRelease, setSelectedRelease] = useState<Release>(
-    {} as Release,
-  );
+  const [selectedUser, setSelectedUser] = useState<User>({} as User);
 
   const handleDelete = useCallback(async () => {
-    await api.delete(`/releases/${selectedRelease.id}`);
-    setReleases(
-      produce(releases, drafts =>
-        drafts.filter(draft => draft.id !== selectedRelease.id),
+    await api.delete(`/users/${selectedUser.id}`);
+    setUsers(
+      produce(users, drafts =>
+        drafts.filter(draft => draft.id !== selectedUser.id),
       ),
     );
-  }, [setReleases, releases, selectedRelease]);
+  }, [setUsers, users, selectedUser.id]);
 
   const onDeleteItem = useCallback(() => {
     Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
@@ -62,6 +67,7 @@ const ReleasesList: React.FC<ReleasesListProps> = ({
     },
     [prevOpenedRow, row],
   );
+
   const handleRefresh = async () => {
     setRefreshing(true);
     await onRefresh();
@@ -80,10 +86,10 @@ const ReleasesList: React.FC<ReleasesListProps> = ({
           />
         }
         keyExtractor={(item, index) => `${item.id} - ${index}`}
-        data={releases}
-        renderItem={({ item: release, index }) => (
+        data={users}
+        renderItem={({ item: user, index }) => (
           <Swipeable
-          ref={ref => (row[index] = ref)} // eslint-disable-line
+            ref={ref => (row[index] = ref)} // eslint-disable-line
             friction={1.5}
             rightThreshold={30}
             renderRightActions={() => <DeleteItem onPress={onDeleteItem} />}
@@ -91,18 +97,31 @@ const ReleasesList: React.FC<ReleasesListProps> = ({
             activeOffsetY={500}
             onSwipeableOpen={() => {
               closeRow(index);
-              setSelectedRelease(release);
+              setSelectedUser(user);
             }}
           >
             <Container>
-              <Name>{release.name}</Name>
-              <UpdatedAt>
-                <UpdatedAtText>
-                  Atualizado{' '}
-                  {moment(release.updated_at).locale('pt-br').fromNow()}
-                </UpdatedAtText>
-                <UpdatedAtText />
-              </UpdatedAt>
+              <Avatar
+                size={SPACING.M * 5}
+                url={
+                  user.avatar_url ||
+                  'https://iupac.org/wp-content/uploads/2018/05/default-avatar.png'
+                }
+              />
+              <Content>
+                <Name>{user.name}</Name>
+                <Email>{user.email}</Email>
+                <UpdatedAt>
+                  <UpdatedAtText>
+                    Atualizado{' '}
+                    {moment(user.updated_at)
+                      .utc(true)
+                      .locale('pt-br')
+                      .fromNow()}
+                  </UpdatedAtText>
+                  <UpdatedAtText />
+                </UpdatedAt>
+              </Content>
             </Container>
           </Swipeable>
         )}
@@ -111,4 +130,4 @@ const ReleasesList: React.FC<ReleasesListProps> = ({
   );
 };
 
-export { ReleasesList };
+export { UsersList };

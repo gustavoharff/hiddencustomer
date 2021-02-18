@@ -27,6 +27,7 @@
     "object-curly-newline": "off",
     "implicit-arrow-linebreak": "off",
     "operator-linebreak": "off",
+    "function-paren-newline": "off",
     "arrow-parens": "off",
     "camelcase": "off",
     "react/jsx-wrap-multilines": "off",

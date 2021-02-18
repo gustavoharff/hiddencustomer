@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 
 import BottomButton from '../../components/BottomButton';
-import CustomersList from '../../components/CustomersList';
+import { CustomersList } from '../../components/CustomersList';
 import ListHeader from '../../components/ListHeader';
 
 import { useCustomers } from '../../hooks/customers';
@@ -34,8 +34,8 @@ const Home: React.FC = () => {
       <ListHeader title="Clientes" />
       <Container>
         <CustomersList
-          items={customers}
-          setItems={setCustomers}
+          customers={customers}
+          setCustomers={setCustomers}
           onRefresh={onRefresh}
           emptyListText="Nenhum cliente cadastrado."
         />

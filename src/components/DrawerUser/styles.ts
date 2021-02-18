@@ -13,6 +13,7 @@ export const Title = styled.Text`
   color: ${COLORS.FONT_SECONDARY};
   text-align: center;
   font-weight: 500;
+  margin-top: 10px;
 `;
 
 export const Text = styled.Text`

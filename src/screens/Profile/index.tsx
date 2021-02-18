@@ -1,7 +1,10 @@
 import React from 'react';
-import { Text, View } from 'react-native';
-import { TouchableOpacity } from 'react-native-gesture-handler';
+import Button from '../../components/Button';
+
+import ListHeader from '../../components/ListHeader';
+
 import { useAuth } from '../../hooks/auth';
+import { SPACING } from '../../styles/tokens';
 
 import { Container } from './styles';
 
@@ -9,13 +12,16 @@ const Profile: React.FC = () => {
   const { signOut } = useAuth();
 
   return (
-    <Container>
-      <Text>Profile</Text>
-
-      <TouchableOpacity onPress={signOut}>
-        <Text>Sair</Text>
-      </TouchableOpacity>
-    </Container>
+    <>
+      <Container>
+        <ListHeader title="Meu perfil" />
+        <Button
+          title="sair"
+          onPress={signOut}
+          style={{ marginBottom: SPACING.XL }}
+        />
+      </Container>
+    </>
   );
 };
 

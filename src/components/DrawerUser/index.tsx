@@ -1,4 +1,5 @@
 import React from 'react';
+import { SPACING } from '../../styles/tokens';
 
 import Avatar from '../Avatar';
 
@@ -13,6 +14,7 @@ interface DrawerUserProps {
 const DrawerUser: React.FC<DrawerUserProps> = ({ name, email, avatar }) => (
   <Container>
     <Avatar
+      size={SPACING.M * 8}
       url={
         avatar ||
         'https://iupac.org/wp-content/uploads/2018/05/default-avatar.png'
