@@ -16,7 +16,7 @@ const Profile: React.FC = () => {
       <Container>
         <ListHeader title="Meu perfil" />
         <Button
-          title="sair"
+          title="Sair"
           onPress={signOut}
           style={{ marginBottom: SPACING.XL }}
         />

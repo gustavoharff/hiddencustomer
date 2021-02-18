@@ -18,7 +18,7 @@
 		2DCD954D1E0B4F2C00145EB5 /* hiddencustomerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 00E356F21AD99517003FC87E /* hiddencustomerTests.m */; };
 		37CDC46CB8CDAAAEA9C26D68 /* libPods-hiddencustomer-tvOSTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5A862905F80947C1DB286811 /* libPods-hiddencustomer-tvOSTests.a */; };
 		55D51DA638BC4D6C40BE219A /* libPods-hiddencustomer.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FAC6302426F00FEBD63F2261 /* libPods-hiddencustomer.a */; };
-		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		6090ED3525DF2E2300F6A85C /* BootSplash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6090ED3425DF2E2300F6A85C /* BootSplash.storyboard */; };
 		E5BE74AE5481B18D299B3A1F /* libPods-hiddencustomer-hiddencustomerTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 84302E0EEC41E5FFFCDDF9B9 /* libPods-hiddencustomer-hiddencustomerTests.a */; };
 /* End PBXBuildFile section */
 
@@ -59,8 +59,8 @@
 		2D02E4901E0B4A5D006451C7 /* hiddencustomer-tvOSTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "hiddencustomer-tvOSTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		4BC9E1A4B9E869E69F1BC414 /* Pods-hiddencustomer-hiddencustomerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-hiddencustomer-hiddencustomerTests.debug.xcconfig"; path = "Target Support Files/Pods-hiddencustomer-hiddencustomerTests/Pods-hiddencustomer-hiddencustomerTests.debug.xcconfig"; sourceTree = "<group>"; };
 		5A862905F80947C1DB286811 /* libPods-hiddencustomer-tvOSTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-hiddencustomer-tvOSTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6090ED3425DF2E2300F6A85C /* BootSplash.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = BootSplash.storyboard; path = hiddencustomer/BootSplash.storyboard; sourceTree = "<group>"; };
 		7E4C5E898568367122249291 /* Pods-hiddencustomer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-hiddencustomer.debug.xcconfig"; path = "Target Support Files/Pods-hiddencustomer/Pods-hiddencustomer.debug.xcconfig"; sourceTree = "<group>"; };
-		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = hiddencustomer/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		84302E0EEC41E5FFFCDDF9B9 /* libPods-hiddencustomer-hiddencustomerTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-hiddencustomer-hiddencustomerTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		B79983513620056D0345BEB6 /* Pods-hiddencustomer-tvOSTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-hiddencustomer-tvOSTests.release.xcconfig"; path = "Target Support Files/Pods-hiddencustomer-tvOSTests/Pods-hiddencustomer-tvOSTests.release.xcconfig"; sourceTree = "<group>"; };
 		DA86CF6D5B3BEE2514250F17 /* Pods-hiddencustomer-tvOSTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-hiddencustomer-tvOSTests.debug.xcconfig"; path = "Target Support Files/Pods-hiddencustomer-tvOSTests/Pods-hiddencustomer-tvOSTests.debug.xcconfig"; sourceTree = "<group>"; };
@@ -125,12 +125,12 @@
 		13B07FAE1A68108700A75B9A /* hiddencustomer */ = {
 			isa = PBXGroup;
 			children = (
+				6090ED3425DF2E2300F6A85C /* BootSplash.storyboard */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.m */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
-				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				13B07FB71A68108700A75B9A /* main.m */,
 			);
 			name = hiddencustomer;
@@ -194,7 +194,6 @@
 				DA86CF6D5B3BEE2514250F17 /* Pods-hiddencustomer-tvOSTests.debug.xcconfig */,
 				B79983513620056D0345BEB6 /* Pods-hiddencustomer-tvOSTests.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -340,8 +339,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				6090ED3525DF2E2300F6A85C /* BootSplash.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

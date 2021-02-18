@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import {
   Alert,
   KeyboardAvoidingView,
@@ -6,6 +6,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import RNBootSplash from 'react-native-bootsplash';
 
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
@@ -28,6 +29,10 @@ interface SignInFormData {
 }
 
 const SignIn: React.FC = () => {
+  useEffect(() => {
+    RNBootSplash.hide({ fade: true }); // fade
+  }, []);
+
   const { signIn } = useAuth();
 
   const formRef = useRef<FormHandles>(null);

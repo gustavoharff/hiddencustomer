@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
-
+import RNBootSplash from 'react-native-bootsplash';
 import BottomButton from '../../components/BottomButton';
 import { CustomersList } from '../../components/CustomersList';
 import ListHeader from '../../components/ListHeader';
@@ -15,6 +15,12 @@ import { Container } from './styles';
 const Home: React.FC = () => {
   const { customers, setCustomers } = useCustomers();
   const navigation = useNavigation();
+
+  useEffect(() => {
+    setTimeout(() => {
+      RNBootSplash.hide({ fade: true });
+    }, 300);
+  }, []);
 
   useEffect(() => {
     api.get('/customers/me').then(response => {
