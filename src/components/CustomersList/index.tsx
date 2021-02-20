@@ -14,6 +14,7 @@ import EmptyList from '../EmptyList';
 import api from '../../services/api';
 
 import { Container, UpdatedAt, Name, UpdatedAtText } from './styles';
+import getRealm from '../../services/realm';
 
 interface CustomersListProps {
   customers: Customer[];
@@ -42,6 +43,12 @@ const CustomersList: React.FC<CustomersListProps> = ({
         drafts.filter(draft => draft.id !== selectedCustomer.id),
       ),
     );
+
+    const realm = await getRealm();
+
+    realm.write(() => {
+      realm.delete(realm.objectForPrimaryKey('Customer', selectedCustomer.id));
+    });
   }, [selectedCustomer, setCustomers, customers]);
 
   const onDeleteItem = useCallback(() => {

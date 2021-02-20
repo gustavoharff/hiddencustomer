@@ -15,6 +15,7 @@ import { useCustomers } from '../../hooks/customers';
 import { COLORS } from '../../styles/tokens';
 
 import { Container, Title, Text, Unform } from './styles';
+import getRealm from '../../services/realm';
 
 const AddCustomer: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
@@ -39,6 +40,12 @@ const AddCustomer: React.FC = () => {
         });
 
         setCustomers(state => [response.data, ...state]);
+
+        const realm = await getRealm();
+
+        realm.write(() => {
+          realm.create('Customer', response.data);
+        });
 
         navigation.navigate('Home');
       } catch (err) {

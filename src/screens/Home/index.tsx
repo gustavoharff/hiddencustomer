@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import RNBootSplash from 'react-native-bootsplash';
+
 import BottomButton from '../../components/BottomButton';
 import { CustomersList } from '../../components/CustomersList';
 import ListHeader from '../../components/ListHeader';
@@ -11,6 +12,8 @@ import { useAuth } from '../../hooks/auth';
 import api from '../../services/api';
 
 import { Container } from './styles';
+import getRealm from '../../services/realm';
+import { Customer } from '../../schemas/customer';
 
 const Home: React.FC = () => {
   const { customers, setCustomers } = useCustomers();
@@ -23,14 +26,53 @@ const Home: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    api.get('/customers/me').then(response => {
-      setCustomers(response.data);
-    });
+    api
+      .get('/customers/me')
+      .then(response => {
+        setCustomers(response.data);
+
+        getRealm().then(realm => {
+          console.log(realm.path);
+          realm.write(() => {
+            const data = realm.objects('Customer');
+
+            realm.delete(data);
+            response.data.map((customer: Customer) =>
+              realm.create('Customer', customer),
+            );
+          });
+        });
+      })
+      .catch(async () => {
+        const realm = await getRealm();
+
+        const data = realm.objects<Customer>('Customer').sorted('name', true);
+
+        setCustomers(data as any);
+      });
   }, [setCustomers]);
 
   const onRefresh = useCallback(async () => {
-    const response = await api.get('/customers/me');
-    setCustomers(response.data);
+    try {
+      const response = await api.get('/customers/me');
+      setCustomers(response.data);
+
+      const realm = await getRealm();
+
+      realm.write(() => {
+        const data = realm.objects('Customer');
+
+        realm.delete(data);
+        response.data.map((customer: Customer) =>
+          realm.create('Customer', customer),
+        );
+      });
+    } catch {
+      const realm = await getRealm();
+      const data = realm.objects<Customer>('Customer').sorted('name', true);
+
+      setCustomers(data as any);
+    }
   }, [setCustomers]);
 
   const { user } = useAuth();

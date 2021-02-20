@@ -12,6 +12,7 @@ import EmptyList from '../EmptyList';
 import { Container, Name, UpdatedAt, UpdatedAtText } from './styles';
 import DeleteItem from '../DeleteItem';
 import api from '../../services/api';
+import getRealm from '../../services/realm';
 
 interface ReleasesListProps {
   releases: Release[];
@@ -40,6 +41,12 @@ const ReleasesList: React.FC<ReleasesListProps> = ({
         drafts.filter(draft => draft.id !== selectedRelease.id),
       ),
     );
+
+    const realm = await getRealm();
+
+    realm.write(() => {
+      realm.delete(realm.objectForPrimaryKey('Release', selectedRelease.id));
+    });
   }, [setReleases, releases, selectedRelease]);
 
   const onDeleteItem = useCallback(() => {

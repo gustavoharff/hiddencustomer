@@ -20,6 +20,7 @@ import Input from '../../components/Input';
 import { Container, Unform } from './styles';
 import api from '../../services/api';
 import { useReleases } from '../../hooks/releases';
+import getRealm from '../../services/realm';
 
 const AddRelease: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
@@ -55,6 +56,12 @@ const AddRelease: React.FC = () => {
         });
 
         setReleases(state => [response.data, ...state]);
+
+        const realm = await getRealm();
+
+        realm.write(() => {
+          realm.create('Release', response.data);
+        });
 
         navigation.navigate('Releases');
       } catch (err) {

@@ -8,6 +8,8 @@ import { useAuth } from '../../hooks/auth';
 import api from '../../services/api';
 import { Container } from './styles';
 import { useReleases } from '../../hooks/releases';
+import getRealm from '../../services/realm';
+import Release from '../../schemas/release';
 
 const Releases: React.FC = () => {
   const { user } = useAuth();
@@ -17,12 +19,31 @@ const Releases: React.FC = () => {
   useEffect(() => {
     api.get('/releases').then(response => {
       setReleases(response.data);
+
+      getRealm().then(realm => {
+        realm.write(() => {
+          const data = realm.objects('Release');
+          realm.delete(data);
+
+          response.data.map((release: Release) =>
+            realm.create('Release', release),
+          );
+        });
+      });
     });
   }, [setReleases]);
 
   const onRefresh = useCallback(async () => {
     const response = await api.get('/releases');
     setReleases(response.data);
+
+    const realm = await getRealm();
+    realm.write(() => {
+      const data = realm.objects('Release');
+      realm.delete(data);
+
+      response.data.map((release: Release) => realm.create('Release', release));
+    });
   }, [setReleases]);
 
   return (
