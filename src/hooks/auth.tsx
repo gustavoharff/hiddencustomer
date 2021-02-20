@@ -5,11 +5,12 @@ import React, {
   useContext,
   useEffect,
 } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import api from '../services/api';
 
 import User from '../schemas/user';
+import Auth from '../schemas/auth';
+import getRealm from '../services/realm';
 
 interface AuthState {
   token: string;
@@ -38,14 +39,17 @@ const AuthProvider: React.FC = ({ children }) => {
 
   useEffect(() => {
     async function loadStoragedData(): Promise<void> {
-      const token = await AsyncStorage.getItem('Hidden-Customer:token');
-      const user = await AsyncStorage.getItem('Hidden-Customer:user');
+      const realm = await getRealm();
 
-      if (token && user) {
-        api.defaults.headers.authorization = `Bearer ${token}`;
+      realm.write(() => {
+        const [user] = realm.objects<Auth>('Auth');
 
-        setData({ token, user: JSON.parse(user) });
-      }
+        if (user && user.token) {
+          api.defaults.headers.authorization = `Bearer ${user.token}`;
+
+          setData({ token: user.token, user });
+        }
+      });
 
       setLoading(false);
     }
@@ -61,8 +65,16 @@ const AuthProvider: React.FC = ({ children }) => {
 
     const { token, user } = response.data;
 
-    await AsyncStorage.setItem('Hidden-Customer:token', token);
-    await AsyncStorage.setItem('Hidden-Customer:user', JSON.stringify(user));
+    const realm = await getRealm();
+
+    const auth = {
+      ...user,
+      token,
+    };
+
+    realm.write(() => {
+      realm.create('Auth', auth);
+    });
 
     api.defaults.headers.authorization = `Bearer ${token}`;
 
@@ -70,15 +82,24 @@ const AuthProvider: React.FC = ({ children }) => {
   }, []);
 
   const signOut = useCallback(async () => {
-    await AsyncStorage.removeItem('Hidden-Customer:token');
-    await AsyncStorage.removeItem('Hidden-Customer:user');
+    const realm = await getRealm();
+
+    realm.write(() => {
+      realm.deleteAll();
+    });
 
     setData({} as AuthState);
   }, []);
 
   const updateUser = useCallback(
     async (user: User) => {
-      await AsyncStorage.setItem('Hidden-Customer:user', JSON.stringify(user));
+      const realm = await getRealm();
+
+      realm.write(() => {
+        const authData = realm.objects('Auth');
+
+        realm.delete(authData);
+      });
 
       setData({
         token: data.token,

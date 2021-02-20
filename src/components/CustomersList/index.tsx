@@ -109,10 +109,7 @@ const CustomersList: React.FC<CustomersListProps> = ({
               <UpdatedAt>
                 <UpdatedAtText>
                   Atualizado{' '}
-                  {moment(customer.updated_at)
-                    .utc(true)
-                    .locale('pt-br')
-                    .fromNow()}
+                  {moment(customer.updated_at).locale('pt-br').fromNow()}
                 </UpdatedAtText>
                 <UpdatedAtText />
               </UpdatedAt>
