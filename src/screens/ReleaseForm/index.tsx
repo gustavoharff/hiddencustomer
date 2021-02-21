@@ -22,7 +22,7 @@ import api from '../../services/api';
 import { useReleases } from '../../hooks/releases';
 import getRealm from '../../services/realm';
 
-const AddRelease: React.FC = () => {
+const ReleaseForm: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const [selectedValue, setSelectedValue] = useState('');
   const navigation = useNavigation();
@@ -136,4 +136,4 @@ const AddRelease: React.FC = () => {
   );
 };
 
-export default AddRelease;
+export { ReleaseForm };

@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Logo from '../components/Logo';
 
 import Home from '../screens/Home';
-import AddCustomer from '../screens/AddCustomer';
+import { CustomerForm } from '../screens/CustomerForm';
 
 import { COLORS, SPACING } from '../styles/tokens';
 
@@ -37,8 +37,8 @@ const HomeRoutes: React.FC = () => (
   >
     <HomeNavigator.Screen name="Home" component={Home} />
     <HomeNavigator.Screen
-      name="AddCustomer"
-      component={AddCustomer}
+      name="CustomerForm"
+      component={CustomerForm}
       options={({ navigation }) => ({
         headerLeft: () => (
           <View style={{ marginLeft: SPACING.S }}>

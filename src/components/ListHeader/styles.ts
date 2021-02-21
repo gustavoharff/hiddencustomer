@@ -22,7 +22,7 @@ export const Title = styled.Text`
 `;
 
 export const Description = styled.Text`
-  color: ${COLORS.FONT};
+  color: ${COLORS.FONT_LIGHT};
   margin-top: 20px;
   font-size: 15px;
   font-weight: bold;

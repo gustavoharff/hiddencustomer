@@ -1,7 +1,9 @@
 import axios from 'axios';
 
+import { SERVICE_URL } from '../config';
+
 const api = axios.create({
-  baseURL: 'https://nodejs.harff.dev',
+  baseURL: SERVICE_URL,
 });
 
 export default api;

@@ -8,6 +8,7 @@ target 'hiddencustomer' do
 
   use_react_native!(:path => config["reactNativePath"])
 
+
   target 'hiddencustomerTests' do
     inherit! :complete
     # Pods for testing

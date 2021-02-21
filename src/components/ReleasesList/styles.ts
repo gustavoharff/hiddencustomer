@@ -10,14 +10,15 @@ export const Container = styled.View`
 
 export const Name = styled.Text`
   color: ${COLORS.FONT};
+  font-size: 15px;
 `;
 
-export const UpdatedAt = styled.View`
+export const Description = styled.View`
   margin-top: 10px;
   flex-direction: row;
   justify-content: space-between;
 `;
 
-export const UpdatedAtText = styled.Text`
+export const DescriptionText = styled.Text`
   color: ${COLORS.FONT_LIGHT};
 `;

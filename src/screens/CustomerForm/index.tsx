@@ -17,7 +17,7 @@ import { COLORS } from '../../styles/tokens';
 import { Container, Title, Text, Unform } from './styles';
 import getRealm from '../../services/realm';
 
-const AddCustomer: React.FC = () => {
+const CustomerForm: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
 
   const { setCustomers } = useCustomers();
@@ -90,4 +90,4 @@ const AddCustomer: React.FC = () => {
   );
 };
 
-export default AddCustomer;
+export { CustomerForm };

@@ -1,6 +1,10 @@
 import styled from 'styled-components/native';
 import { COLORS, SPACING } from '../../styles/tokens';
 
+interface DateProps {
+  past: boolean;
+}
+
 export const Container = styled.View`
   padding: ${SPACING.M}px;
   background: ${COLORS.BACKGROUND_LIGHT};
@@ -8,16 +12,7 @@ export const Container = styled.View`
   border-color: ${COLORS.DARKEN_15};
 `;
 
-export const Name = styled.Text`
-  color: ${COLORS.FONT};
+export const Date = styled.Text<DateProps>`
+  color: ${props => (props.past ? COLORS.FONT_LIGHT : COLORS.FONT)};
   font-size: 15px;
-`;
-export const UpdatedAt = styled.View`
-  margin-top: 10px;
-  flex-direction: row;
-  justify-content: space-between;
-`;
-
-export const UpdatedAtText = styled.Text`
-  color: ${COLORS.FONT_LIGHT};
 `;

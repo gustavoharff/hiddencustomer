@@ -7,7 +7,8 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Logo from '../components/Logo';
 
 import Releases from '../screens/Releases';
-import AddRelease from '../screens/AddRelease';
+import { ReleaseForm } from '../screens/ReleaseForm';
+import { ReleaseDetails } from '../screens/ReleaseDetails';
 
 import { COLORS, SPACING } from '../styles/tokens';
 
@@ -37,8 +38,21 @@ const ReleasesRoutes: React.FC = () => (
   >
     <ReleasesNavigator.Screen name="Releases" component={Releases} />
     <ReleasesNavigator.Screen
-      name="AddRelease"
-      component={AddRelease}
+      name="ReleaseForm"
+      component={ReleaseForm}
+      options={({ navigation }) => ({
+        headerLeft: () => (
+          <View style={{ marginLeft: SPACING.S }}>
+            <TouchableOpacity onPress={() => navigation.navigate('Releases')}>
+              <Icon name="close" color={COLORS.FONT} size={SPACING.L * 2} />
+            </TouchableOpacity>
+          </View>
+        ),
+      })}
+    />
+    <ReleasesNavigator.Screen
+      name="ReleaseDetails"
+      component={ReleaseDetails}
       options={({ navigation }) => ({
         headerLeft: () => (
           <View style={{ marginLeft: SPACING.S }}>

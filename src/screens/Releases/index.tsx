@@ -60,7 +60,7 @@ const Releases: React.FC = () => {
       {user.permission !== 'user' && (
         <BottomButton
           name="plus"
-          onPress={() => navigation.navigate('AddRelease')}
+          onPress={() => navigation.navigate('ReleaseForm')}
         />
       )}
     </>

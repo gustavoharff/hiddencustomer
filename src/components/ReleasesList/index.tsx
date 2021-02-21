@@ -5,11 +5,14 @@ import produce from 'immer';
 import moment from 'moment';
 import 'moment/locale/pt-br';
 
+import { RectButton } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native';
 import Release from '../../schemas/release';
 
 import EmptyList from '../EmptyList';
 
-import { Container, Name, UpdatedAt, UpdatedAtText } from './styles';
+import { Container, Name, Description, DescriptionText } from './styles';
+
 import DeleteItem from '../DeleteItem';
 import api from '../../services/api';
 import getRealm from '../../services/realm';
@@ -33,6 +36,8 @@ const ReleasesList: React.FC<ReleasesListProps> = ({
   const [selectedRelease, setSelectedRelease] = useState<Release>(
     {} as Release,
   );
+
+  const navigation = useNavigation();
 
   const handleDelete = useCallback(async () => {
     await api.delete(`/releases/${selectedRelease.id}`);
@@ -101,16 +106,34 @@ const ReleasesList: React.FC<ReleasesListProps> = ({
               setSelectedRelease(release);
             }}
           >
-            <Container>
-              <Name>{release.name}</Name>
-              <UpdatedAt>
-                <UpdatedAtText>
-                  Atualizado{' '}
-                  {moment(release.updated_at).locale('pt-br').fromNow()}
-                </UpdatedAtText>
-                <UpdatedAtText />
-              </UpdatedAt>
-            </Container>
+            <RectButton
+              onPress={() => {
+                navigation.navigate('ReleaseDetails', {
+                  release_id: release.id,
+                });
+              }}
+            >
+              <Container>
+                <Name>{release.name}</Name>
+                <Description>
+                  <DescriptionText>
+                    {release.paid
+                      ? 'Pagamento realizado!'
+                      : 'Pagamento ainda não realizado!'}
+                  </DescriptionText>
+                </Description>
+                <Description>
+                  <DescriptionText>
+                    Atualizado{' '}
+                    {moment(release.updated_at)
+                      .utc(true)
+                      .locale('pt-br')
+                      .fromNow()}
+                  </DescriptionText>
+                  <DescriptionText />
+                </Description>
+              </Container>
+            </RectButton>
           </Swipeable>
         )}
       />

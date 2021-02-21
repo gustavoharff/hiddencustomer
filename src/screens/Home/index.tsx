@@ -10,9 +10,9 @@ import { useCustomers } from '../../hooks/customers';
 import { useAuth } from '../../hooks/auth';
 
 import api from '../../services/api';
+import getRealm from '../../services/realm';
 
 import { Container } from './styles';
-import getRealm from '../../services/realm';
 import { Customer } from '../../schemas/customer';
 
 const Home: React.FC = () => {
@@ -91,7 +91,7 @@ const Home: React.FC = () => {
       {user.permission !== 'user' && (
         <BottomButton
           name="plus"
-          onPress={() => navigation.navigate('AddCustomer')}
+          onPress={() => navigation.navigate('CustomerForm')}
         />
       )}
     </>
