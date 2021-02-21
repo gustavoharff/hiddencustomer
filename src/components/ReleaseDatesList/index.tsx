@@ -1,7 +1,8 @@
 import React, { useCallback, useState } from 'react';
-import { View, FlatList, RefreshControl } from 'react-native';
+import { View, FlatList, RefreshControl, Alert } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import moment from 'moment';
+import produce from 'immer';
 import 'moment/locale/pt-br';
 
 import EmptyList from '../EmptyList';
@@ -9,16 +10,19 @@ import EmptyList from '../EmptyList';
 import { Container, Date } from './styles';
 import { ReleaseDate } from '../../schemas/releaseDate';
 import DeleteItem from '../DeleteItem';
+import api from '../../services/api';
+import getRealm from '../../services/realm';
 
 interface ReleaseDatesListProps {
   dates: ReleaseDate[];
-  setDates?: React.Dispatch<React.SetStateAction<ReleaseDate[]>>;
+  setDates: React.Dispatch<React.SetStateAction<ReleaseDate[]>>;
   onRefresh: () => Promise<void>;
   emptyListText: string;
 }
 
 const ReleaseDatesList: React.FC<ReleaseDatesListProps> = ({
   dates,
+  setDates,
   onRefresh,
   emptyListText,
 }) => {
@@ -29,31 +33,35 @@ const ReleaseDatesList: React.FC<ReleaseDatesListProps> = ({
     {} as ReleaseDate,
   );
 
-  // const handleDelete = useCallback(async () => {
-  //   await api.delete(`/customers/${selectedCustomer.id}`);
-  //   setCustomers(
-  //     produce(customers, drafts =>
-  //       drafts.filter(draft => draft.id !== selectedCustomer.id),
-  //     ),
-  //   );
+  const handleDelete = useCallback(async () => {
+    try {
+      await api.delete(`/release/dates/${selectedDate.id}`);
+      setDates(
+        produce(dates, drafts =>
+          drafts.filter(draft => draft.id !== selectedDate.id),
+        ),
+      );
+      const realm = await getRealm();
+      realm.write(() => {
+        realm.delete(realm.objectForPrimaryKey('ReleaseDate', selectedDate.id));
+      });
+    } catch (err) {
+      Alert.alert('Erro!', 'Ocorreu um erro , reporte aos desenvolvedores!');
+      prevOpenedRow.close();
+    }
+    await onRefresh();
+  }, [dates, setDates, selectedDate.id, prevOpenedRow, onRefresh]);
 
-  //   const realm = await getRealm();
-
-  //   realm.write(() => {
-  //     realm.delete(realm.objectForPrimaryKey('Customer', selectedCustomer.id));
-  //   });
-  // }, [selectedCustomer, setCustomers, customers]);
-
-  // const onDeleteItem = useCallback(() => {
-  //   Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
-  //     {
-  //       text: 'Cancelar',
-  //       onPress: () => prevOpenedRow.close(),
-  //       style: 'cancel',
-  //     },
-  //     { text: 'Sim', onPress: () => handleDelete() },
-  //   ]);
-  // }, [prevOpenedRow, handleDelete]);
+  const onDeleteItem = useCallback(() => {
+    Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
+      {
+        text: 'Cancelar',
+        onPress: () => prevOpenedRow.close(),
+        style: 'cancel',
+      },
+      { text: 'Sim', onPress: () => handleDelete() },
+    ]);
+  }, [prevOpenedRow, handleDelete]);
 
   const closeRow = useCallback(
     index => {
@@ -89,9 +97,7 @@ const ReleaseDatesList: React.FC<ReleaseDatesListProps> = ({
             ref={ref => (row[index] = ref)} // eslint-disable-line
             friction={1.5}
             rightThreshold={30}
-            renderRightActions={() => (
-              <DeleteItem onPress={() => console.log('delete')} />
-            )}
+            renderRightActions={() => <DeleteItem onPress={onDeleteItem} />}
             activeOffsetX={-1}
             activeOffsetY={500}
             onSwipeableOpen={() => {

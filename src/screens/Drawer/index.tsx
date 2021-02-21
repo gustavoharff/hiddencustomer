@@ -51,7 +51,11 @@ const Drawer: React.FC<DrawerContentComponentProps> = ({ navigation }) => {
     <>
       <StatusBar />
       <Container>
-        <DrawerUser email={user.email} name={user.name} />
+        <DrawerUser
+          email={user.email}
+          name={user.name}
+          avatar_url={user.avatar_url}
+        />
 
         <DrawerList items={items} />
 
@@ -60,4 +64,5 @@ const Drawer: React.FC<DrawerContentComponentProps> = ({ navigation }) => {
     </>
   );
 };
+
 export default Drawer;

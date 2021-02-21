@@ -1,6 +1,6 @@
 import React, { createContext, useState, useContext } from 'react';
 
-import Customer from '../schemas/customer';
+import { Customer } from '../schemas/customer';
 
 interface CustomersContextData {
   customers: Customer[];

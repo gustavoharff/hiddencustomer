@@ -6,7 +6,7 @@ import { COLORS, SPACING } from '../../styles/tokens';
 
 const Home: React.FC = () => (
   <View>
-    <Icon name="home" color={COLORS.FONT_SECONDARY} size={SPACING.L * 2} />
+    <Icon name="home" color={COLORS.FONT} size={SPACING.L * 2} />
   </View>
 );
 

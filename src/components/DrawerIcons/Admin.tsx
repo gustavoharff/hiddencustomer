@@ -6,11 +6,7 @@ import { COLORS, SPACING } from '../../styles/tokens';
 
 const Admin: React.FC = () => (
   <View>
-    <Icon
-      name="account-cog"
-      color={COLORS.FONT_SECONDARY}
-      size={SPACING.L * 2}
-    />
+    <Icon name="account-cog" color={COLORS.FONT} size={SPACING.L * 2} />
   </View>
 );
 

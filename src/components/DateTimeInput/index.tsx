@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Platform } from 'react-native';
+import { Platform } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 import 'moment/locale/pt-br';
 
-import { RectButton, TouchableOpacity } from 'react-native-gesture-handler';
-import { SPACING, COLORS, BODY } from '../../styles/tokens';
+import { TouchableOpacity } from 'react-native-gesture-handler';
+
+import { DateText, Container, TimeText, Content } from './styles';
 
 interface DateTimeInputProps {
   date: Date;
@@ -18,17 +19,16 @@ const DateTimeInput: React.FC<DateTimeInputProps> = ({ date, setDate }) => {
 
   if (Platform.OS === 'android') {
     return (
-      <View style={styles.placeHolderView}>
-        <TouchableOpacity onPress={() => setOpenedDate(true)}>
-          <Text style={styles.placeHolderText}>
-            {moment(date).locale('pt-br').format('L')}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setOpenedTime(true)}>
-          <Text style={styles.placeHolderText}>
-            {moment(date).locale('pt-br').format('LT')}
-          </Text>
-        </TouchableOpacity>
+      <Container>
+        <Content>
+          <TouchableOpacity onPress={() => setOpenedDate(true)}>
+            <DateText>{moment(date).locale('pt-br').format('L')}</DateText>
+          </TouchableOpacity>
+          <TouchableOpacity onPress={() => setOpenedTime(true)}>
+            <TimeText>{moment(date).locale('pt-br').format('LT')}</TimeText>
+          </TouchableOpacity>
+        </Content>
+
         {openedDate && (
           <DateTimePicker
             mode="date"
@@ -60,12 +60,12 @@ const DateTimeInput: React.FC<DateTimeInputProps> = ({ date, setDate }) => {
             }}
           />
         )}
-      </View>
+      </Container>
     );
   }
 
   return (
-    <View style={styles.placeHolderView}>
+    <Container>
       <DateTimePicker
         mode="datetime"
         value={date}
@@ -79,26 +79,7 @@ const DateTimeInput: React.FC<DateTimeInputProps> = ({ date, setDate }) => {
           }
         }}
       />
-    </View>
+    </Container>
   );
 };
-
-const styles = StyleSheet.create({
-  placeHolderView: {
-    // flex: 1,
-    justifyContent: 'center',
-    padding: 10,
-  },
-  placeHolderText: {
-    textAlign: 'center',
-    color: COLORS.WHITE,
-    fontSize: BODY.M.SIZE,
-  },
-  window: {
-    backgroundColor: 'white',
-    borderRadius: SPACING.M,
-    padding: SPACING.M,
-  },
-});
-
 export { DateTimeInput };

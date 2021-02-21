@@ -8,15 +8,19 @@ interface DrawerItemProps {
   Icon: React.FC<{}>;
 }
 
-const DrawerItem: React.FC<DrawerItemProps> = ({ title, onPress, Icon }) => (
-  <TouchableOpacity onPress={onPress}>
-    <Container>
-      <Icon />
-      <Content>
-        <Title>{title}</Title>
-      </Content>
-    </Container>
-  </TouchableOpacity>
-);
+const DrawerItem: React.FC<DrawerItemProps> = ({ title, onPress, Icon }) => {
+  console.log();
+
+  return (
+    <TouchableOpacity onPress={onPress}>
+      <Container>
+        <Icon />
+        <Content>
+          <Title>{title}</Title>
+        </Content>
+      </Container>
+    </TouchableOpacity>
+  );
+};
 
 export default DrawerItem;

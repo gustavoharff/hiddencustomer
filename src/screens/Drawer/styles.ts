@@ -12,5 +12,5 @@ export const StatusBar = styled.View`
 export const Container = styled.View`
   flex: 1;
   padding-top: 10px;
-  background: ${COLORS.WHITE};
+  background: ${COLORS.BACKGROUND_LIGHT};
 `;

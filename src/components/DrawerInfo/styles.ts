@@ -9,8 +9,15 @@ export const Container = styled.View`
 `;
 
 export const Title = styled.Text`
-  color: ${COLORS.FONT_SECONDARY};
+  color: ${COLORS.FONT};
   font-size: ${SPACING.L}px;
   text-align: center;
-  margin-bottom: ${SPACING.S}px;
+  margin-top: ${SPACING.S}px;
+`;
+
+export const Version = styled.Text`
+  color: ${COLORS.FONT};
+  font-size: ${SPACING.M}px;
+  text-align: center;
+  margin-top: ${SPACING.S}px;
 `;

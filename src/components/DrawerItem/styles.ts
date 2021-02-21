@@ -11,7 +11,7 @@ export const Container = styled.View`
 `;
 
 export const Title = styled.Text`
-  color: ${COLORS.FONT_SECONDARY};
+  color: ${COLORS.FONT};
 `;
 
 export const Content = styled.View`
@@ -21,5 +21,5 @@ export const Content = styled.View`
   padding-top: 20px;
   justify-content: center;
   border-bottom-width: ${StyleSheet.hairlineWidth}px;
-  border-bottom-color: rgba(0, 0, 0, 0.15);
+  border-bottom-color: rgba(255, 255, 255, 0.15);
 `;

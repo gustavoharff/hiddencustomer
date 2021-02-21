@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react';
-
 import { View } from 'react-native';
+
 import { DateTimeInput } from '../DateTimeInput';
 
-import { SPACING } from '../../styles/tokens';
+import { COLORS, SPACING } from '../../styles/tokens';
 import { Container } from './styles';
 import { ReleaseDatesList } from '../ReleaseDatesList';
 import Button from '../Button';
@@ -53,17 +53,24 @@ const ReleaseDates: React.FC<ReleaseDatedProps> = ({ release_id }) => {
   }, [release_id]);
 
   const handleAddDate = useCallback(async () => {
-    const response = await api.post('/release/dates/', {
+    const response = await api.post('/release/dates', {
       release_id,
       date: date.toISOString(),
     });
     setDates(state => [...state, response.data]);
+
+    const realm = await getRealm();
+
+    realm.write(() => {
+      realm.create('ReleaseDate', response.data);
+    });
   }, [date, release_id]);
 
   return (
     <Container>
       <ReleaseDatesList
         dates={dates}
+        setDates={setDates}
         onRefresh={onRefresh}
         emptyListText="Não há datas!"
       />
@@ -78,11 +85,12 @@ const ReleaseDates: React.FC<ReleaseDatedProps> = ({ release_id }) => {
                 setIsAddingDate(false);
                 handleAddDate();
               }}
-              style={{ marginBottom: SPACING.XL }}
             />
             <Button
               title="Cancelar"
               onPress={() => setIsAddingDate(false)}
+              backgroundColor={COLORS.ALERT}
+              textColor={COLORS.FONT}
               style={{ marginBottom: SPACING.XL }}
             />
           </View>

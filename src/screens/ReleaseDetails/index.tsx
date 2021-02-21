@@ -37,11 +37,6 @@ const ReleaseDetails: React.FC<Props> = ({ route }) => {
     { key: 'groups', title: 'Grupos' },
   ];
 
-  const renderScene = SceneMap({
-    dates: () => <ReleaseDates release_id={release.id} />,
-    groups: GroupsRoute,
-  });
-
   useEffect(() => {
     const { release_id } = route.params;
 
@@ -65,7 +60,16 @@ const ReleaseDetails: React.FC<Props> = ({ route }) => {
       <ListHeader title={release.name} description={customer.name} />
       <TabView
         navigationState={{ routes: tabRoutes, index: tabIndex }}
-        renderScene={renderScene}
+        renderScene={({ route: tabRoute }) => {
+          switch (tabRoute.key) {
+            case 'dates':
+              return <ReleaseDates release_id={release.id} />;
+            case 'groups':
+              return <ReleaseDates release_id={release.id} />;
+            default:
+              return null;
+          }
+        }}
         onIndexChange={setTabIndex}
         initialLayout={{ width: Dimensions.get('window').width }}
         renderTabBar={props => (

@@ -19,8 +19,10 @@ const ReleasesRoutes: React.FC = () => (
     mode="modal"
     screenOptions={({ navigation }) => ({
       cardStyle: {
-        backgroundColor: COLORS.BACKGROUND,
+        backgroundColor: 'transparent',
       },
+      animationEnabled: true,
+
       headerTitle: () => <Logo size={SPACING.XXL} />,
       headerTitleAlign: 'center',
       headerLeft: () => (
@@ -36,11 +38,22 @@ const ReleasesRoutes: React.FC = () => (
       },
     })}
   >
-    <ReleasesNavigator.Screen name="Releases" component={Releases} />
+    <ReleasesNavigator.Screen
+      name="Releases"
+      component={Releases}
+      options={() => ({
+        cardStyle: {
+          backgroundColor: COLORS.BACKGROUND,
+        },
+      })}
+    />
     <ReleasesNavigator.Screen
       name="ReleaseForm"
       component={ReleaseForm}
       options={({ navigation }) => ({
+        cardStyle: {
+          backgroundColor: COLORS.BACKGROUND,
+        },
         headerLeft: () => (
           <View style={{ marginLeft: SPACING.S }}>
             <TouchableOpacity onPress={() => navigation.navigate('Releases')}>
@@ -54,6 +67,9 @@ const ReleasesRoutes: React.FC = () => (
       name="ReleaseDetails"
       component={ReleaseDetails}
       options={({ navigation }) => ({
+        cardStyle: {
+          backgroundColor: COLORS.BACKGROUND,
+        },
         headerLeft: () => (
           <View style={{ marginLeft: SPACING.S }}>
             <TouchableOpacity onPress={() => navigation.navigate('Releases')}>

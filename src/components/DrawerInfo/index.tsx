@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
-import { Container, Title } from './styles';
+import { Container, Title, Version } from './styles';
 
 import Company from '../../schemas/company';
 
@@ -19,8 +19,9 @@ const DrawerInfo: React.FC = () => {
 
   return (
     <Container>
-      <Title>{company.name}</Title>
       <Logo size={SPACING.XXL} />
+      {company.name && <Title>{company.name}</Title>}
+      <Version>Cliente Oculto - 0.0.1</Version>
     </Container>
   );
 };
