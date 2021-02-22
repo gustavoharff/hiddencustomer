@@ -4,9 +4,19 @@ import Swipeable from 'react-native-gesture-handler/Swipeable';
 import moment from 'moment';
 import produce from 'immer';
 import 'moment/locale/pt-br';
+
+import api from '../../services/api';
+
 import User from '../../schemas/user';
 
 import EmptyList from '../EmptyList';
+
+import DeleteItem from '../DeleteItem';
+
+import { Avatar } from '../Avatar';
+
+import { SPACING } from '../../styles/tokens';
+
 import {
   Container,
   UpdatedAt,
@@ -15,10 +25,6 @@ import {
   UpdatedAtText,
   Content,
 } from './styles';
-import DeleteItem from '../DeleteItem';
-import api from '../../services/api';
-import Avatar from '../Avatar';
-import { SPACING } from '../../styles/tokens';
 
 interface UsersListProps {
   users: User[];

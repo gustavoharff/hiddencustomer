@@ -1,15 +1,16 @@
 import React from 'react';
+
 import { SPACING } from '../../styles/tokens';
 
-import Avatar from '../Avatar';
+import { Avatar } from '../Avatar';
 
 import { Container, Title, Text } from './styles';
 
-interface DrawerUserProps {
+type DrawerUserProps = {
   name: string;
   email: string;
   avatar_url?: string;
-}
+};
 
 const DrawerUser: React.FC<DrawerUserProps> = ({ name, email, avatar_url }) => (
   <Container>

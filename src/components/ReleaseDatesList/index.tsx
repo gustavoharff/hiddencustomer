@@ -41,7 +41,9 @@ const ReleaseDatesList: React.FC<ReleaseDatesListProps> = ({
           drafts.filter(draft => draft.id !== selectedDate.id),
         ),
       );
+
       const realm = await getRealm();
+
       realm.write(() => {
         realm.delete(realm.objectForPrimaryKey('ReleaseDate', selectedDate.id));
       });

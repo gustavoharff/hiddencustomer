@@ -1,10 +1,11 @@
 import React from 'react';
+
 import { Container, Image } from './styles';
 
-interface AvatarProps {
+type AvatarProps = {
   url: string;
   size: number;
-}
+};
 
 const Avatar: React.FC<AvatarProps> = ({ url, size }) => (
   <Container>
@@ -17,4 +18,4 @@ const Avatar: React.FC<AvatarProps> = ({ url, size }) => (
   </Container>
 );
 
-export default Avatar;
+export { Avatar };

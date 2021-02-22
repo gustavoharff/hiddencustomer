@@ -82,7 +82,7 @@ const SignIn: React.FC = () => {
         keyboardShouldPersistTaps="handled"
       >
         <Container>
-          <Logo size="90px" />
+          <Logo size={90} />
           <View>
             <HeaderTitle>Cliente Oculto</HeaderTitle>
           </View>
