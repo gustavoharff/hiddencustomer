@@ -1,8 +1,8 @@
 import React from 'react';
 
-import { SPACING } from '../../styles/tokens';
+import { Avatar } from 'components';
 
-import { Avatar } from '../Avatar';
+import { SPACING } from 'styles';
 
 import { Container, Title, Text } from './styles';
 
@@ -26,4 +26,4 @@ const DrawerUser: React.FC<DrawerUserProps> = ({ name, email, avatar_url }) => (
   </Container>
 );
 
-export default DrawerUser;
+export { DrawerUser };

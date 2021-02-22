@@ -1,11 +1,11 @@
 import React, { createContext, useState, useContext } from 'react';
 
-import { Customer } from '../schemas/customer';
+import { Customer } from 'types';
 
-interface CustomersContextData {
+type CustomersContextData = {
   customers: Customer[];
   setCustomers: React.Dispatch<React.SetStateAction<Customer[]>>;
-}
+};
 
 const CustomersContext = createContext<CustomersContextData>(
   {} as CustomersContextData,

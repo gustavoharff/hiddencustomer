@@ -2,10 +2,10 @@ import React from 'react';
 
 import { Header, Content, Title, Description } from './styles';
 
-interface ListHeaderProps {
+type ListHeaderProps = {
   title: string;
   description?: string;
-}
+};
 
 const ListHeader: React.FC<ListHeaderProps> = ({ title, description }) => (
   <Header>
@@ -16,4 +16,4 @@ const ListHeader: React.FC<ListHeaderProps> = ({ title, description }) => (
   </Header>
 );
 
-export default ListHeader;
+export { ListHeader };

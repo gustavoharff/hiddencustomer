@@ -1,10 +1,10 @@
 import React from 'react';
-import Button from '../../components/Button';
 
-import ListHeader from '../../components/ListHeader';
+import { Button, ListHeader } from 'components';
 
-import { useAuth } from '../../hooks/auth';
-import { SPACING } from '../../styles/tokens';
+import { useAuth } from 'hooks';
+
+import { SPACING } from 'styles';
 
 import { Container } from './styles';
 
@@ -25,4 +25,4 @@ const Profile: React.FC = () => {
   );
 };
 
-export default Profile;
+export { Profile };

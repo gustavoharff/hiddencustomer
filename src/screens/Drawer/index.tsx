@@ -1,16 +1,17 @@
 import React, { useMemo } from 'react';
 import { DrawerContentComponentProps } from '@react-navigation/drawer';
 
-import Home from '../../components/DrawerIcons/Home';
-import Rocket from '../../components/DrawerIcons/Rocket';
-import Profile from '../../components/DrawerIcons/Profile';
-import Admin from '../../components/DrawerIcons/Admin';
+import {
+  DrawerHomeIcon,
+  DrawerAdminIcon,
+  DrawerRocketIcon,
+  DrawerProfileIcon,
+  DrawerUser,
+  DrawerList,
+  DrawerInfo,
+} from 'components';
 
-import DrawerUser from '../../components/DrawerUser';
-import DrawerList from '../../components/DrawerList';
-import DrawerInfo from '../../components/DrawerInfo';
-
-import { useAuth } from '../../hooks/auth';
+import { useAuth } from 'hooks';
 
 import { StatusBar, Container } from './styles';
 
@@ -22,25 +23,25 @@ const Drawer: React.FC<DrawerContentComponentProps> = ({ navigation }) => {
       {
         title: 'Página inicial',
         onPress: () => navigation.navigate('Home'),
-        icon: Home,
+        icon: DrawerHomeIcon,
         canAccess: true,
       },
       {
         title: 'Lançamentos',
         onPress: () => navigation.navigate('Releases'),
-        icon: Rocket,
+        icon: DrawerRocketIcon,
         canAccess: true,
       },
       {
         title: 'Administração',
         onPress: () => navigation.navigate('Administration'),
-        icon: Admin,
+        icon: DrawerAdminIcon,
         canAccess: user.permission === 'admin',
       },
       {
         title: 'Perfil',
         onPress: () => navigation.navigate('Profile'),
-        icon: Profile,
+        icon: DrawerProfileIcon,
         canAccess: true,
       },
     ],
@@ -65,4 +66,4 @@ const Drawer: React.FC<DrawerContentComponentProps> = ({ navigation }) => {
   );
 };
 
-export default Drawer;
+export { Drawer };

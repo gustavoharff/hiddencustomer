@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 
-import { COLORS, SPACING } from '../../styles/tokens';
+import { COLORS, SPACING } from 'styles';
 
 export const Container = styled.View`
   padding-left: ${SPACING.L}px;

@@ -5,13 +5,13 @@ import moment from 'moment';
 import produce from 'immer';
 import 'moment/locale/pt-br';
 
-import EmptyList from '../EmptyList';
+import { EmptyList, DeleteItem } from 'components';
+
+import { api, getRealm } from 'services';
+
+import { ReleaseDate } from 'types';
 
 import { Container, Date } from './styles';
-import { ReleaseDate } from '../../schemas/releaseDate';
-import DeleteItem from '../DeleteItem';
-import api from '../../services/api';
-import getRealm from '../../services/realm';
 
 interface ReleaseDatesListProps {
   dates: ReleaseDate[];

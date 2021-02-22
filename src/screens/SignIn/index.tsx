@@ -7,26 +7,24 @@ import {
   View,
 } from 'react-native';
 import RNBootSplash from 'react-native-bootsplash';
-
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
 import { ScrollView } from 'react-native-gesture-handler';
 
-import Input from '../../components/Input';
-import Button from '../../components/Button';
+import { Button, Input, Logo } from 'components';
 
-import { useAuth } from '../../hooks/auth';
+import { useAuth } from 'hooks';
+
+import { getValidationErrors } from 'utils';
+
+import { COLORS } from 'styles';
 
 import { Container, HeaderTitle, HeaderContent, Unform } from './styles';
 
-import getValidationErrors from '../../utils/getValidationErrors';
-import Logo from '../../components/Logo';
-import { COLORS } from '../../styles/tokens';
-
-interface SignInFormData {
+type SignInFormData = {
   email: string;
   password: string;
-}
+};
 
 const SignIn: React.FC = () => {
   useEffect(() => {
@@ -125,4 +123,4 @@ const SignIn: React.FC = () => {
   );
 };
 
-export default SignIn;
+export { SignIn };

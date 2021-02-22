@@ -1,9 +1,10 @@
 import styled from 'styled-components/native';
-import { COLORS, SPACING } from '../../styles/tokens';
 
-interface DateProps {
+import { COLORS, SPACING } from 'styles';
+
+type DateProps = {
   past: boolean;
-}
+};
 
 export const Container = styled.View`
   padding: ${SPACING.M}px;

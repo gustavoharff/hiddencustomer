@@ -1,4 +1,4 @@
-interface Release {
+type Release = {
   id: string;
   name: string;
   customer_id: string;
@@ -7,6 +7,6 @@ interface Release {
   annotations: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export default Release;
+export { Release };

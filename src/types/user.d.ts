@@ -1,4 +1,4 @@
-interface User {
+type User = {
   id: string;
   name: string;
   email: string;
@@ -6,6 +6,6 @@ interface User {
   avatar_url: string;
   created_at: string;
   updated_at: string;
-}
+};
 
-export default User;
+export { User };

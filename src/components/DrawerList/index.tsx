@@ -1,18 +1,18 @@
 import React from 'react';
 import { View } from 'react-native';
 
-import DrawerItem from '../DrawerItem';
+import { DrawerItem } from 'components';
 
-interface Item {
+type Item = {
   onPress(): void;
   title: string;
   icon: React.FC<{}>;
   canAccess: boolean;
-}
+};
 
-interface DrawerListProps {
+type DrawerListProps = {
   items: Item[];
-}
+};
 
 const DrawerList: React.FC<DrawerListProps> = ({ items }) => (
   <View>
@@ -30,4 +30,4 @@ const DrawerList: React.FC<DrawerListProps> = ({ items }) => (
   </View>
 );
 
-export default DrawerList;
+export { DrawerList };

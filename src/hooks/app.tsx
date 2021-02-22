@@ -1,8 +1,6 @@
 import React from 'react';
 
-import { AuthProvider } from './auth';
-import { CustomerProvider } from './customers';
-import { ReleasesProvider } from './releases';
+import { AuthProvider, CustomerProvider, ReleasesProvider } from 'hooks';
 
 const AppProvider: React.FC = ({ children }) => (
   <AuthProvider>
@@ -12,4 +10,4 @@ const AppProvider: React.FC = ({ children }) => (
   </AuthProvider>
 );
 
-export default AppProvider;
+export { AppProvider };

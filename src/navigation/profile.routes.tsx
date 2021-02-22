@@ -4,16 +4,16 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import Logo from '../components/Logo';
+import { Profile } from 'screens';
 
-import Administration from '../screens/Administration';
+import { Logo } from 'components';
 
-import { COLORS, SPACING } from '../styles/tokens';
+import { COLORS, SPACING } from 'styles';
 
-const AdministrationNavigator = createStackNavigator();
+const ProfileNavigator = createStackNavigator();
 
-const AdministrationRoutes: React.FC = () => (
-  <AdministrationNavigator.Navigator
+const ProfileRoutes: React.FC = () => (
+  <ProfileNavigator.Navigator
     screenOptions={({ navigation }) => ({
       cardStyle: {
         backgroundColor: COLORS.BACKGROUND,
@@ -33,11 +33,8 @@ const AdministrationRoutes: React.FC = () => (
       },
     })}
   >
-    <AdministrationNavigator.Screen
-      name="Administration"
-      component={Administration}
-    />
-  </AdministrationNavigator.Navigator>
+    <ProfileNavigator.Screen name="Profile" component={Profile} />
+  </ProfileNavigator.Navigator>
 );
 
-export { AdministrationRoutes };
+export { ProfileRoutes };

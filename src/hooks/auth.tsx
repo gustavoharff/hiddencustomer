@@ -6,30 +6,28 @@ import React, {
   useEffect,
 } from 'react';
 
-import api from '../services/api';
+import { User, Auth } from 'types';
 
-import User from '../schemas/user';
-import Auth from '../schemas/auth';
-import getRealm from '../services/realm';
+import { api, getRealm } from 'services';
 
-interface AuthState {
+type AuthState = {
   token: string;
   user: User;
-}
+};
 
-interface SignInCredentials {
+type SignInCredentials = {
   email: string;
   password: string;
-}
+};
 
-interface AuthContextData {
+type AuthContextData = {
   user: User;
   token: string;
   loading: boolean;
   signIn(credentials: SignInCredentials): Promise<void>;
   signOut(): void;
   updateUser(user: User): void;
-}
+};
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 

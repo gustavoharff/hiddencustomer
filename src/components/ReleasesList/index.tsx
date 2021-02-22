@@ -1,28 +1,26 @@
 import React, { useCallback, useState } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
+import { RectButton } from 'react-native-gesture-handler';
+import { useNavigation } from '@react-navigation/native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import produce from 'immer';
 import moment from 'moment';
 import 'moment/locale/pt-br';
 
-import { RectButton } from 'react-native-gesture-handler';
-import { useNavigation } from '@react-navigation/native';
-import Release from '../../schemas/release';
+import { EmptyList, DeleteItem } from 'components';
 
-import EmptyList from '../EmptyList';
+import { api, getRealm } from 'services';
+
+import { Release } from 'types';
 
 import { Container, Name, Description, DescriptionText } from './styles';
 
-import DeleteItem from '../DeleteItem';
-import api from '../../services/api';
-import getRealm from '../../services/realm';
-
-interface ReleasesListProps {
+type ReleasesListProps = {
   releases: Release[];
   setReleases: React.Dispatch<React.SetStateAction<Release[]>>;
   onRefresh: () => Promise<void>;
   emptyListText: string;
-}
+};
 
 const ReleasesList: React.FC<ReleasesListProps> = ({
   releases,

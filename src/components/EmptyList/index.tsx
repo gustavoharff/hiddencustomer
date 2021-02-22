@@ -2,9 +2,9 @@ import React from 'react';
 
 import { Container, Text } from './styles';
 
-interface EmptyListProps {
+type EmptyListProps = {
   text: string;
-}
+};
 
 const EmptyList: React.FC<EmptyListProps> = ({ text }) => (
   <Container>
@@ -12,4 +12,4 @@ const EmptyList: React.FC<EmptyListProps> = ({ text }) => (
   </Container>
 );
 
-export default EmptyList;
+export { EmptyList };

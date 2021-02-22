@@ -4,18 +4,16 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import Logo from '../components/Logo';
+import { Logo } from 'components';
 
-import Home from '../screens/Home';
-import { CustomerForm } from '../screens/CustomerForm';
+import { COLORS, SPACING } from 'styles';
 
-import { COLORS, SPACING } from '../styles/tokens';
+import { Administration } from 'screens';
 
-const HomeNavigator = createStackNavigator();
+const AdministrationNavigator = createStackNavigator();
 
-const HomeRoutes: React.FC = () => (
-  <HomeNavigator.Navigator
-    mode="modal"
+const AdministrationRoutes: React.FC = () => (
+  <AdministrationNavigator.Navigator
     screenOptions={({ navigation }) => ({
       cardStyle: {
         backgroundColor: COLORS.BACKGROUND,
@@ -35,21 +33,11 @@ const HomeRoutes: React.FC = () => (
       },
     })}
   >
-    <HomeNavigator.Screen name="Home" component={Home} />
-    <HomeNavigator.Screen
-      name="CustomerForm"
-      component={CustomerForm}
-      options={({ navigation }) => ({
-        headerLeft: () => (
-          <View style={{ marginLeft: SPACING.S }}>
-            <TouchableOpacity onPress={() => navigation.navigate('Home')}>
-              <Icon name="close" color={COLORS.FONT} size={SPACING.L * 2} />
-            </TouchableOpacity>
-          </View>
-        ),
-      })}
+    <AdministrationNavigator.Screen
+      name="Administration"
+      component={Administration}
     />
-  </HomeNavigator.Navigator>
+  </AdministrationNavigator.Navigator>
 );
 
-export { HomeRoutes };
+export { AdministrationRoutes };

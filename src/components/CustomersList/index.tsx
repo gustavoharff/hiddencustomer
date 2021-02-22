@@ -5,23 +5,20 @@ import produce from 'immer';
 import moment from 'moment';
 import 'moment/locale/pt-br';
 
-import DeleteItem from '../DeleteItem';
+import { DeleteItem, EmptyList } from 'components';
 
-import { Customer } from '../../schemas/customer';
+import { Customer } from 'types';
 
-import EmptyList from '../EmptyList';
+import { api, getRealm } from 'services';
 
-import api from '../../services/api';
+import { Container, Name, UpdatedAt, UpdatedAtText } from './styles';
 
-import { Container, UpdatedAt, Name, UpdatedAtText } from './styles';
-import getRealm from '../../services/realm';
-
-interface CustomersListProps {
+type CustomersListProps = {
   customers: Customer[];
   setCustomers: React.Dispatch<React.SetStateAction<Customer[]>>;
   onRefresh: () => Promise<void>;
   emptyListText: string;
-}
+};
 
 const CustomersList: React.FC<CustomersListProps> = ({
   customers,

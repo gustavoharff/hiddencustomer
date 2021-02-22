@@ -5,17 +5,13 @@ import moment from 'moment';
 import produce from 'immer';
 import 'moment/locale/pt-br';
 
-import api from '../../services/api';
+import { api } from 'services';
 
-import User from '../../schemas/user';
+import { Avatar, EmptyList, DeleteItem } from 'components';
 
-import EmptyList from '../EmptyList';
+import { User } from 'types';
 
-import DeleteItem from '../DeleteItem';
-
-import { Avatar } from '../Avatar';
-
-import { SPACING } from '../../styles/tokens';
+import { SPACING } from 'styles';
 
 import {
   Container,
@@ -26,12 +22,12 @@ import {
   Content,
 } from './styles';
 
-interface UsersListProps {
+type UsersListProps = {
   users: User[];
   setUsers: React.Dispatch<React.SetStateAction<User[]>>;
   onRefresh: () => Promise<void>;
   emptyListText: string;
-}
+};
 
 const UsersList: React.FC<UsersListProps> = ({
   users,

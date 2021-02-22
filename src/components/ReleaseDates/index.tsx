@@ -1,19 +1,19 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { View } from 'react-native';
 
-import { DateTimeInput } from '../DateTimeInput';
+import { COLORS, SPACING } from 'styles';
 
-import { COLORS, SPACING } from '../../styles/tokens';
+import { DateTimeInput, Button, ReleaseDatesList } from 'components';
+
+import { api, getRealm } from 'services';
+
+import { ReleaseDate } from 'types';
+
 import { Container } from './styles';
-import { ReleaseDatesList } from '../ReleaseDatesList';
-import Button from '../Button';
-import api from '../../services/api';
-import { ReleaseDate } from '../../schemas/releaseDate';
-import getRealm from '../../services/realm';
 
-interface ReleaseDatedProps {
+type ReleaseDatedProps = {
   release_id: string;
-}
+};
 
 const ReleaseDates: React.FC<ReleaseDatedProps> = ({ release_id }) => {
   const [date, setDate] = useState(new Date());

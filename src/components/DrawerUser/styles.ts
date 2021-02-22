@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
 
-import { SPACING, COLORS } from '../../styles/tokens';
+import { SPACING, COLORS } from 'styles';
 
 export const Container = styled.View`
   align-items: center;

@@ -4,13 +4,11 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import Logo from '../components/Logo';
+import { Logo } from 'components';
 
-import Releases from '../screens/Releases';
-import { ReleaseForm } from '../screens/ReleaseForm';
-import { ReleaseDetails } from '../screens/ReleaseDetails';
+import { Releases, ReleaseForm, ReleaseDetails } from 'screens';
 
-import { COLORS, SPACING } from '../styles/tokens';
+import { COLORS, SPACING } from 'styles';
 
 const ReleasesNavigator = createStackNavigator();
 

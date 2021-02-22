@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import { Platform } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import moment from 'moment';
 import 'moment/locale/pt-br';
 
-import { TouchableOpacity } from 'react-native-gesture-handler';
-
 import { DateText, Container, TimeText, Content } from './styles';
 
-interface DateTimeInputProps {
+type DateTimeInputProps = {
   date: Date;
   setDate: React.Dispatch<React.SetStateAction<Date>>;
-}
+};
 
 const DateTimeInput: React.FC<DateTimeInputProps> = ({ date, setDate }) => {
   const [openedDate, setOpenedDate] = useState(false);
@@ -38,10 +37,7 @@ const DateTimeInput: React.FC<DateTimeInputProps> = ({ date, setDate }) => {
               if (selectedDate) {
                 setDate(selectedDate);
               }
-              // onChange();
-              // onChange(event, selectedDate);
             }}
-            // is24Hour
           />
         )}
 
@@ -54,9 +50,6 @@ const DateTimeInput: React.FC<DateTimeInputProps> = ({ date, setDate }) => {
               if (selectedDate) {
                 setDate(selectedDate);
               }
-              // onChange();
-
-              // onChange(event, selectedDate);
             }}
           />
         )}
@@ -71,15 +64,13 @@ const DateTimeInput: React.FC<DateTimeInputProps> = ({ date, setDate }) => {
         value={date}
         style={{ marginLeft: 10 }}
         onChange={(event, selectedDate) => {
-          // onChange(event, selectedDate);
           if (selectedDate) {
             setDate(selectedDate);
-
-            // onChange();
           }
         }}
       />
     </Container>
   );
 };
+
 export { DateTimeInput };

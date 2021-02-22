@@ -2,18 +2,15 @@ import React, { useCallback, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import RNBootSplash from 'react-native-bootsplash';
 
-import BottomButton from '../../components/BottomButton';
-import { CustomersList } from '../../components/CustomersList';
-import ListHeader from '../../components/ListHeader';
+import { BottomButton, CustomersList, ListHeader } from 'components';
 
-import { useCustomers } from '../../hooks/customers';
-import { useAuth } from '../../hooks/auth';
+import { api, getRealm } from 'services';
 
-import api from '../../services/api';
-import getRealm from '../../services/realm';
+import { Customer } from 'types';
+
+import { useCustomers, useAuth } from 'hooks';
 
 import { Container } from './styles';
-import { Customer } from '../../schemas/customer';
 
 const Home: React.FC = () => {
   const { customers, setCustomers } = useCustomers();
@@ -98,4 +95,4 @@ const Home: React.FC = () => {
   );
 };
 
-export default Home;
+export { Home };

@@ -1,17 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { TabView, TabBar, SceneMap } from 'react-native-tab-view';
+import { TabView, TabBar } from 'react-native-tab-view';
 import { StackScreenProps } from '@react-navigation/stack';
-import { Dimensions, View } from 'react-native';
+import { Dimensions } from 'react-native';
 
-import Release from '../../schemas/release';
-import api from '../../services/api';
+import { Release, Customer } from 'types';
 
-import { Customer } from '../../schemas/customer';
+import { api } from 'services';
 
-import ListHeader from '../../components/ListHeader';
-import { ReleaseDates } from '../../components/ReleaseDates';
+import { ListHeader, ReleaseDates } from 'components';
 
-import { COLORS } from '../../styles/tokens';
+import { COLORS } from 'styles';
 
 type Params = {
   ReleaseDetails: {
@@ -20,12 +18,6 @@ type Params = {
 };
 
 type Props = StackScreenProps<Params, 'ReleaseDetails'>;
-
-// import { Container } from './styles';
-
-const GroupsRoute = () => (
-  <View style={{ flex: 1, backgroundColor: COLORS.BACKGROUND }} />
-);
 
 const ReleaseDetails: React.FC<Props> = ({ route }) => {
   const [release, setRelease] = useState<Release>({} as Release);

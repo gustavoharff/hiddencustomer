@@ -1,11 +1,11 @@
 import React, { createContext, useState, useContext } from 'react';
 
-import Release from '../schemas/release';
+import { Release } from 'types';
 
-interface ReleasesContextData {
+type ReleasesContextData = {
   releases: Release[];
   setReleases: React.Dispatch<React.SetStateAction<Release[]>>;
-}
+};
 
 const ReleasesContext = createContext<ReleasesContextData>(
   {} as ReleasesContextData,

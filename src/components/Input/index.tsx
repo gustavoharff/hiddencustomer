@@ -16,15 +16,15 @@ interface InputProps extends TextInputProps {
   containerStyle?: object;
 }
 
-interface InputValueRef {
+type InputValueRef = {
   value: string;
-}
+};
 
-interface InputRef {
+type InputRef = {
   focus(): void;
-}
+};
 
-const Input: React.ForwardRefRenderFunction<InputRef, InputProps> = (
+const ForwardInput: React.ForwardRefRenderFunction<InputRef, InputProps> = (
   { name, containerStyle, ...rest },
   ref,
 ) => {
@@ -81,4 +81,7 @@ const Input: React.ForwardRefRenderFunction<InputRef, InputProps> = (
     </Container>
   );
 };
-export default forwardRef(Input);
+
+const Input = forwardRef(ForwardInput);
+
+export { Input };

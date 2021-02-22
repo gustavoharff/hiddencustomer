@@ -2,15 +2,15 @@ import styled from 'styled-components/native';
 import { shade } from 'polished';
 import { RectButton } from 'react-native-gesture-handler';
 
-import { COLORS, BODY, SPACING } from '../../styles/tokens';
+import { COLORS, BODY, SPACING } from 'styles';
 
-interface ContainerProps {
+type ContainerProps = {
   backgroundColor?: string;
-}
+};
 
-interface ButtonTextProps {
+type ButtonTextProps = {
   textColor?: string;
-}
+};
 
 export const Container = styled(RectButton)<ContainerProps>`
   width: 90%;

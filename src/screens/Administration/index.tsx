@@ -1,10 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import ListHeader from '../../components/ListHeader';
-import { UsersList } from '../../components/UsersList';
+import { User } from 'types';
 
-import User from '../../schemas/user';
-import api from '../../services/api';
+import { ListHeader, UsersList } from 'components';
+
+import { api } from 'services';
 
 import { Container } from './styles';
 
@@ -38,4 +38,4 @@ const Administration: React.FC = () => {
   );
 };
 
-export default Administration;
+export { Administration };

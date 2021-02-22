@@ -4,16 +4,17 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import { COLORS, SPACING } from '../styles/tokens';
+import { Logo } from 'components';
 
-import Profile from '../screens/Profile';
+import { Home, CustomerForm } from 'screens';
 
-import Logo from '../components/Logo';
+import { COLORS, SPACING } from 'styles';
 
-const ProfileNavigator = createStackNavigator();
+const HomeNavigator = createStackNavigator();
 
-const ProfileRoutes: React.FC = () => (
-  <ProfileNavigator.Navigator
+const HomeRoutes: React.FC = () => (
+  <HomeNavigator.Navigator
+    mode="modal"
     screenOptions={({ navigation }) => ({
       cardStyle: {
         backgroundColor: COLORS.BACKGROUND,
@@ -33,8 +34,21 @@ const ProfileRoutes: React.FC = () => (
       },
     })}
   >
-    <ProfileNavigator.Screen name="Profile" component={Profile} />
-  </ProfileNavigator.Navigator>
+    <HomeNavigator.Screen name="Home" component={Home} />
+    <HomeNavigator.Screen
+      name="CustomerForm"
+      component={CustomerForm}
+      options={({ navigation }) => ({
+        headerLeft: () => (
+          <View style={{ marginLeft: SPACING.S }}>
+            <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+              <Icon name="close" color={COLORS.FONT} size={SPACING.L * 2} />
+            </TouchableOpacity>
+          </View>
+        ),
+      })}
+    />
+  </HomeNavigator.Navigator>
 );
 
-export { ProfileRoutes };
+export { HomeRoutes };

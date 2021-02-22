@@ -2,7 +2,7 @@ import { Platform } from 'react-native';
 import { getStatusBarHeight } from 'react-native-iphone-x-helper';
 import styled from 'styled-components/native';
 
-import { COLORS } from '../../styles/tokens';
+import { COLORS } from 'styles';
 
 export const StatusBar = styled.View`
   background: ${COLORS.BACKGROUND_DARK};

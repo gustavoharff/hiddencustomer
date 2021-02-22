@@ -1,10 +1,10 @@
 import styled, { css } from 'styled-components/native';
 
-import { COLORS, SPACING, BODY } from '../../styles/tokens';
+import { COLORS, SPACING, BODY } from 'styles';
 
-interface ContainerProps {
+type ContainerProps = {
   isFocused: boolean;
-}
+};
 
 export const Container = styled.View<ContainerProps>`
   width: 90%;

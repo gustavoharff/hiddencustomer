@@ -1,5 +1,6 @@
 import styled from 'styled-components/native';
-import { BODY, COLORS, SPACING } from '../../styles/tokens';
+
+import { BODY, COLORS, SPACING } from 'styles';
 
 export const Container = styled.View`
   justify-content: center;

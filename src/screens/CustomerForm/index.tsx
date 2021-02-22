@@ -5,17 +5,15 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { Alert, KeyboardAvoidingView, Platform } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-import Input from '../../components/Input';
-import Button from '../../components/Button';
+import { Input, Button } from 'components';
 
-import api from '../../services/api';
+import { api, getRealm } from 'services';
 
-import { useCustomers } from '../../hooks/customers';
+import { useCustomers } from 'hooks';
 
-import { COLORS } from '../../styles/tokens';
+import { COLORS } from 'styles';
 
 import { Container, Title, Text, Unform } from './styles';
-import getRealm from '../../services/realm';
 
 const CustomerForm: React.FC = () => {
   const formRef = useRef<FormHandles>(null);

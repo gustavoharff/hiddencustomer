@@ -1,7 +1,8 @@
 import React from 'react';
 import { Dimensions } from 'react-native';
 import { createDrawerNavigator } from '@react-navigation/drawer';
-import Drawer from '../screens/Drawer';
+
+import { Drawer } from 'screens';
 
 import { HomeRoutes } from './home.routes';
 import { ProfileRoutes } from './profile.routes';
@@ -30,4 +31,4 @@ const DrawerNavigation: React.FC = () => (
   </DrawerNavigator.Navigator>
 );
 
-export default DrawerNavigation;
+export { DrawerNavigation };

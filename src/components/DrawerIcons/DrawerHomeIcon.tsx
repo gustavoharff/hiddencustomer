@@ -4,10 +4,10 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { COLORS, SPACING } from '../../styles/tokens';
 
-const Home: React.FC = () => (
+const DrawerHomeIcon: React.FC = () => (
   <View>
     <Icon name="home" color={COLORS.FONT} size={SPACING.L * 2} />
   </View>
 );
 
-export default Home;
+export { DrawerHomeIcon };

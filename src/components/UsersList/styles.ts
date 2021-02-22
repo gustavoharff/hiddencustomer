@@ -1,5 +1,6 @@
 import styled from 'styled-components/native';
-import { COLORS, SPACING } from '../../styles/tokens';
+
+import { COLORS, SPACING } from 'styles';
 
 export const Container = styled.View`
   flex-direction: row;

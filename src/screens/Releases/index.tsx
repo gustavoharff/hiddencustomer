@@ -1,15 +1,14 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useCallback, useEffect } from 'react';
 
-import BottomButton from '../../components/BottomButton';
-import { ReleasesList } from '../../components/ReleasesList';
-import ListHeader from '../../components/ListHeader';
-import { useAuth } from '../../hooks/auth';
-import api from '../../services/api';
+import { BottomButton, ReleasesList, ListHeader } from 'components';
+import { useAuth, useReleases } from 'hooks';
+
+import { api, getRealm } from 'services';
+
+import { Release } from 'types';
+
 import { Container } from './styles';
-import { useReleases } from '../../hooks/releases';
-import getRealm from '../../services/realm';
-import Release from '../../schemas/release';
 
 const Releases: React.FC = () => {
   const { user } = useAuth();
@@ -67,4 +66,4 @@ const Releases: React.FC = () => {
   );
 };
 
-export default Releases;
+export { Releases };

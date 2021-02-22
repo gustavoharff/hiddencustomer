@@ -1,9 +1,10 @@
 import React from 'react';
 import { ActivityIndicator, View } from 'react-native';
 
-import { useAuth } from '../hooks/auth';
-import AuthRoutes from './auth.routes';
-import AppRoutes from './app.routes';
+import { useAuth } from 'hooks';
+
+import { AuthRoutes } from './auth.routes';
+import { DrawerNavigation } from './app.routes';
 
 const Routes: React.FC = () => {
   const { user, loading } = useAuth();
@@ -16,7 +17,7 @@ const Routes: React.FC = () => {
     );
   }
 
-  return user ? <AppRoutes /> : <AuthRoutes />;
+  return user ? <DrawerNavigation /> : <AuthRoutes />;
 };
 
 export default Routes;

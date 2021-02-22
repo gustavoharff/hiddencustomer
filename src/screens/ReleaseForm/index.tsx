@@ -9,18 +9,17 @@ import {
 import { Picker } from '@react-native-picker/picker';
 import * as Yup from 'yup';
 import { FormHandles } from '@unform/core';
-
 import { useNavigation } from '@react-navigation/native';
-import { useCustomers } from '../../hooks/customers';
-import { COLORS } from '../../styles/tokens';
-import ListHeader from '../../components/ListHeader';
-import Button from '../../components/Button';
-import Input from '../../components/Input';
+
+import { Button, ListHeader, Input } from 'components';
+
+import { useCustomers, useReleases } from 'hooks';
+
+import { COLORS } from 'styles';
+
+import { api, getRealm } from 'services';
 
 import { Container, Unform } from './styles';
-import api from '../../services/api';
-import { useReleases } from '../../hooks/releases';
-import getRealm from '../../services/realm';
 
 const ReleaseForm: React.FC = () => {
   const formRef = useRef<FormHandles>(null);

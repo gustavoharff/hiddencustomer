@@ -1,6 +1,7 @@
 import React from 'react';
+import { View } from 'react-native';
 
-import { Container, Image } from './styles';
+import { Image } from './styles';
 
 type AvatarProps = {
   url: string;
@@ -8,14 +9,14 @@ type AvatarProps = {
 };
 
 const Avatar: React.FC<AvatarProps> = ({ url, size }) => (
-  <Container>
+  <View>
     <Image
       size={size}
       source={{
         uri: url,
       }}
     />
-  </Container>
+  </View>
 );
 
 export { Avatar };

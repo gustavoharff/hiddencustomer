@@ -4,10 +4,10 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { COLORS, SPACING } from '../../styles/tokens';
 
-const Admin: React.FC = () => (
+const DrawerRocketIcon: React.FC = () => (
   <View>
-    <Icon name="account-cog" color={COLORS.FONT} size={SPACING.L * 2} />
+    <Icon name="rocket" color={COLORS.FONT} size={SPACING.L * 2} />
   </View>
 );
 
-export default Admin;
+export { DrawerRocketIcon };

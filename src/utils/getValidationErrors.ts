@@ -1,10 +1,10 @@
 import { ValidationError } from 'yup';
 
-interface Errors {
+type Errors = {
   [key: string]: string;
-}
+};
 
-export default function getValidationErrors(err: ValidationError): Errors {
+export function getValidationErrors(err: ValidationError): Errors {
   const validationsErrors: Errors = {};
 
   err.inner.forEach(error => {

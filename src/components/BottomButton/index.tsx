@@ -2,7 +2,7 @@ import React from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { BaseButtonProperties } from 'react-native-gesture-handler';
 
-import { COLORS, SPACING } from '../../styles/tokens';
+import { COLORS, SPACING } from 'styles';
 
 import { Container, Button } from './styles';
 
@@ -18,4 +18,4 @@ const BottomButton: React.FC<ButtonProps> = ({ name, ...rest }) => (
   </Container>
 );
 
-export default BottomButton;
+export { BottomButton };

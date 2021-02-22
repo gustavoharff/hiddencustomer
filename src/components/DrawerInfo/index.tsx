@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
 
+import { SPACING } from 'styles';
+
+import { api } from 'services';
+
+import { Company } from 'types';
+
+import { Logo } from 'components';
+
 import { Container, Title, Version } from './styles';
-
-import Company from '../../schemas/company';
-
-import api from '../../services/api';
-import Logo from '../Logo';
-import { SPACING } from '../../styles/tokens';
 
 const DrawerInfo: React.FC = () => {
   const [company, setCompany] = useState<Company>({} as Company);
@@ -26,4 +28,4 @@ const DrawerInfo: React.FC = () => {
   );
 };
 
-export default DrawerInfo;
+export { DrawerInfo };

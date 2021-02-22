@@ -20,4 +20,4 @@ const Button: React.FC<ButtonProps> = ({
   </Container>
 );
 
-export default Button;
+export { Button };

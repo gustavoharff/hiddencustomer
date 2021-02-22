@@ -1,9 +1,9 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import SignIn from '../screens/SignIn';
+import { SignIn } from 'screens';
 
-import { COLORS } from '../styles/tokens';
+import { COLORS } from 'styles';
 
 const Auth = createStackNavigator();
 
@@ -20,4 +20,4 @@ const AuthRoutes: React.FC = () => (
   </Auth.Navigator>
 );
 
-export default AuthRoutes;
+export { AuthRoutes };

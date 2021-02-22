@@ -1,6 +1,6 @@
 import styled from 'styled-components/native';
 
-import { COLORS } from '../../styles/tokens';
+import { COLORS } from 'styles';
 
 export const Header = styled.View`
   width: 100%;
