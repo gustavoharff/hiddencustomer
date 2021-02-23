@@ -5,5 +5,6 @@ export * from './Home';
 export * from './Profile';
 export * from './ReleaseDetails';
 export * from './ReleaseForm';
+export * from './ReleaseGroupForm';
 export * from './Releases';
 export * from './SignIn';

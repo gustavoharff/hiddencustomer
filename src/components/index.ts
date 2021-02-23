@@ -15,5 +15,7 @@ export * from './ListHeader';
 export * from './Logo';
 export * from './ReleaseDates';
 export * from './ReleaseDatesList';
+export * from './ReleaseGroups';
+export * from './ReleaseGroupsList';
 export * from './ReleasesList';
 export * from './UsersList';

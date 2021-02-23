@@ -1,58 +1,62 @@
 import React, { useCallback, useState } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
-import moment from 'moment';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import produce from 'immer';
-import 'moment/locale/pt-br';
 
 import { EmptyList, DeleteItem } from 'components';
 
 import { api, getRealm } from 'services';
 
-import { ReleaseDate } from 'types';
+import { ReleaseGroup } from 'types';
 
-import { Container, Date } from './styles';
+import { SPACING } from 'styles';
 
-type ReleaseDatesListProps = {
-  dates: ReleaseDate[];
-  setDates: React.Dispatch<React.SetStateAction<ReleaseDate[]>>;
+import { useGroups } from 'hooks';
+import { Container, Name } from './styles';
+
+type ReleaseGroupsListProps = {
+  groups: ReleaseGroup[];
   onRefresh: () => Promise<void>;
   emptyListText: string;
 };
 
-const ReleaseDatesList: React.FC<ReleaseDatesListProps> = ({
-  dates,
-  setDates,
+const ReleaseGroupsList: React.FC<ReleaseGroupsListProps> = ({
+  groups,
   onRefresh,
   emptyListText,
 }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [row] = useState<Array<any>>([]);
   const [prevOpenedRow, setPrevOpenedRow] = useState<any>();
-  const [selectedDate, setSelectedDate] = useState<ReleaseDate>(
-    {} as ReleaseDate,
+  const [selectedGroup, setSelectedGroup] = useState<ReleaseGroup>(
+    {} as ReleaseGroup,
   );
+
+  const { setGroups } = useGroups();
 
   const handleDelete = useCallback(async () => {
     try {
-      await api.delete(`/release/dates/${selectedDate.id}`);
-      setDates(
-        produce(dates, drafts =>
-          drafts.filter(draft => draft.id !== selectedDate.id),
+      await api.delete(`/release/groups/${selectedGroup.id}`);
+      setGroups(
+        produce(groups, drafts =>
+          drafts.filter(draft => draft.id !== selectedGroup.id),
         ),
       );
 
       const realm = await getRealm();
 
       realm.write(() => {
-        realm.delete(realm.objectForPrimaryKey('ReleaseDate', selectedDate.id));
+        realm.delete(
+          realm.objectForPrimaryKey('ReleaseGroup', selectedGroup.id),
+        );
       });
     } catch (err) {
       Alert.alert('Erro!', 'Ocorreu um erro , reporte aos desenvolvedores!');
       prevOpenedRow.close();
       await onRefresh();
     }
-  }, [dates, setDates, selectedDate.id, prevOpenedRow, onRefresh]);
+  }, [groups, setGroups, selectedGroup.id, prevOpenedRow, onRefresh]);
 
   const onDeleteItem = useCallback(() => {
     Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
@@ -93,8 +97,8 @@ const ReleaseDatesList: React.FC<ReleaseDatesListProps> = ({
           />
         }
         keyExtractor={(item, index) => `${item.id} - ${index}`}
-        data={dates}
-        renderItem={({ item: date, index }) => (
+        data={groups}
+        renderItem={({ item: group, index }) => (
           <Swipeable
             ref={ref => (row[index] = ref)} // eslint-disable-line
             friction={1.5}
@@ -104,13 +108,20 @@ const ReleaseDatesList: React.FC<ReleaseDatesListProps> = ({
             activeOffsetY={500}
             onSwipeableOpen={() => {
               closeRow(index);
-              setSelectedDate(date);
+              setSelectedGroup(group);
             }}
           >
             <Container>
-              <Date past={moment(date.date).isSameOrBefore()}>
-                {moment(date.date).locale('pt-br').format('LLL')}
-              </Date>
+              <Name>{group.name}</Name>
+              {group.type === 'discord' && (
+                <Icon name="discord" color="#7289d9" size={SPACING.L * 1.5} />
+              )}
+              {group.type === 'whatsapp' && (
+                <Icon name="whatsapp" color="#25D366" size={SPACING.L * 1.5} />
+              )}
+              {group.type === 'telegram' && (
+                <Icon name="telegram" color="#0088cc" size={SPACING.L * 1.5} />
+              )}
             </Container>
           </Swipeable>
         )}
@@ -119,4 +130,4 @@ const ReleaseDatesList: React.FC<ReleaseDatesListProps> = ({
   );
 };
 
-export { ReleaseDatesList };
+export { ReleaseGroupsList };

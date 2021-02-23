@@ -5,11 +5,18 @@ import {
   CustomerSchema,
   ReleaseSchema,
   ReleaseDateSchema,
+  ReleaseGroupSchema,
 } from 'schemas';
 
 export async function getRealm(): Promise<Realm> {
   return Realm.open({
-    schema: [AuthSchema, CustomerSchema, ReleaseSchema, ReleaseDateSchema],
-    schemaVersion: 3,
+    schema: [
+      AuthSchema,
+      CustomerSchema,
+      ReleaseSchema,
+      ReleaseDateSchema,
+      ReleaseGroupSchema,
+    ],
+    schemaVersion: 4,
   });
 }

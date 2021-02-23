@@ -7,7 +7,7 @@ import { Release, Customer } from 'types';
 
 import { api } from 'services';
 
-import { ListHeader, ReleaseDates } from 'components';
+import { ListHeader, ReleaseDates, ReleaseGroups } from 'components';
 
 import { COLORS } from 'styles';
 
@@ -25,8 +25,8 @@ const ReleaseDetails: React.FC<Props> = ({ route }) => {
   const [tabIndex, setTabIndex] = useState(0);
 
   const tabRoutes = [
-    { key: 'dates', title: 'Datas' },
     { key: 'groups', title: 'Grupos' },
+    { key: 'dates', title: 'Datas' },
   ];
 
   useEffect(() => {
@@ -57,7 +57,7 @@ const ReleaseDetails: React.FC<Props> = ({ route }) => {
             case 'dates':
               return <ReleaseDates release_id={release.id} />;
             case 'groups':
-              return <ReleaseDates release_id={release.id} />;
+              return <ReleaseGroups release_id={release.id} />;
             default:
               return null;
           }

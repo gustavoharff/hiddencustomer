@@ -6,7 +6,12 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { Logo } from 'components';
 
-import { Releases, ReleaseForm, ReleaseDetails } from 'screens';
+import {
+  Releases,
+  ReleaseForm,
+  ReleaseDetails,
+  ReleaseGroupForm,
+} from 'screens';
 
 import { COLORS, SPACING } from 'styles';
 
@@ -71,6 +76,25 @@ const ReleasesRoutes: React.FC = () => (
         headerLeft: () => (
           <View style={{ marginLeft: SPACING.S }}>
             <TouchableOpacity onPress={() => navigation.navigate('Releases')}>
+              <Icon name="close" color={COLORS.FONT} size={SPACING.L * 2} />
+            </TouchableOpacity>
+          </View>
+        ),
+      })}
+    />
+
+    <ReleasesNavigator.Screen
+      name="ReleaseGroupForm"
+      component={ReleaseGroupForm}
+      options={({ navigation }) => ({
+        cardStyle: {
+          backgroundColor: COLORS.BACKGROUND,
+        },
+        headerLeft: () => (
+          <View style={{ marginLeft: SPACING.S }}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate('ReleaseDetails')}
+            >
               <Icon name="close" color={COLORS.FONT} size={SPACING.L * 2} />
             </TouchableOpacity>
           </View>
