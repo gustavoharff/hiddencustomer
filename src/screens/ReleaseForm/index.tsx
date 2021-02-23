@@ -15,9 +15,14 @@ import { Button, ListHeader, Input } from 'components';
 
 import { useCustomers, useReleases } from 'hooks';
 
-import { COLORS } from 'styles';
+import { COLORS, SPACING } from 'styles';
 
 import { api, getRealm } from 'services';
+
+import {
+  getBottomSpace,
+  getStatusBarHeight,
+} from 'react-native-iphone-x-helper';
 
 import { Container, Unform } from './styles';
 
@@ -76,6 +81,9 @@ const ReleaseForm: React.FC = () => {
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={
+        getBottomSpace() + getStatusBarHeight(false) + SPACING.L * 2
+      }
       enabled
     >
       <ScrollView
@@ -83,50 +91,52 @@ const ReleaseForm: React.FC = () => {
         contentContainerStyle={{ flex: 1 }}
       >
         <Container>
-          <ListHeader
-            title="Cadastrar lançamento"
-            description="Digite o nome do lançamento:"
-          />
+          <View style={{ width: '100%' }}>
+            <ListHeader
+              title="Cadastrar lançamento"
+              description="Digite o nome do lançamento:"
+            />
 
-          <Unform ref={formRef} onSubmit={handleSubmit}>
-            <Input
-              name="name"
-              placeholder="Nome"
-              placeholderTextColor={COLORS.FONT_LIGHT}
-              returnKeyType="send"
-              onSubmitEditing={() => formRef.current?.submitForm()}
-            />
-          </Unform>
-          <Picker
-            mode="dialog"
-            selectedValue={selectedValue}
-            onValueChange={onPickerChange}
-            style={{ color: COLORS.FONT, width: '95%' }}
-            dropdownIconColor={COLORS.FONT}
-          >
-            <Picker.Item
-              color={
-                Platform.OS === 'ios' ? COLORS.FONT : COLORS.BACKGROUND_DARK
-              }
-              label="Selecione o cliente..."
-              value={undefined}
-            />
-            {customers.map(customer => (
+            <Unform ref={formRef} onSubmit={handleSubmit}>
+              <Input
+                name="name"
+                placeholder="Nome"
+                placeholderTextColor={COLORS.FONT_LIGHT}
+                returnKeyType="send"
+                onSubmitEditing={() => formRef.current?.submitForm()}
+              />
+            </Unform>
+            <Picker
+              mode="dialog"
+              selectedValue={selectedValue}
+              onValueChange={onPickerChange}
+              style={{ color: COLORS.FONT, width: '95%' }}
+              dropdownIconColor={COLORS.FONT}
+            >
               <Picker.Item
                 color={
                   Platform.OS === 'ios' ? COLORS.FONT : COLORS.BACKGROUND_DARK
                 }
-                key={customer.id}
-                label={customer.name}
-                value={customer.id}
+                label="Selecione o cliente..."
+                value={undefined}
               />
-            ))}
-          </Picker>
-
+              {customers.map(customer => (
+                <Picker.Item
+                  color={
+                    Platform.OS === 'ios' ? COLORS.FONT : COLORS.BACKGROUND_DARK
+                  }
+                  key={customer.id}
+                  label={customer.name}
+                  value={customer.id}
+                />
+              ))}
+            </Picker>
+          </View>
           <View style={{ width: '100%', alignItems: 'center' }}>
             <Button
               title="Cadastrar"
               onPress={() => formRef.current?.submitForm()}
+              style={{ marginBottom: SPACING.M }}
             />
           </View>
         </Container>

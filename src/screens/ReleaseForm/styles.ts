@@ -5,7 +5,8 @@ import { COLORS } from 'styles';
 
 export const Container = styled.View`
   flex: 1;
-  align-items: center;
+  /* align-items: center; */
+  justify-content: space-between;
 `;
 
 export const Title = styled.Text`

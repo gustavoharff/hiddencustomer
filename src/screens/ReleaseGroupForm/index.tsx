@@ -15,7 +15,7 @@ import * as Yup from 'yup';
 
 import { Input, Button } from 'components';
 
-import { COLORS } from 'styles';
+import { COLORS, SPACING } from 'styles';
 
 import { api, getRealm } from 'services';
 
@@ -90,7 +90,9 @@ const ReleaseGroupForm: React.FC<Props> = ({ route }) => {
     <KeyboardAvoidingView
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={getBottomSpace() + getStatusBarHeight(true)}
+      keyboardVerticalOffset={
+        getBottomSpace() + getStatusBarHeight(true) + SPACING.L * 2
+      }
       enabled
     >
       <ScrollView
@@ -98,65 +100,67 @@ const ReleaseGroupForm: React.FC<Props> = ({ route }) => {
         contentContainerStyle={{ flex: 1 }}
       >
         <Container>
-          <ListHeader
-            title="Cadastrar grupo para o lançamento"
-            description="Digite o nome do grupo do lançamento:"
-          />
-
-          <Unform ref={formRef} onSubmit={handleSubmit}>
-            <Input
-              name="name"
-              placeholder="Nome"
-              placeholderTextColor={COLORS.FONT_LIGHT}
-              returnKeyType="send"
-              onSubmitEditing={() => formRef.current?.submitForm()}
-            />
-          </Unform>
-          <Picker
-            mode="dialog"
-            selectedValue={selectedValue}
-            onValueChange={onPickerChange}
-            style={{ color: COLORS.FONT, width: '95%' }}
-            dropdownIconColor={COLORS.FONT}
-          >
-            <Picker.Item
-              color={
-                Platform.OS === 'ios' ? COLORS.FONT : COLORS.BACKGROUND_DARK
-              }
-              label="Selecione o tipo de grupo..."
-              value={undefined}
+          <View style={{ width: '100%' }}>
+            <ListHeader
+              title="Cadastrar grupo para o lançamento"
+              description="Digite o nome do grupo do lançamento:"
             />
 
-            <Picker.Item
-              color={
-                Platform.OS === 'ios' ? COLORS.FONT : COLORS.BACKGROUND_DARK
-              }
-              key="whatsapp"
-              label="WhatsApp"
-              value="whatsapp"
-            />
-            <Picker.Item
-              color={
-                Platform.OS === 'ios' ? COLORS.FONT : COLORS.BACKGROUND_DARK
-              }
-              key="discord"
-              label="Discord"
-              value="discord"
-            />
-            <Picker.Item
-              color={
-                Platform.OS === 'ios' ? COLORS.FONT : COLORS.BACKGROUND_DARK
-              }
-              key="telegram"
-              label="Telegram"
-              value="telegram"
-            />
-          </Picker>
+            <Unform ref={formRef} onSubmit={handleSubmit}>
+              <Input
+                name="name"
+                placeholder="Nome"
+                placeholderTextColor={COLORS.FONT_LIGHT}
+                returnKeyType="send"
+                onSubmitEditing={() => formRef.current?.submitForm()}
+              />
+            </Unform>
+            <Picker
+              mode="dialog"
+              selectedValue={selectedValue}
+              onValueChange={onPickerChange}
+              style={{ color: COLORS.FONT, width: '95%' }}
+              dropdownIconColor={COLORS.FONT}
+            >
+              <Picker.Item
+                color={
+                  Platform.OS === 'ios' ? COLORS.FONT : COLORS.BACKGROUND_DARK
+                }
+                label="Selecione o tipo de grupo..."
+                value={undefined}
+              />
 
+              <Picker.Item
+                color={
+                  Platform.OS === 'ios' ? COLORS.FONT : COLORS.BACKGROUND_DARK
+                }
+                key="whatsapp"
+                label="WhatsApp"
+                value="whatsapp"
+              />
+              <Picker.Item
+                color={
+                  Platform.OS === 'ios' ? COLORS.FONT : COLORS.BACKGROUND_DARK
+                }
+                key="discord"
+                label="Discord"
+                value="discord"
+              />
+              <Picker.Item
+                color={
+                  Platform.OS === 'ios' ? COLORS.FONT : COLORS.BACKGROUND_DARK
+                }
+                key="telegram"
+                label="Telegram"
+                value="telegram"
+              />
+            </Picker>
+          </View>
           <View style={{ width: '100%', alignItems: 'center' }}>
             <Button
               title="Cadastrar"
               onPress={() => formRef.current?.submitForm()}
+              style={{ marginBottom: SPACING.M }}
             />
           </View>
         </Container>
