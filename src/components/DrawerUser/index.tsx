@@ -23,11 +23,11 @@ const DrawerUser: React.FC<DrawerUserProps> = ({
 }) => (
   <Container>
     <TouchableOpacity
-      style={{ alignItems: 'flex-start' }}
+      style={{ alignItems: 'center' }}
       onPress={() => navigation.navigate('Profile')}
     >
       <Avatar
-        size={SPACING.M * 5}
+        size={SPACING.M * 7}
         url={
           avatar_url ||
           'https://iupac.org/wp-content/uploads/2018/05/default-avatar.png'

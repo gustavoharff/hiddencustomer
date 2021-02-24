@@ -3,7 +3,7 @@ import styled from 'styled-components/native';
 import { SPACING, COLORS } from 'styles';
 
 export const Container = styled.View`
-  align-items: flex-start;
+  align-items: center;
   padding-left: ${SPACING.XL}px;
   padding-right: ${SPACING.L}px;
   padding-top: ${SPACING.XL}px;

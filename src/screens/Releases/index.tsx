@@ -63,7 +63,10 @@ const Releases: React.FC = () => {
 
   return (
     <>
-      <ListHeader title="Lançamentos" />
+      <ListHeader
+        title="Lançamentos"
+        description={`Total de lançamentos cadastrados: ${releases.length}`}
+      />
       <Container>
         <ReleasesList
           releases={releases}

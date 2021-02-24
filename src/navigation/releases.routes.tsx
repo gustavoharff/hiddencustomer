@@ -4,7 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import { Logo } from 'components';
+import { BackHeaderIcon, CloseHeaderIcon, Logo } from 'components';
 
 import {
   Releases,
@@ -19,13 +19,12 @@ const ReleasesNavigator = createStackNavigator();
 
 const ReleasesRoutes: React.FC = () => (
   <ReleasesNavigator.Navigator
-    mode="modal"
+    mode="card"
     screenOptions={({ navigation }) => ({
       cardStyle: {
         backgroundColor: 'transparent',
       },
       animationEnabled: true,
-
       headerTitle: () => <Logo size={SPACING.XXL} />,
       headerTitleAlign: 'center',
       headerLeft: () => (
@@ -58,11 +57,7 @@ const ReleasesRoutes: React.FC = () => (
           backgroundColor: COLORS.BACKGROUND,
         },
         headerLeft: () => (
-          <View style={{ marginLeft: SPACING.S }}>
-            <TouchableOpacity onPress={() => navigation.navigate('Releases')}>
-              <Icon name="close" color={COLORS.FONT} size={SPACING.L * 2} />
-            </TouchableOpacity>
-          </View>
+          <BackHeaderIcon onPress={() => navigation.navigate('Releases')} />
         ),
       })}
     />
@@ -74,11 +69,7 @@ const ReleasesRoutes: React.FC = () => (
           backgroundColor: COLORS.BACKGROUND,
         },
         headerLeft: () => (
-          <View style={{ marginLeft: SPACING.S }}>
-            <TouchableOpacity onPress={() => navigation.navigate('Releases')}>
-              <Icon name="close" color={COLORS.FONT} size={SPACING.L * 2} />
-            </TouchableOpacity>
-          </View>
+          <BackHeaderIcon onPress={() => navigation.goBack()} />
         ),
       })}
     />
@@ -91,13 +82,9 @@ const ReleasesRoutes: React.FC = () => (
           backgroundColor: COLORS.BACKGROUND,
         },
         headerLeft: () => (
-          <View style={{ marginLeft: SPACING.S }}>
-            <TouchableOpacity
-              onPress={() => navigation.navigate('ReleaseDetails')}
-            >
-              <Icon name="close" color={COLORS.FONT} size={SPACING.L * 2} />
-            </TouchableOpacity>
-          </View>
+          <CloseHeaderIcon
+            onPress={() => navigation.navigate('ReleaseDetails')}
+          />
         ),
       })}
     />

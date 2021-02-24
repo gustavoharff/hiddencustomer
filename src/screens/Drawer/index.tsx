@@ -21,15 +21,15 @@ const Drawer: React.FC<DrawerContentComponentProps> = ({ navigation }) => {
   const items = useMemo(
     () => [
       {
-        title: 'Clientes',
-        onPress: () => navigation.navigate('Customers'),
-        icon: DrawerCustomersIcon,
-        canAccess: true,
-      },
-      {
         title: 'Lançamentos',
         onPress: () => navigation.navigate('Releases'),
         icon: DrawerRocketIcon,
+        canAccess: true,
+      },
+      {
+        title: 'Clientes',
+        onPress: () => navigation.navigate('Customers'),
+        icon: DrawerCustomersIcon,
         canAccess: true,
       },
       {

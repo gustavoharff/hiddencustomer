@@ -106,7 +106,7 @@ const ReleaseDates: React.FC<ReleaseDatedProps> = ({ release_id }) => {
         dates={dates}
         setDates={setDates}
         onRefresh={onRefresh}
-        emptyListText="Não há datas!"
+        emptyListText="Não há datas cadastradas!"
       />
 
       {isAddingDate && (

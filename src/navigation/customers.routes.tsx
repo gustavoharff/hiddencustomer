@@ -1,12 +1,14 @@
 import React from 'react';
-import { View } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import { Logo } from 'components';
+import {
+  Logo,
+  BackHeaderIcon,
+  MenuHeaderIcon,
+  CloseHeaderIcon,
+} from 'components';
 
-import { Home, CustomerForm } from 'screens';
+import { Customers, CustomerForm, CustomerDetails } from 'screens';
 
 import { COLORS, SPACING } from 'styles';
 
@@ -14,7 +16,7 @@ const CustomersNavigator = createStackNavigator();
 
 const CustomersRoutes: React.FC = () => (
   <CustomersNavigator.Navigator
-    mode="modal"
+    mode="card"
     screenOptions={({ navigation }) => ({
       cardStyle: {
         backgroundColor: COLORS.BACKGROUND,
@@ -22,11 +24,7 @@ const CustomersRoutes: React.FC = () => (
       headerTitle: () => <Logo size={SPACING.XXL} />,
       headerTitleAlign: 'center',
       headerLeft: () => (
-        <View style={{ marginLeft: SPACING.S }}>
-          <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
-            <Icon name="menu" color={COLORS.FONT} size={SPACING.L * 2} />
-          </TouchableOpacity>
-        </View>
+        <MenuHeaderIcon onPress={() => navigation.toggleDrawer()} />
       ),
       headerTintColor: COLORS.FONT,
       headerStyle: {
@@ -34,17 +32,23 @@ const CustomersRoutes: React.FC = () => (
       },
     })}
   >
-    <CustomersNavigator.Screen name="Customers" component={Home} />
+    <CustomersNavigator.Screen name="Customers" component={Customers} />
     <CustomersNavigator.Screen
       name="CustomerForm"
       component={CustomerForm}
       options={({ navigation }) => ({
         headerLeft: () => (
-          <View style={{ marginLeft: SPACING.S }}>
-            <TouchableOpacity onPress={() => navigation.navigate('Customers')}>
-              <Icon name="close" color={COLORS.FONT} size={SPACING.L * 2} />
-            </TouchableOpacity>
-          </View>
+          <CloseHeaderIcon onPress={() => navigation.navigate('Customers')} />
+        ),
+      })}
+    />
+
+    <CustomersNavigator.Screen
+      name="CustomerDetails"
+      component={CustomerDetails}
+      options={({ navigation }) => ({
+        headerLeft: () => (
+          <BackHeaderIcon onPress={() => navigation.navigate('Customers')} />
         ),
       })}
     />

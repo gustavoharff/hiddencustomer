@@ -1,19 +1,20 @@
 import React, { useCallback, useState } from 'react';
-import { View, FlatList, RefreshControl, Alert } from 'react-native';
+import { View, FlatList, RefreshControl, Alert, Text } from 'react-native';
 import { RectButton } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import produce from 'immer';
 import moment from 'moment';
 import 'moment/locale/pt-br';
-
 import { EmptyList, DeleteItem } from 'components';
 
 import { api, getRealm } from 'services';
 
 import { Release } from 'types';
 
-import { Container, Name, Description, DescriptionText } from './styles';
+import { COLORS, SPACING } from 'styles';
+
+import { Container, Name } from './styles';
 
 type ReleasesListProps = {
   releases: Release[];
@@ -114,23 +115,26 @@ const ReleasesList: React.FC<ReleasesListProps> = ({
             >
               <Container>
                 <Name>{release.name}</Name>
-                <Description>
-                  <DescriptionText>
+                <View style={{ marginTop: SPACING.S }}>
+                  <Text
+                    style={{
+                      color: release.paid ? COLORS.SUCCESS : COLORS.ALERT,
+                    }}
+                  >
                     {release.paid
                       ? 'Pagamento realizado!'
                       : 'Pagamento ainda não realizado!'}
-                  </DescriptionText>
-                </Description>
-                <Description>
-                  <DescriptionText>
+                  </Text>
+                </View>
+                <View style={{ marginTop: SPACING.S }}>
+                  <Text style={{ color: COLORS.FONT_LIGHT }}>
                     Atualizado{' '}
                     {moment(release.updated_at)
                       .utc(true)
                       .locale('pt-br')
                       .fromNow()}
-                  </DescriptionText>
-                  <DescriptionText />
-                </Description>
+                  </Text>
+                </View>
               </Container>
             </RectButton>
           </Swipeable>

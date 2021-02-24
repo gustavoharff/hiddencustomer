@@ -1,6 +1,7 @@
 export * from './Avatar';
 export * from './BottomButton';
 export * from './Button';
+export * from './CustomerReleaseList';
 export * from './CustomersList';
 export * from './DateTimeInput';
 export * from './DeleteItem';
@@ -10,6 +11,7 @@ export * from './DrawerItem';
 export * from './DrawerList';
 export * from './DrawerUser';
 export * from './EmptyList';
+export * from './HeaderIcons';
 export * from './Input';
 export * from './ListHeader';
 export * from './Logo';

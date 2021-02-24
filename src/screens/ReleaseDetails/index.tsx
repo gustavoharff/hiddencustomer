@@ -81,7 +81,6 @@ const ReleaseDetails: React.FC<Props> = ({ route }) => {
   }, [route.params.customer_id]);
 
   useEffect(() => {
-    loadLocalRelease();
     const { release_id, customer_id } = route.params;
 
     api

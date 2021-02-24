@@ -1,55 +1,54 @@
 import React, { useCallback, useState } from 'react';
-import { View, FlatList, RefreshControl, Alert } from 'react-native';
+import { View, FlatList, RefreshControl, Alert, Text } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import produce from 'immer';
 import moment from 'moment';
 import 'moment/locale/pt-br';
 
-import { DeleteItem, EmptyList } from 'components';
-
-import { Customer } from 'types';
+import { EmptyList, DeleteItem } from 'components';
 
 import { api, getRealm } from 'services';
 
-import { RectButton } from 'react-native-gesture-handler';
-import { useNavigation } from '@react-navigation/native';
-import { Container, Name, UpdatedAt, UpdatedAtText } from './styles';
+import { Release } from 'types';
 
-type CustomersListProps = {
-  customers: Customer[];
-  setCustomers: React.Dispatch<React.SetStateAction<Customer[]>>;
+import { COLORS, SPACING } from 'styles';
+
+import { Container, Name } from './styles';
+
+type ReleasesListProps = {
+  releases: Release[];
+  setReleases: React.Dispatch<React.SetStateAction<Release[]>>;
   onRefresh: () => Promise<void>;
   emptyListText: string;
 };
 
-const CustomersList: React.FC<CustomersListProps> = ({
-  customers,
-  setCustomers,
+const CustomerReleasesList: React.FC<ReleasesListProps> = ({
+  releases,
+  setReleases,
   onRefresh,
   emptyListText,
 }) => {
   const [refreshing, setRefreshing] = useState(false);
   const [row] = useState<Array<any>>([]);
   const [prevOpenedRow, setPrevOpenedRow] = useState<any>();
-  const [selectedCustomer, setSelectedCustomer] = useState<Customer>(
-    {} as Customer,
+  const [selectedRelease, setSelectedRelease] = useState<Release>(
+    {} as Release,
   );
-  const navigation = useNavigation();
 
   const handleDelete = useCallback(async () => {
-    await api.delete(`/customers/${selectedCustomer.id}`);
-    setCustomers(
-      produce(customers, drafts =>
-        drafts.filter(draft => draft.id !== selectedCustomer.id),
+    await api.delete(`/releases/${selectedRelease.id}`);
+    setReleases(
+      produce(releases, drafts =>
+        drafts.filter(draft => draft.id !== selectedRelease.id),
       ),
     );
 
     const realm = await getRealm();
 
     realm.write(() => {
-      realm.delete(realm.objectForPrimaryKey('Customer', selectedCustomer.id));
+      realm.delete(realm.objectForPrimaryKey('Release', selectedRelease.id));
     });
-  }, [selectedCustomer, setCustomers, customers]);
+  }, [setReleases, releases, selectedRelease]);
 
   const onDeleteItem = useCallback(() => {
     Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
@@ -71,7 +70,6 @@ const CustomersList: React.FC<CustomersListProps> = ({
     },
     [prevOpenedRow, row],
   );
-
   const handleRefresh = async () => {
     setRefreshing(true);
     await onRefresh();
@@ -90,10 +88,10 @@ const CustomersList: React.FC<CustomersListProps> = ({
           />
         }
         keyExtractor={(item, index) => `${item.id} - ${index}`}
-        data={customers}
-        renderItem={({ item: customer, index }) => (
+        data={releases}
+        renderItem={({ item: release, index }) => (
           <Swipeable
-            ref={ref => (row[index] = ref)} // eslint-disable-line
+          ref={ref => (row[index] = ref)} // eslint-disable-line
             friction={1.5}
             rightThreshold={30}
             renderRightActions={() => <DeleteItem onPress={onDeleteItem} />}
@@ -101,30 +99,32 @@ const CustomersList: React.FC<CustomersListProps> = ({
             activeOffsetY={500}
             onSwipeableOpen={() => {
               closeRow(index);
-              setSelectedCustomer(customer);
+              setSelectedRelease(release);
             }}
           >
-            <RectButton
-              onPress={() => {
-                navigation.navigate('CustomerDetails', {
-                  customer_id: customer.id,
-                });
-              }}
-            >
-              <Container>
-                <Name>{customer.name}</Name>
-                <UpdatedAt>
-                  <UpdatedAtText>
-                    Atualizado{' '}
-                    {moment(customer.updated_at)
-                      .utc(true)
-                      .locale('pt-br')
-                      .fromNow()}
-                  </UpdatedAtText>
-                  <UpdatedAtText />
-                </UpdatedAt>
-              </Container>
-            </RectButton>
+            <Container>
+              <Name>{release.name}</Name>
+              <View style={{ marginTop: SPACING.S }}>
+                <Text
+                  style={{
+                    color: release.paid ? COLORS.SUCCESS : COLORS.ALERT,
+                  }}
+                >
+                  {release.paid
+                    ? 'Pagamento realizado!'
+                    : 'Pagamento ainda não realizado!'}
+                </Text>
+              </View>
+              <View style={{ marginTop: SPACING.S }}>
+                <Text style={{ color: COLORS.FONT_LIGHT }}>
+                  Atualizado{' '}
+                  {moment(release.updated_at)
+                    .utc(true)
+                    .locale('pt-br')
+                    .fromNow()}
+                </Text>
+              </View>
+            </Container>
           </Swipeable>
         )}
       />
@@ -132,4 +132,4 @@ const CustomersList: React.FC<CustomersListProps> = ({
   );
 };
 
-export { CustomersList };
+export { CustomerReleasesList };

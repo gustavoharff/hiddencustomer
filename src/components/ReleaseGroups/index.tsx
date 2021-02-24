@@ -88,7 +88,7 @@ const ReleaseGroups: React.FC<ReleaseGroupsProps> = ({ release_id }) => {
       <ReleaseGroupsList
         groups={groups}
         onRefresh={onRefresh}
-        emptyListText="Não há datas!"
+        emptyListText="Não há grupos cadastrados!"
       />
 
       <View style={{ width: '100%', alignItems: 'center' }}>

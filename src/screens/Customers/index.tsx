@@ -12,7 +12,7 @@ import { useCustomers, useAuth } from 'hooks';
 
 import { Container } from './styles';
 
-const Home: React.FC = () => {
+const Customers: React.FC = () => {
   const { customers, setCustomers } = useCustomers();
   const navigation = useNavigation();
 
@@ -36,9 +36,6 @@ const Home: React.FC = () => {
     setCustomers(response.data);
 
     const realm = await getRealm();
-
-    console.log(realm.path);
-
     realm.write(() => {
       const data = realm.objects('Customer');
 
@@ -71,7 +68,10 @@ const Home: React.FC = () => {
 
   return (
     <>
-      <ListHeader title="Clientes" />
+      <ListHeader
+        title="Clientes"
+        description={`Total de clientes cadastrados: ${customers.length}`}
+      />
       <Container>
         <CustomersList
           customers={customers}
@@ -90,4 +90,4 @@ const Home: React.FC = () => {
   );
 };
 
-export { Home };
+export { Customers };
