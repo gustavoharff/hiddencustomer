@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Alert,
   KeyboardAvoidingView,
@@ -27,6 +27,8 @@ type SignInFormData = {
 };
 
 const SignIn: React.FC = () => {
+  const [loadingButton, setLoadingButton] = useState(false);
+
   useEffect(() => {
     RNBootSplash.hide({ fade: true }); // fade
   }, []);
@@ -62,18 +64,22 @@ const SignIn: React.FC = () => {
 
           Alert.alert('Alerta', 'Complete os campos corretamente.');
 
+          setLoadingButton(false);
           return;
         }
 
-        if (err.response.status === 402) {
+        if (err.response?.status === 402) {
           Alert.alert('Erro', 'Usuário sem permissão de acesso ao sistema.');
         } else {
           Alert.alert('Erro', 'Erro na autenticação, verifique seus dados.');
         }
+
+        setLoadingButton(false);
       }
     },
     [signIn],
   );
+
   return (
     <KeyboardAvoidingView
       style={{ flex: 1 }}
@@ -116,7 +122,11 @@ const SignIn: React.FC = () => {
 
             <Button
               title="Entrar"
-              onPress={() => formRef.current?.submitForm()}
+              onPress={() => {
+                formRef.current?.submitForm();
+                setLoadingButton(true);
+              }}
+              loading={loadingButton}
             >
               Entrar
             </Button>

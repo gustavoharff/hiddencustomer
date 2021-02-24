@@ -20,6 +20,8 @@ const ReleaseDates: React.FC<ReleaseDatedProps> = ({ release_id }) => {
   const [isAddingDate, setIsAddingDate] = useState(false);
   const [dates, setDates] = useState<ReleaseDate[]>([]);
 
+  const [loadingButton, setLoadingButton] = useState(false);
+
   const loadApiReleaseDates = useCallback(async () => {
     if (!release_id) {
       return;
@@ -93,6 +95,9 @@ const ReleaseDates: React.FC<ReleaseDatedProps> = ({ release_id }) => {
     realm.write(() => {
       realm.create('ReleaseDate', response.data);
     });
+
+    setLoadingButton(false);
+    setIsAddingDate(false);
   }, [date, release_id]);
 
   return (
@@ -110,9 +115,10 @@ const ReleaseDates: React.FC<ReleaseDatedProps> = ({ release_id }) => {
           <View style={{ width: '100%', alignItems: 'center' }}>
             <Button
               title="Salvar"
+              loading={loadingButton}
               onPress={() => {
-                setIsAddingDate(false);
                 handleAddDate();
+                setLoadingButton(true);
               }}
             />
             <Button

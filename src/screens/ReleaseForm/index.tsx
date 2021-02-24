@@ -29,6 +29,7 @@ import { Container, Unform } from './styles';
 const ReleaseForm: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
   const [selectedValue, setSelectedValue] = useState('');
+  const [loadingButton, setLoadingButton] = useState(false);
   const navigation = useNavigation();
 
   const { setReleases } = useReleases();
@@ -40,11 +41,6 @@ const ReleaseForm: React.FC = () => {
 
   const handleSubmit = useCallback(
     async data => {
-      if (!selectedValue) {
-        Alert.alert('Atenção', 'Selecione algum cliente!');
-        return;
-      }
-
       try {
         formRef.current?.setErrors({});
 
@@ -53,6 +49,12 @@ const ReleaseForm: React.FC = () => {
         });
 
         await schema.validate(data, { abortEarly: false });
+
+        if (!selectedValue) {
+          setLoadingButton(false);
+          Alert.alert('Atenção', 'Selecione algum cliente!');
+          return;
+        }
 
         const response = await api.post('/releases', {
           name: data.name,
@@ -71,7 +73,10 @@ const ReleaseForm: React.FC = () => {
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           Alert.alert('Atenção!', 'Complete o campo de nome');
+          setLoadingButton(false);
         }
+
+        setLoadingButton(false);
       }
     },
     [navigation, setReleases, selectedValue],
@@ -138,7 +143,11 @@ const ReleaseForm: React.FC = () => {
           <View style={{ width: '100%', alignItems: 'center' }}>
             <Button
               title="Cadastrar"
-              onPress={() => formRef.current?.submitForm()}
+              loading={loadingButton}
+              onPress={() => {
+                formRef.current?.submitForm();
+                setLoadingButton(true);
+              }}
               style={{ marginBottom: SPACING.M }}
             />
           </View>

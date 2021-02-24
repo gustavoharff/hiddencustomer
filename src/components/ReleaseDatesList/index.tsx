@@ -48,20 +48,20 @@ const ReleaseDatesList: React.FC<ReleaseDatesListProps> = ({
         realm.delete(realm.objectForPrimaryKey('ReleaseDate', selectedDate.id));
       });
     } catch (err) {
-      Alert.alert('Erro!', 'Ocorreu um erro , reporte aos desenvolvedores!');
+      Alert.alert('Erro!', 'Ocorreu um erro, reporte aos desenvolvedores!');
       prevOpenedRow.close();
       await onRefresh();
     }
   }, [dates, setDates, selectedDate.id, prevOpenedRow, onRefresh]);
 
-  const onDeleteItem = useCallback(() => {
+  const onDeleteItem = useCallback(async () => {
     Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
       {
         text: 'Cancelar',
         onPress: () => prevOpenedRow.close(),
         style: 'cancel',
       },
-      { text: 'Sim', onPress: () => handleDelete() },
+      { text: 'Sim', onPress: handleDelete },
     ]);
   }, [prevOpenedRow, handleDelete]);
 
@@ -99,7 +99,14 @@ const ReleaseDatesList: React.FC<ReleaseDatesListProps> = ({
             ref={ref => (row[index] = ref)} // eslint-disable-line
             friction={1.5}
             rightThreshold={30}
-            renderRightActions={() => <DeleteItem onPress={onDeleteItem} />}
+            renderRightActions={() => (
+              <DeleteItem
+                onPress={() => {
+                  setSelectedDate(date);
+                  onDeleteItem();
+                }}
+              />
+            )}
             activeOffsetX={-1}
             activeOffsetY={500}
             onSwipeableOpen={() => {

@@ -4,9 +4,9 @@ import { SPACING, COLORS } from 'styles';
 
 export const Container = styled.View`
   align-items: flex-start;
-  padding-left: ${SPACING.L}px;
+  padding-left: ${SPACING.XL}px;
   padding-right: ${SPACING.L}px;
-  padding-top: ${SPACING.L}px;
+  padding-top: ${SPACING.XL}px;
 `;
 
 export const Title = styled.Text`

@@ -60,7 +60,6 @@ const AuthProvider: React.FC = ({ children }) => {
       email,
       password,
     });
-
     const { token, user } = response.data;
 
     const realm = await getRealm();

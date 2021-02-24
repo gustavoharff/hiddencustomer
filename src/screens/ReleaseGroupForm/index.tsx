@@ -40,6 +40,8 @@ const ReleaseGroupForm: React.FC<Props> = ({ route }) => {
   const [selectedValue, setSelectedValue] = useState('');
   const navigation = useNavigation();
 
+  const [loadingButton, setLoadingButton] = useState(false);
+
   const { setGroups } = useGroups();
 
   const onPickerChange = useCallback(value => {
@@ -48,11 +50,6 @@ const ReleaseGroupForm: React.FC<Props> = ({ route }) => {
 
   const handleSubmit = useCallback(
     async data => {
-      if (!selectedValue) {
-        Alert.alert('Atenção', 'Selecione algum tipo de grupo!');
-        return;
-      }
-
       try {
         formRef.current?.setErrors({});
 
@@ -61,6 +58,12 @@ const ReleaseGroupForm: React.FC<Props> = ({ route }) => {
         });
 
         await schema.validate(data, { abortEarly: false });
+
+        if (!selectedValue) {
+          Alert.alert('Atenção', 'Selecione algum tipo de grupo!');
+          setLoadingButton(false);
+          return;
+        }
 
         const response = await api.post('/release/groups', {
           name: data.name,
@@ -80,7 +83,10 @@ const ReleaseGroupForm: React.FC<Props> = ({ route }) => {
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           Alert.alert('Atenção!', 'Complete o campo de nome');
+          setLoadingButton(false);
         }
+
+        setLoadingButton(false);
       }
     },
     [navigation, selectedValue, setGroups, route.params.release_id],
@@ -159,7 +165,11 @@ const ReleaseGroupForm: React.FC<Props> = ({ route }) => {
           <View style={{ width: '100%', alignItems: 'center' }}>
             <Button
               title="Cadastrar"
-              onPress={() => formRef.current?.submitForm()}
+              loading={loadingButton}
+              onPress={() => {
+                formRef.current?.submitForm();
+                setLoadingButton(true);
+              }}
               style={{ marginBottom: SPACING.M }}
             />
           </View>

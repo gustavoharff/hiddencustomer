@@ -1,6 +1,10 @@
-import React, { useCallback, useRef } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
+import {
+  getBottomSpace,
+  getStatusBarHeight,
+} from 'react-native-iphone-x-helper';
 import {
   Alert,
   KeyboardAvoidingView,
@@ -18,13 +22,10 @@ import { useCustomers } from 'hooks';
 
 import { COLORS, SPACING } from 'styles';
 
-import {
-  getBottomSpace,
-  getStatusBarHeight,
-} from 'react-native-iphone-x-helper';
 import { Container, Title, Text, Unform } from './styles';
 
 const CustomerForm: React.FC = () => {
+  const [loadingButton, setLoadingButton] = useState(false);
   const formRef = useRef<FormHandles>(null);
 
   const { setCustomers } = useCustomers();
@@ -54,11 +55,14 @@ const CustomerForm: React.FC = () => {
           realm.create('Customer', response.data);
         });
 
-        navigation.navigate('Home');
+        navigation.navigate('Customers');
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           Alert.alert('Atenção!', 'Complete o campo de nome');
+          setLoadingButton(false);
         }
+
+        setLoadingButton(false);
       }
     },
     [setCustomers, navigation],
@@ -95,7 +99,11 @@ const CustomerForm: React.FC = () => {
           <View style={{ width: '100%', alignItems: 'center' }}>
             <Button
               title="Enviar"
-              onPress={() => formRef.current?.submitForm()}
+              loading={loadingButton}
+              onPress={() => {
+                formRef.current?.submitForm();
+                setLoadingButton(true);
+              }}
               style={{ marginBottom: SPACING.M }}
             />
           </View>
