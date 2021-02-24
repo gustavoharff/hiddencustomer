@@ -2,6 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 
 import { DrawerItem } from 'components';
+import { SPACING } from 'styles';
 
 type Item = {
   onPress(): void;
@@ -15,7 +16,7 @@ type DrawerListProps = {
 };
 
 const DrawerList: React.FC<DrawerListProps> = ({ items }) => (
-  <View>
+  <View style={{ marginTop: SPACING.XL }}>
     {items.map(
       item =>
         item.canAccess && (

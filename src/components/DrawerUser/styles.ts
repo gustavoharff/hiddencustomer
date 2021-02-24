@@ -3,7 +3,7 @@ import styled from 'styled-components/native';
 import { SPACING, COLORS } from 'styles';
 
 export const Container = styled.View`
-  align-items: center;
+  align-items: flex-start;
   padding-left: ${SPACING.L}px;
   padding-right: ${SPACING.L}px;
   padding-top: ${SPACING.L}px;
@@ -17,5 +17,5 @@ export const Title = styled.Text`
 `;
 
 export const Text = styled.Text`
-  color: ${COLORS.FONT};
+  color: ${COLORS.FONT_LIGHTEST};
 `;

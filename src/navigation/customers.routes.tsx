@@ -10,10 +10,10 @@ import { Home, CustomerForm } from 'screens';
 
 import { COLORS, SPACING } from 'styles';
 
-const HomeNavigator = createStackNavigator();
+const CustomersNavigator = createStackNavigator();
 
-const HomeRoutes: React.FC = () => (
-  <HomeNavigator.Navigator
+const CustomersRoutes: React.FC = () => (
+  <CustomersNavigator.Navigator
     mode="modal"
     screenOptions={({ navigation }) => ({
       cardStyle: {
@@ -34,21 +34,21 @@ const HomeRoutes: React.FC = () => (
       },
     })}
   >
-    <HomeNavigator.Screen name="Home" component={Home} />
-    <HomeNavigator.Screen
+    <CustomersNavigator.Screen name="Customers" component={Home} />
+    <CustomersNavigator.Screen
       name="CustomerForm"
       component={CustomerForm}
       options={({ navigation }) => ({
         headerLeft: () => (
           <View style={{ marginLeft: SPACING.S }}>
-            <TouchableOpacity onPress={() => navigation.navigate('Home')}>
+            <TouchableOpacity onPress={() => navigation.navigate('Customers')}>
               <Icon name="close" color={COLORS.FONT} size={SPACING.L * 2} />
             </TouchableOpacity>
           </View>
         ),
       })}
     />
-  </HomeNavigator.Navigator>
+  </CustomersNavigator.Navigator>
 );
 
-export { HomeRoutes };
+export { CustomersRoutes };

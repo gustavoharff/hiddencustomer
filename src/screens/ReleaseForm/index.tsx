@@ -110,7 +110,10 @@ const ReleaseForm: React.FC = () => {
               mode="dialog"
               selectedValue={selectedValue}
               onValueChange={onPickerChange}
-              style={{ color: COLORS.FONT, width: '95%' }}
+              style={{
+                color: COLORS.FONT,
+                width: '100%',
+              }}
               dropdownIconColor={COLORS.FONT}
             >
               <Picker.Item

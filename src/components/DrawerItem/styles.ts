@@ -1,4 +1,3 @@
-import { StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 
 import { COLORS, SPACING } from 'styles';
@@ -20,6 +19,4 @@ export const Content = styled.View`
   padding: 10px;
   padding-top: 20px;
   justify-content: center;
-  border-bottom-width: ${StyleSheet.hairlineWidth}px;
-  border-bottom-color: rgba(255, 255, 255, 0.15);
 `;

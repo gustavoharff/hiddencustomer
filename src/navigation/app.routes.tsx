@@ -4,7 +4,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 
 import { Drawer } from 'screens';
 
-import { HomeRoutes } from './home.routes';
+import { CustomersRoutes } from './customers.routes';
 import { ProfileRoutes } from './profile.routes';
 import { AdministrationRoutes } from './administration.routes';
 import { ReleasesRoutes } from './releases.routes';
@@ -15,13 +15,13 @@ const DrawerNavigator = createDrawerNavigator();
 
 const DrawerNavigation: React.FC = () => (
   <DrawerNavigator.Navigator
-    initialRouteName="Home"
+    initialRouteName="Customers"
     drawerType="back"
-    overlayColor="rgba(0, 0, 0, 0)"
+    overlayColor="rgba(0, 0, 0, 0.3)"
     drawerStyle={{ width: width * 0.8 }}
     drawerContent={props => <Drawer {...props} />}
   >
-    <DrawerNavigator.Screen name="Home" component={HomeRoutes} />
+    <DrawerNavigator.Screen name="Customers" component={CustomersRoutes} />
     <DrawerNavigator.Screen name="Profile" component={ProfileRoutes} />
     <DrawerNavigator.Screen
       name="Administration"

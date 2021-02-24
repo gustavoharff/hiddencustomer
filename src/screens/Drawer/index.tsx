@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { DrawerContentComponentProps } from '@react-navigation/drawer';
 
 import {
-  DrawerHomeIcon,
+  DrawerCustomersIcon,
   DrawerAdminIcon,
   DrawerRocketIcon,
   DrawerProfileIcon,
@@ -21,9 +21,9 @@ const Drawer: React.FC<DrawerContentComponentProps> = ({ navigation }) => {
   const items = useMemo(
     () => [
       {
-        title: 'Página inicial',
-        onPress: () => navigation.navigate('Home'),
-        icon: DrawerHomeIcon,
+        title: 'Clientes',
+        onPress: () => navigation.navigate('Customers'),
+        icon: DrawerCustomersIcon,
         canAccess: true,
       },
       {
@@ -56,6 +56,7 @@ const Drawer: React.FC<DrawerContentComponentProps> = ({ navigation }) => {
           email={user.email}
           name={user.name}
           avatar_url={user.avatar_url}
+          navigation={navigation}
         />
 
         <DrawerList items={items} />

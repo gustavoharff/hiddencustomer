@@ -1,4 +1,4 @@
 export * from './DrawerAdminIcon';
-export * from './DrawerHomeIcon';
+export * from './DrawerCustomersIcon';
 export * from './DrawerProfileIcon';
 export * from './DrawerRocketIcon';

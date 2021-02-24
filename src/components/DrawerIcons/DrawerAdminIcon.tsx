@@ -6,7 +6,11 @@ import { COLORS, SPACING } from '../../styles/tokens';
 
 const DrawerAdminIcon: React.FC = () => (
   <View>
-    <Icon name="account-cog" color={COLORS.FONT} size={SPACING.L * 2} />
+    <Icon
+      name="account-cog-outline"
+      color={COLORS.FONT_LIGHT}
+      size={SPACING.L * 2}
+    />
   </View>
 );
 
