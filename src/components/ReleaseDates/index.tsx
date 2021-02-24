@@ -20,20 +20,11 @@ const ReleaseDates: React.FC<ReleaseDatedProps> = ({ release_id }) => {
   const [isAddingDate, setIsAddingDate] = useState(false);
   const [dates, setDates] = useState<ReleaseDate[]>([]);
 
-  useEffect(() => {
-    getRealm().then(realm => {
-      realm.write(() => {
-        const data = realm
-          .objects<ReleaseDate>('ReleaseDate')
-          .filtered(`release_id = '${release_id}'`)
-          .sorted('date', true);
+  const loadApiReleaseDates = useCallback(async () => {
+    if (!release_id) {
+      return;
+    }
 
-        setDates(data as any);
-      });
-    });
-  }, [release_id]);
-
-  const onRefresh = useCallback(async () => {
     const response = await api.get(`/release/dates/${release_id}`);
     setDates(response.data);
 
@@ -52,11 +43,49 @@ const ReleaseDates: React.FC<ReleaseDatedProps> = ({ release_id }) => {
     });
   }, [release_id]);
 
+  const loadLocalReleaseDates = useCallback(async () => {
+    if (!release_id) {
+      return;
+    }
+
+    const realm = await getRealm();
+
+    realm.write(() => {
+      const data = realm
+        .objects<ReleaseDate>('ReleaseDate')
+        .filtered(`release_id == '${release_id}'`)
+        .sorted('date', true);
+
+      const formattedDates = data.map(releaseDate => ({
+        id: releaseDate.id,
+        date: releaseDate.date,
+        release_id: releaseDate.release_id,
+        created_at: releaseDate.created_at,
+        updated_at: releaseDate.updated_at,
+      }));
+
+      setDates(formattedDates);
+    });
+  }, [release_id]);
+
+  useEffect(() => {
+    loadApiReleaseDates().catch(() => {
+      loadLocalReleaseDates();
+    });
+  }, [loadApiReleaseDates, loadLocalReleaseDates, release_id]);
+
+  const onRefresh = useCallback(async () => {
+    loadApiReleaseDates().catch(() => {
+      loadLocalReleaseDates();
+    });
+  }, [loadApiReleaseDates, loadLocalReleaseDates]);
+
   const handleAddDate = useCallback(async () => {
     const response = await api.post('/release/dates', {
       release_id,
       date: date.toISOString(),
     });
+
     setDates(state => [...state, response.data]);
 
     const realm = await getRealm();

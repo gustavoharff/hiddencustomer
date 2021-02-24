@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { TabView, TabBar } from 'react-native-tab-view';
 import { StackScreenProps } from '@react-navigation/stack';
 import { Dimensions } from 'react-native';
 
 import { Release, Customer } from 'types';
 
-import { api } from 'services';
+import { api, getRealm } from 'services';
 
 import { ListHeader, ReleaseDates, ReleaseGroups } from 'components';
 
@@ -14,6 +14,7 @@ import { COLORS } from 'styles';
 type Params = {
   ReleaseDetails: {
     release_id: string;
+    customer_id: string;
   };
 };
 
@@ -22,6 +23,8 @@ type Props = StackScreenProps<Params, 'ReleaseDetails'>;
 const ReleaseDetails: React.FC<Props> = ({ route }) => {
   const [release, setRelease] = useState<Release>({} as Release);
   const [customer, setCustomer] = useState<Customer>({} as Customer);
+  const [loadingRelease, setLoadingRelease] = useState(true);
+  const [loadingCustomer, setLoadingCustomer] = useState(true);
   const [tabIndex, setTabIndex] = useState(0);
 
   const tabRoutes = [
@@ -29,39 +32,99 @@ const ReleaseDetails: React.FC<Props> = ({ route }) => {
     { key: 'dates', title: 'Datas' },
   ];
 
-  useEffect(() => {
-    const { release_id } = route.params;
+  const loadLocalRelease = useCallback(async () => {
+    const realm = await getRealm();
 
-    api.get(`/release/${release_id}`).then(response => {
-      setRelease(response.data);
-    });
-  }, [route]);
+    const data = realm.objectForPrimaryKey<Release>(
+      'Release',
+      route.params.release_id,
+    );
 
-  useEffect(() => {
-    if (!release.customer_id) {
+    if (!data) {
       return;
     }
 
-    api.get(`/customer/${release.customer_id}`).then(response => {
-      setCustomer(response.data);
-    });
-  }, [release.customer_id]);
+    const formattedRelease = {
+      id: data.id,
+      name: data.name,
+      customer_id: data.customer_id,
+      company_id: data.company_id,
+      paid: data.paid,
+      annotations: data.annotations,
+      created_at: data.created_at,
+      updated_at: data.updated_at,
+    };
+
+    setRelease(formattedRelease);
+  }, [route.params.release_id]);
+
+  const loadLocalCustomer = useCallback(async () => {
+    const realm = await getRealm();
+
+    const data = realm.objectForPrimaryKey<Customer>(
+      'Customer',
+      route.params.customer_id,
+    );
+
+    if (!data) {
+      return;
+    }
+
+    const formattedCustomer = {
+      id: data.id,
+      name: data.name,
+      created_at: data.created_at,
+      updated_at: data.updated_at,
+    };
+
+    setCustomer(formattedCustomer);
+  }, [route.params.customer_id]);
+
+  useEffect(() => {
+    loadLocalRelease();
+    const { release_id, customer_id } = route.params;
+
+    api
+      .get(`/release/${release_id}`)
+      .then(response => {
+        setRelease(response.data);
+      })
+      .catch(() => loadLocalRelease())
+      .finally(() => setLoadingRelease(false));
+
+    api
+      .get(`/customer/${customer_id}`)
+      .then(response => {
+        setCustomer(response.data);
+      })
+      .catch(() => loadLocalCustomer())
+      .finally(() => setLoadingCustomer(false));
+  }, [route.params, loadLocalRelease, loadLocalCustomer]);
+
+  const renderScene = useCallback(
+    ({ route: tabRoute }) => {
+      switch (tabRoute.key) {
+        case 'dates':
+          return <ReleaseDates release_id={route.params.release_id} />;
+        case 'groups':
+          return <ReleaseGroups release_id={route.params.release_id} />;
+        default:
+          return null;
+      }
+    },
+    [route.params.release_id],
+  );
 
   return (
     <>
-      <ListHeader title={release.name} description={customer.name} />
+      <ListHeader
+        title={release.name}
+        description={customer.name}
+        loading={loadingRelease || loadingCustomer}
+      />
       <TabView
         navigationState={{ routes: tabRoutes, index: tabIndex }}
-        renderScene={({ route: tabRoute }) => {
-          switch (tabRoute.key) {
-            case 'dates':
-              return <ReleaseDates release_id={release.id} />;
-            case 'groups':
-              return <ReleaseGroups release_id={release.id} />;
-            default:
-              return null;
-          }
-        }}
+        renderScene={renderScene}
         onIndexChange={setTabIndex}
         initialLayout={{ width: Dimensions.get('window').width }}
         renderTabBar={props => (

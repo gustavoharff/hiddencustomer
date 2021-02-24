@@ -16,6 +16,39 @@ const Home: React.FC = () => {
   const { customers, setCustomers } = useCustomers();
   const navigation = useNavigation();
 
+  const loadLocalCustomers = useCallback(async () => {
+    const realm = await getRealm();
+
+    const data = realm.objects<Customer>('Customer').sorted('name', true);
+
+    const formattedCustomers = data.map(customer => ({
+      id: customer.id,
+      name: customer.name,
+      created_at: customer.created_at,
+      updated_at: customer.updated_at,
+    }));
+
+    setCustomers(formattedCustomers);
+  }, [setCustomers]);
+
+  const loadApiCustomers = useCallback(async () => {
+    const response = await api.get('/customers/me');
+    setCustomers(response.data);
+
+    const realm = await getRealm();
+
+    console.log(realm.path);
+
+    realm.write(() => {
+      const data = realm.objects('Customer');
+
+      realm.delete(data);
+      response.data.map((customer: Customer) =>
+        realm.create('Customer', customer),
+      );
+    });
+  }, [setCustomers]);
+
   useEffect(() => {
     setTimeout(() => {
       RNBootSplash.hide({ fade: true });
@@ -23,54 +56,16 @@ const Home: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    api
-      .get('/customers/me')
-      .then(response => {
-        setCustomers(response.data);
-
-        getRealm().then(realm => {
-          console.log(realm.path);
-          realm.write(() => {
-            const data = realm.objects('Customer');
-
-            realm.delete(data);
-            response.data.map((customer: Customer) =>
-              realm.create('Customer', customer),
-            );
-          });
-        });
-      })
-      .catch(async () => {
-        const realm = await getRealm();
-
-        const data = realm.objects<Customer>('Customer').sorted('name', true);
-
-        setCustomers(data as any);
-      });
-  }, [setCustomers]);
+    loadApiCustomers().catch(() => {
+      loadLocalCustomers();
+    });
+  }, [loadApiCustomers, loadLocalCustomers]);
 
   const onRefresh = useCallback(async () => {
-    try {
-      const response = await api.get('/customers/me');
-      setCustomers(response.data);
-
-      const realm = await getRealm();
-
-      realm.write(() => {
-        const data = realm.objects('Customer');
-
-        realm.delete(data);
-        response.data.map((customer: Customer) =>
-          realm.create('Customer', customer),
-        );
-      });
-    } catch {
-      const realm = await getRealm();
-      const data = realm.objects<Customer>('Customer').sorted('name', true);
-
-      setCustomers(data as any);
-    }
-  }, [setCustomers]);
+    loadApiCustomers().catch(() => {
+      loadLocalCustomers();
+    });
+  }, [loadApiCustomers, loadLocalCustomers]);
 
   const { user } = useAuth();
 

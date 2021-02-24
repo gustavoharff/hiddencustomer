@@ -23,18 +23,11 @@ const ReleaseGroups: React.FC<ReleaseGroupsProps> = ({ release_id }) => {
 
   const navigation = useNavigation();
 
-  useEffect(() => {
-    getRealm().then(realm => {
-      realm.write(() => {
-        const data = realm
-          .objects<ReleaseGroup>('ReleaseGroup')
-          .filtered(`release_id = '${release_id}'`);
-        setGroups(data as any);
-      });
-    });
-  }, [release_id, setGroups]);
+  const loadApiGroups = useCallback(async () => {
+    if (!release_id) {
+      return;
+    }
 
-  const onRefresh = useCallback(async () => {
     const response = await api.get(`/release/groups/${release_id}`);
 
     setGroups(response.data);
@@ -52,6 +45,43 @@ const ReleaseGroups: React.FC<ReleaseGroupsProps> = ({ release_id }) => {
       );
     });
   }, [release_id, setGroups]);
+
+  const loadLocalGroups = useCallback(async () => {
+    if (!release_id) {
+      return;
+    }
+
+    const realm = await getRealm();
+
+    realm.write(() => {
+      const data = realm
+        .objects<ReleaseGroup>('ReleaseGroup')
+        .filtered(`release_id == '${release_id}'`);
+
+      const formattedGroups = data.map(group => ({
+        id: group.id,
+        name: group.name,
+        type: group.type,
+        release_id: group.release_id,
+        created_at: group.created_at,
+        updated_at: group.updated_at,
+      }));
+
+      setGroups(formattedGroups);
+    });
+  }, [release_id, setGroups]);
+
+  useEffect(() => {
+    loadApiGroups().catch(() => {
+      loadLocalGroups();
+    });
+  }, [loadApiGroups, loadLocalGroups]);
+
+  const onRefresh = useCallback(async () => {
+    loadApiGroups().catch(() => {
+      loadLocalGroups();
+    });
+  }, [loadApiGroups, loadLocalGroups]);
 
   return (
     <Container>

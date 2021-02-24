@@ -108,6 +108,7 @@ const ReleasesList: React.FC<ReleasesListProps> = ({
               onPress={() => {
                 navigation.navigate('ReleaseDetails', {
                   release_id: release.id,
+                  customer_id: release.customer_id,
                 });
               }}
             >
