@@ -17,6 +17,6 @@ export async function getRealm(): Promise<Realm> {
       ReleaseDateSchema,
       ReleaseGroupSchema,
     ],
-    schemaVersion: 4,
+    schemaVersion: 5,
   });
 }

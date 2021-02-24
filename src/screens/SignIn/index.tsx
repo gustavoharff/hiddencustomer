@@ -65,7 +65,11 @@ const SignIn: React.FC = () => {
           return;
         }
 
-        Alert.alert('Erro', 'Erro na autenticação, verifique seus dados.');
+        if (err.response.status === 402) {
+          Alert.alert('Erro', 'Usuário sem permissão de acesso ao sistema.');
+        } else {
+          Alert.alert('Erro', 'Erro na autenticação, verifique seus dados.');
+        }
       }
     },
     [signIn],

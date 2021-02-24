@@ -7,6 +7,7 @@ class AuthSchema {
       name: 'string',
       email: 'string',
       permission: 'string',
+      active: 'bool',
       token: 'string',
       avatar_url: 'string?',
       created_at: 'string',

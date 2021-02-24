@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import moment from 'moment';
 import produce from 'immer';
 import 'moment/locale/pt-br';
@@ -11,7 +12,7 @@ import { Avatar, EmptyList, DeleteItem } from 'components';
 
 import { User } from 'types';
 
-import { SPACING } from 'styles';
+import { COLORS, SPACING } from 'styles';
 
 import {
   Container,
@@ -124,6 +125,12 @@ const UsersList: React.FC<UsersListProps> = ({
                   <UpdatedAtText />
                 </UpdatedAt>
               </Content>
+              <Icon
+                name={user.active ? 'check' : 'close'}
+                color={user.active ? COLORS.SUCCESS : COLORS.ALERT}
+                size={SPACING.L * 1.5}
+                style={{ marginRight: SPACING.S }}
+              />
             </Container>
           </Swipeable>
         )}
