@@ -13,7 +13,7 @@ import { api, getRealm } from 'services';
 
 import { RectButton } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
-import { Container, Name, UpdatedAt, UpdatedAtText } from './styles';
+import { Container, Name, Content, UpdatedAt, UpdatedAtText } from './styles';
 
 type CustomersListProps = {
   customers: Customer[];
@@ -92,40 +92,42 @@ const CustomersList: React.FC<CustomersListProps> = ({
         keyExtractor={(item, index) => `${item.id} - ${index}`}
         data={customers}
         renderItem={({ item: customer, index }) => (
-          <Swipeable
+          <Container>
+            <Swipeable
             ref={ref => (row[index] = ref)} // eslint-disable-line
-            friction={1.5}
-            rightThreshold={30}
-            renderRightActions={() => <DeleteItem onPress={onDeleteItem} />}
-            activeOffsetX={-1}
-            activeOffsetY={500}
-            onSwipeableOpen={() => {
-              closeRow(index);
-              setSelectedCustomer(customer);
-            }}
-          >
-            <RectButton
-              onPress={() => {
-                navigation.navigate('CustomerDetails', {
-                  customer_id: customer.id,
-                });
+              friction={1.5}
+              rightThreshold={30}
+              renderRightActions={() => <DeleteItem onPress={onDeleteItem} />}
+              activeOffsetX={-1}
+              activeOffsetY={500}
+              onSwipeableOpen={() => {
+                closeRow(index);
+                setSelectedCustomer(customer);
               }}
             >
-              <Container>
-                <Name>{customer.name}</Name>
-                <UpdatedAt>
-                  <UpdatedAtText>
-                    Atualizado{' '}
-                    {moment(customer.updated_at)
-                      .utc(true)
-                      .locale('pt-br')
-                      .fromNow()}
-                  </UpdatedAtText>
-                  <UpdatedAtText />
-                </UpdatedAt>
-              </Container>
-            </RectButton>
-          </Swipeable>
+              <RectButton
+                onPress={() => {
+                  navigation.navigate('CustomerDetails', {
+                    customer_id: customer.id,
+                  });
+                }}
+              >
+                <Content>
+                  <Name>{customer.name}</Name>
+                  <UpdatedAt>
+                    <UpdatedAtText>
+                      Atualizado{' '}
+                      {moment(customer.updated_at)
+                        .utc(true)
+                        .locale('pt-br')
+                        .fromNow()}
+                    </UpdatedAtText>
+                    <UpdatedAtText />
+                  </UpdatedAt>
+                </Content>
+              </RectButton>
+            </Swipeable>
+          </Container>
         )}
       />
     </View>

@@ -19,14 +19,13 @@ const CustomersRoutes: React.FC = () => (
     mode="card"
     screenOptions={({ navigation }) => ({
       cardStyle: {
-        backgroundColor: COLORS.BACKGROUND,
+        backgroundColor: COLORS.BACKGROUND_DARK,
       },
       headerTitle: () => <Logo size={SPACING.XXL} />,
       headerTitleAlign: 'center',
       headerLeft: () => (
         <MenuHeaderIcon onPress={() => navigation.toggleDrawer()} />
       ),
-      headerTintColor: COLORS.FONT,
       headerStyle: {
         backgroundColor: COLORS.BACKGROUND_DARK,
       },

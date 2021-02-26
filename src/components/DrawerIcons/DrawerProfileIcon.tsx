@@ -8,7 +8,7 @@ const DrawerProfileIcon: React.FC = () => (
   <View>
     <Icon
       name="account-edit-outline"
-      color={COLORS.FONT_LIGHT}
+      color={COLORS.ALERT}
       size={SPACING.L * 2}
     />
   </View>

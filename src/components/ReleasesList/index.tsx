@@ -4,8 +4,7 @@ import { RectButton } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import produce from 'immer';
-import moment from 'moment';
-import 'moment/locale/pt-br';
+
 import { EmptyList, DeleteItem } from 'components';
 
 import { api, getRealm } from 'services';
@@ -14,7 +13,7 @@ import { Release } from 'types';
 
 import { COLORS, SPACING } from 'styles';
 
-import { Container, Name } from './styles';
+import { Container, Content, Name } from './styles';
 
 type ReleasesListProps = {
   releases: Release[];
@@ -93,51 +92,44 @@ const ReleasesList: React.FC<ReleasesListProps> = ({
         keyExtractor={(item, index) => `${item.id} - ${index}`}
         data={releases}
         renderItem={({ item: release, index }) => (
-          <Swipeable
-          ref={ref => (row[index] = ref)} // eslint-disable-line
-            friction={1.5}
-            rightThreshold={30}
-            renderRightActions={() => <DeleteItem onPress={onDeleteItem} />}
-            activeOffsetX={-1}
-            activeOffsetY={500}
-            onSwipeableOpen={() => {
-              closeRow(index);
-              setSelectedRelease(release);
-            }}
-          >
-            <RectButton
-              onPress={() => {
-                navigation.navigate('ReleaseDetails', {
-                  release_id: release.id,
-                  customer_id: release.customer_id,
-                });
+          <Container>
+            <Swipeable
+              ref={ref => (row[index] = ref)} // eslint-disable-line
+              friction={1.5}
+              rightThreshold={30}
+              renderRightActions={() => <DeleteItem onPress={onDeleteItem} />}
+              activeOffsetX={-1}
+              activeOffsetY={500}
+              onSwipeableOpen={() => {
+                closeRow(index);
+                setSelectedRelease(release);
               }}
             >
-              <Container>
-                <Name>{release.name}</Name>
-                <View style={{ marginTop: SPACING.S }}>
-                  <Text
-                    style={{
-                      color: release.paid ? COLORS.SUCCESS : COLORS.ALERT,
-                    }}
-                  >
-                    {release.paid
-                      ? 'Pagamento realizado!'
-                      : 'Pagamento ainda não realizado!'}
-                  </Text>
-                </View>
-                <View style={{ marginTop: SPACING.S }}>
-                  <Text style={{ color: COLORS.FONT_LIGHT }}>
-                    Atualizado{' '}
-                    {moment(release.updated_at)
-                      .utc(true)
-                      .locale('pt-br')
-                      .fromNow()}
-                  </Text>
-                </View>
-              </Container>
-            </RectButton>
-          </Swipeable>
+              <RectButton
+                onPress={() => {
+                  navigation.navigate('ReleaseDetails', {
+                    release_id: release.id,
+                    customer_id: release.customer_id,
+                  });
+                }}
+              >
+                <Content>
+                  <Name>{release.name}</Name>
+                  <View style={{ marginTop: SPACING.S }}>
+                    <Text
+                      style={{
+                        color: release.paid ? COLORS.SUCCESS : COLORS.ALERT,
+                      }}
+                    >
+                      {release.paid
+                        ? 'Pagamento realizado!'
+                        : 'Pagamento ainda não realizado!'}
+                    </Text>
+                  </View>
+                </Content>
+              </RectButton>
+            </Swipeable>
+          </Container>
         )}
       />
     </View>

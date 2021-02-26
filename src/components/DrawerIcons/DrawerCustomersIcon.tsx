@@ -8,7 +8,7 @@ const DrawerCustomersIcon: React.FC = () => (
   <View>
     <Icon
       name="account-group-outline"
-      color={COLORS.FONT_LIGHT}
+      color={COLORS.ALERT}
       size={SPACING.L * 2}
     />
   </View>

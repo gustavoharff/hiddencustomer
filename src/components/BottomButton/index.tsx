@@ -13,7 +13,7 @@ interface ButtonProps extends BaseButtonProperties {
 const BottomButton: React.FC<ButtonProps> = ({ name, ...rest }) => (
   <Container>
     <Button {...rest}>
-      <Icon name={name} color={COLORS.FONT} size={SPACING.L * 2} />
+      <Icon name={name} color={COLORS.ALERT} size={SPACING.XL * 2} />
     </Button>
   </Container>
 );

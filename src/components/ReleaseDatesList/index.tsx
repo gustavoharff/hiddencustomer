@@ -11,7 +11,7 @@ import { api, getRealm } from 'services';
 
 import { ReleaseDate } from 'types';
 
-import { Container, Date } from './styles';
+import { Container, Content, Date } from './styles';
 
 type ReleaseDatesListProps = {
   dates: ReleaseDate[];
@@ -36,8 +36,8 @@ const ReleaseDatesList: React.FC<ReleaseDatesListProps> = ({
   const handleDelete = useCallback(async () => {
     try {
       await api.delete(`/release/dates/${selectedDate.id}`);
-      setDates(
-        produce(dates, drafts =>
+      setDates(state =>
+        produce(state, drafts =>
           drafts.filter(draft => draft.id !== selectedDate.id),
         ),
       );
@@ -52,7 +52,7 @@ const ReleaseDatesList: React.FC<ReleaseDatesListProps> = ({
       prevOpenedRow.close();
       await onRefresh();
     }
-  }, [dates, setDates, selectedDate.id, prevOpenedRow, onRefresh]);
+  }, [setDates, selectedDate.id, prevOpenedRow, onRefresh]);
 
   const onDeleteItem = useCallback(async () => {
     Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
@@ -95,31 +95,26 @@ const ReleaseDatesList: React.FC<ReleaseDatesListProps> = ({
         keyExtractor={(item, index) => `${item.id} - ${index}`}
         data={dates}
         renderItem={({ item: date, index }) => (
-          <Swipeable
+          <Container>
+            <Swipeable
             ref={ref => (row[index] = ref)} // eslint-disable-line
-            friction={1.5}
-            rightThreshold={30}
-            renderRightActions={() => (
-              <DeleteItem
-                onPress={() => {
-                  setSelectedDate(date);
-                  onDeleteItem();
-                }}
-              />
-            )}
-            activeOffsetX={-1}
-            activeOffsetY={500}
-            onSwipeableOpen={() => {
-              closeRow(index);
-              setSelectedDate(date);
-            }}
-          >
-            <Container>
-              <Date past={moment(date.date).isSameOrBefore()}>
-                {moment(date.date).locale('pt-br').format('LLL')}
-              </Date>
-            </Container>
-          </Swipeable>
+              friction={1.5}
+              rightThreshold={30}
+              renderRightActions={() => <DeleteItem onPress={onDeleteItem} />}
+              activeOffsetX={-1}
+              activeOffsetY={500}
+              onSwipeableOpen={() => {
+                closeRow(index);
+                setSelectedDate(date);
+              }}
+            >
+              <Content>
+                <Date past={moment(date.date).isSameOrBefore()}>
+                  {moment(date.date).locale('pt-br').format('LLL')}
+                </Date>
+              </Content>
+            </Swipeable>
+          </Container>
         )}
       />
     </View>

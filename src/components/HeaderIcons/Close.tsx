@@ -12,7 +12,7 @@ type Props = {
 const CloseHeaderIcon: React.FC<Props> = ({ onPress }) => (
   <View style={{ marginLeft: SPACING.S }}>
     <TouchableOpacity onPress={onPress}>
-      <Icon name="close" color={COLORS.FONT} size={SPACING.L * 2} />
+      <Icon name="close" color={COLORS.WHITE} size={SPACING.L * 2} />
     </TouchableOpacity>
   </View>
 );

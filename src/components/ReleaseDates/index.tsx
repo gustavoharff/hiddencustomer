@@ -77,7 +77,7 @@ const ReleaseDates: React.FC<ReleaseDatedProps> = ({ release_id }) => {
   }, [loadApiReleaseDates, loadLocalReleaseDates, release_id]);
 
   const onRefresh = useCallback(async () => {
-    loadApiReleaseDates().catch(() => {
+    await loadApiReleaseDates().catch(() => {
       loadLocalReleaseDates();
     });
   }, [loadApiReleaseDates, loadLocalReleaseDates]);

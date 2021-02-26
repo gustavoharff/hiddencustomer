@@ -26,7 +26,7 @@ export const Container = styled(RectButton)<ContainerProps>`
 `;
 
 export const ButtonText = styled.Text<ButtonTextProps>`
-  color: ${props => props.textColor || COLORS.BACKGROUND_DARK};
+  color: ${props => props.textColor || COLORS.BACKGROUND};
   font-family: 'Arial';
   font-weight: bold;
 `;

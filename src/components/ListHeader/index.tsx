@@ -1,7 +1,7 @@
 import React from 'react';
 import { ActivityIndicator } from 'react-native';
 
-import { SPACING } from 'styles';
+import { COLORS, SPACING } from 'styles';
 
 import { Header, Content, Title, Description } from './styles';
 
@@ -19,7 +19,7 @@ const ListHeader: React.FC<ListHeaderProps> = ({
   <Header>
     <Content>
       {loading ? (
-        <ActivityIndicator size={SPACING.XL * 3} />
+        <ActivityIndicator size={SPACING.XL * 3} color={COLORS.WHITE} />
       ) : (
         <>
           <Title>{title}</Title>

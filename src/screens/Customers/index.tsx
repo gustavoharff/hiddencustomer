@@ -1,7 +1,5 @@
 import React, { useCallback, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import RNBootSplash from 'react-native-bootsplash';
-
 import { BottomButton, CustomersList, ListHeader } from 'components';
 
 import { api, getRealm } from 'services';
@@ -45,12 +43,6 @@ const Customers: React.FC = () => {
       );
     });
   }, [setCustomers]);
-
-  useEffect(() => {
-    setTimeout(() => {
-      RNBootSplash.hide({ fade: true });
-    }, 300);
-  }, []);
 
   useEffect(() => {
     loadApiCustomers().catch(() => {

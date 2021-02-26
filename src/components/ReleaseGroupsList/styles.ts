@@ -3,13 +3,17 @@ import styled from 'styled-components/native';
 import { COLORS, SPACING } from 'styles';
 
 export const Container = styled.View`
+  padding: ${SPACING.S}px ${SPACING.M}px;
+`;
+
+export const Content = styled.View`
   padding: ${SPACING.M}px;
+  background: ${COLORS.BACKGROUND};
+  border: 1px solid ${COLORS.FONT_LIGHTEST};
+  border-radius: ${SPACING.M / 2}px;
   flex-direction: row;
-  align-items: center;
   justify-content: space-between;
-  background: ${COLORS.BACKGROUND_LIGHT};
-  border-bottom-width: 1px;
-  border-color: ${COLORS.DARKEN_15};
+  align-items: center;
 `;
 
 export const Name = styled.Text`

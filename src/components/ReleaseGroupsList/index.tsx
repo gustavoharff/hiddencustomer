@@ -13,7 +13,7 @@ import { ReleaseGroup } from 'types';
 import { SPACING } from 'styles';
 
 import { useGroups } from 'hooks';
-import { Container, Name } from './styles';
+import { Container, Content, Name } from './styles';
 
 type ReleaseGroupsListProps = {
   groups: ReleaseGroup[];
@@ -99,31 +99,41 @@ const ReleaseGroupsList: React.FC<ReleaseGroupsListProps> = ({
         keyExtractor={(item, index) => `${item.id} - ${index}`}
         data={groups}
         renderItem={({ item: group, index }) => (
-          <Swipeable
+          <Container>
+            <Swipeable
             ref={ref => (row[index] = ref)} // eslint-disable-line
-            friction={1.5}
-            rightThreshold={30}
-            renderRightActions={() => <DeleteItem onPress={onDeleteItem} />}
-            activeOffsetX={-1}
-            activeOffsetY={500}
-            onSwipeableOpen={() => {
-              closeRow(index);
-              setSelectedGroup(group);
-            }}
-          >
-            <Container>
-              <Name>{group.name}</Name>
-              {group.type === 'discord' && (
-                <Icon name="discord" color="#7289d9" size={SPACING.L * 1.5} />
-              )}
-              {group.type === 'whatsapp' && (
-                <Icon name="whatsapp" color="#25D366" size={SPACING.L * 1.5} />
-              )}
-              {group.type === 'telegram' && (
-                <Icon name="telegram" color="#0088cc" size={SPACING.L * 1.5} />
-              )}
-            </Container>
-          </Swipeable>
+              friction={1.5}
+              rightThreshold={30}
+              renderRightActions={() => <DeleteItem onPress={onDeleteItem} />}
+              activeOffsetX={-1}
+              activeOffsetY={500}
+              onSwipeableOpen={() => {
+                closeRow(index);
+                setSelectedGroup(group);
+              }}
+            >
+              <Content>
+                <Name>{group.name}</Name>
+                {group.type === 'discord' && (
+                  <Icon name="discord" color="#7289d9" size={SPACING.L * 1.5} />
+                )}
+                {group.type === 'whatsapp' && (
+                  <Icon
+                    name="whatsapp"
+                    color="#25D366"
+                    size={SPACING.L * 1.5}
+                  />
+                )}
+                {group.type === 'telegram' && (
+                  <Icon
+                    name="telegram"
+                    color="#0088cc"
+                    size={SPACING.L * 1.5}
+                  />
+                )}
+              </Content>
+            </Swipeable>
+          </Container>
         )}
       />
     </View>

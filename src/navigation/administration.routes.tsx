@@ -1,10 +1,7 @@
 import React from 'react';
-import { View } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import { Logo } from 'components';
+import { Logo, MenuHeaderIcon } from 'components';
 
 import { COLORS, SPACING } from 'styles';
 
@@ -16,16 +13,12 @@ const AdministrationRoutes: React.FC = () => (
   <AdministrationNavigator.Navigator
     screenOptions={({ navigation }) => ({
       cardStyle: {
-        backgroundColor: COLORS.BACKGROUND,
+        backgroundColor: COLORS.BACKGROUND_DARK,
       },
       headerTitle: () => <Logo size={SPACING.XXL} />,
       headerTitleAlign: 'center',
       headerLeft: () => (
-        <View style={{ marginLeft: SPACING.S }}>
-          <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
-            <Icon name="menu" color={COLORS.FONT} size={SPACING.L * 2} />
-          </TouchableOpacity>
-        </View>
+        <MenuHeaderIcon onPress={() => navigation.toggleDrawer()} />
       ),
       headerTintColor: COLORS.FONT,
       headerStyle: {

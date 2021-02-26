@@ -8,6 +8,7 @@ export const Container = styled(RectButton)`
   align-items: center;
   justify-content: center;
   background: ${COLORS.ALERT};
+  border-radius: ${SPACING.M / 2}px;
 `;
 
 export const Text = styled.Text`

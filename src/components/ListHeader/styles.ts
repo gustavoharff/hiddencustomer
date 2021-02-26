@@ -8,7 +8,7 @@ export const Header = styled.View`
   justify-content: center;
   align-items: center;
 
-  background: ${COLORS.DARKEN_10};
+  /* background: ${COLORS.DARKEN_10}; */
 `;
 
 export const Content = styled.View`

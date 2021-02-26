@@ -1,5 +1,6 @@
 import { useNavigation } from '@react-navigation/native';
 import React, { useCallback, useEffect } from 'react';
+import RNBootSplash from 'react-native-bootsplash';
 
 import { BottomButton, ReleasesList, ListHeader } from 'components';
 
@@ -15,6 +16,12 @@ const Releases: React.FC = () => {
   const { user } = useAuth();
   const { releases, setReleases } = useReleases();
   const navigation = useNavigation();
+
+  useEffect(() => {
+    setTimeout(() => {
+      RNBootSplash.hide({ fade: true });
+    }, 300);
+  }, []);
 
   const loadApiReleases = useCallback(async () => {
     const response = await api.get('/releases');

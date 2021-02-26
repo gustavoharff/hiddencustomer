@@ -6,11 +6,7 @@ import { COLORS, SPACING } from '../../styles/tokens';
 
 const DrawerRocketIcon: React.FC = () => (
   <View>
-    <Icon
-      name="rocket-outline"
-      color={COLORS.FONT_LIGHT}
-      size={SPACING.L * 2}
-    />
+    <Icon name="rocket-outline" color={COLORS.ALERT} size={SPACING.L * 2} />
   </View>
 );
 

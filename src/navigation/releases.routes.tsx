@@ -1,10 +1,12 @@
 import React from 'react';
-import { View } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
-import { TouchableOpacity } from 'react-native-gesture-handler';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import { BackHeaderIcon, CloseHeaderIcon, Logo } from 'components';
+import {
+  BackHeaderIcon,
+  CloseHeaderIcon,
+  Logo,
+  MenuHeaderIcon,
+} from 'components';
 
 import {
   Releases,
@@ -20,19 +22,16 @@ const ReleasesNavigator = createStackNavigator();
 const ReleasesRoutes: React.FC = () => (
   <ReleasesNavigator.Navigator
     mode="card"
+    initialRouteName="Releases"
     screenOptions={({ navigation }) => ({
       cardStyle: {
-        backgroundColor: 'transparent',
+        backgroundColor: COLORS.BACKGROUND_DARK,
       },
       animationEnabled: true,
       headerTitle: () => <Logo size={SPACING.XXL} />,
       headerTitleAlign: 'center',
       headerLeft: () => (
-        <View style={{ marginLeft: SPACING.S }}>
-          <TouchableOpacity onPress={() => navigation.toggleDrawer()}>
-            <Icon name="menu" color={COLORS.FONT} size={SPACING.L * 2} />
-          </TouchableOpacity>
-        </View>
+        <MenuHeaderIcon onPress={() => navigation.toggleDrawer()} />
       ),
       headerTintColor: COLORS.FONT,
       headerStyle: {
@@ -40,22 +39,11 @@ const ReleasesRoutes: React.FC = () => (
       },
     })}
   >
-    <ReleasesNavigator.Screen
-      name="Releases"
-      component={Releases}
-      options={() => ({
-        cardStyle: {
-          backgroundColor: COLORS.BACKGROUND,
-        },
-      })}
-    />
+    <ReleasesNavigator.Screen name="Releases" component={Releases} />
     <ReleasesNavigator.Screen
       name="ReleaseForm"
       component={ReleaseForm}
       options={({ navigation }) => ({
-        cardStyle: {
-          backgroundColor: COLORS.BACKGROUND,
-        },
         headerLeft: () => (
           <BackHeaderIcon onPress={() => navigation.navigate('Releases')} />
         ),
@@ -65,9 +53,6 @@ const ReleasesRoutes: React.FC = () => (
       name="ReleaseDetails"
       component={ReleaseDetails}
       options={({ navigation }) => ({
-        cardStyle: {
-          backgroundColor: COLORS.BACKGROUND,
-        },
         headerLeft: () => (
           <BackHeaderIcon onPress={() => navigation.goBack()} />
         ),
@@ -78,9 +63,6 @@ const ReleasesRoutes: React.FC = () => (
       name="ReleaseGroupForm"
       component={ReleaseGroupForm}
       options={({ navigation }) => ({
-        cardStyle: {
-          backgroundColor: COLORS.BACKGROUND,
-        },
         headerLeft: () => (
           <CloseHeaderIcon
             onPress={() => navigation.navigate('ReleaseDetails')}

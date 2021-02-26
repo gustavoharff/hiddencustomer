@@ -2,22 +2,25 @@ import styled from 'styled-components/native';
 
 import { COLORS, SPACING } from 'styles';
 
-export const Container = styled.View`
-  flex-direction: row;
-  flex: 1;
-  align-items: center;
-  justify-content: center;
-  padding: ${SPACING.M}px;
-  background: ${COLORS.BACKGROUND_LIGHT};
-  border-bottom-width: 1px;
-  border-color: ${COLORS.DARKEN_15};
-`;
-
-export const Content = styled.View`
+export const UserInfo = styled.View`
   flex: 1;
   margin-left: 15px;
   text-align: left;
   justify-content: center;
+`;
+
+export const Container = styled.View`
+  padding: ${SPACING.S}px ${SPACING.M}px;
+`;
+
+export const Content = styled.View`
+  padding: ${SPACING.M}px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  background: ${COLORS.BACKGROUND};
+  border: 1px solid ${COLORS.FONT_LIGHTEST};
+  border-radius: ${SPACING.M / 2}px;
 `;
 
 export const Name = styled.Text`
@@ -28,14 +31,4 @@ export const Email = styled.Text`
   color: ${COLORS.FONT_LIGHT};
   font-size: 13px;
   margin-top: 7px;
-`;
-
-export const UpdatedAt = styled.View`
-  margin-top: 7px;
-  flex-direction: row;
-  justify-content: space-between;
-`;
-
-export const UpdatedAtText = styled.Text`
-  color: ${COLORS.FONT_LIGHTEST};
 `;

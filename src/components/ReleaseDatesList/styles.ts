@@ -7,12 +7,15 @@ type DateProps = {
 };
 
 export const Container = styled.View`
-  padding: ${SPACING.M}px;
-  background: ${COLORS.BACKGROUND_LIGHT};
-  border-bottom-width: 1px;
-  border-color: ${COLORS.DARKEN_15};
+  padding: ${SPACING.S}px ${SPACING.M}px;
 `;
 
+export const Content = styled.View`
+  padding: ${SPACING.M}px;
+  background: ${COLORS.BACKGROUND};
+  border: 1px solid ${COLORS.FONT_LIGHTEST};
+  border-radius: ${SPACING.M / 2}px;
+`;
 export const Date = styled.Text<DateProps>`
   color: ${props => (props.past ? COLORS.FONT_LIGHT : COLORS.FONT)};
   font-size: 15px;

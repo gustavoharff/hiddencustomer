@@ -14,14 +14,7 @@ import { User } from 'types';
 
 import { COLORS, SPACING } from 'styles';
 
-import {
-  Container,
-  UpdatedAt,
-  Name,
-  Email,
-  UpdatedAtText,
-  Content,
-} from './styles';
+import { Container, Name, Email, UserInfo, Content } from './styles';
 
 type UsersListProps = {
   users: User[];
@@ -91,48 +84,40 @@ const UsersList: React.FC<UsersListProps> = ({
         keyExtractor={(item, index) => `${item.id} - ${index}`}
         data={users}
         renderItem={({ item: user, index }) => (
-          <Swipeable
+          <Container>
+            <Swipeable
             ref={ref => (row[index] = ref)} // eslint-disable-line
-            friction={1.5}
-            rightThreshold={30}
-            renderRightActions={() => <DeleteItem onPress={onDeleteItem} />}
-            activeOffsetX={-1}
-            activeOffsetY={500}
-            onSwipeableOpen={() => {
-              closeRow(index);
-              setSelectedUser(user);
-            }}
-          >
-            <Container>
-              <Avatar
-                size={SPACING.M * 5}
-                url={
-                  user.avatar_url ||
-                  'https://iupac.org/wp-content/uploads/2018/05/default-avatar.png'
-                }
-              />
+              friction={1.5}
+              rightThreshold={30}
+              renderRightActions={() => <DeleteItem onPress={onDeleteItem} />}
+              activeOffsetX={-1}
+              activeOffsetY={500}
+              onSwipeableOpen={() => {
+                closeRow(index);
+                setSelectedUser(user);
+              }}
+            >
               <Content>
-                <Name>{user.name}</Name>
-                <Email>{user.email}</Email>
-                <UpdatedAt>
-                  <UpdatedAtText>
-                    Atualizado{' '}
-                    {moment(user.updated_at)
-                      .utc(true)
-                      .locale('pt-br')
-                      .fromNow()}
-                  </UpdatedAtText>
-                  <UpdatedAtText />
-                </UpdatedAt>
+                <Avatar
+                  size={SPACING.M * 5}
+                  url={
+                    user.avatar_url ||
+                    'https://iupac.org/wp-content/uploads/2018/05/default-avatar.png'
+                  }
+                />
+                <UserInfo>
+                  <Name>{user.name}</Name>
+                  <Email>{user.email}</Email>
+                </UserInfo>
+                <Icon
+                  name={user.active ? 'check' : 'close'}
+                  color={user.active ? COLORS.SUCCESS : COLORS.ALERT}
+                  size={SPACING.L * 1.5}
+                  style={{ marginRight: SPACING.S }}
+                />
               </Content>
-              <Icon
-                name={user.active ? 'check' : 'close'}
-                color={user.active ? COLORS.SUCCESS : COLORS.ALERT}
-                size={SPACING.L * 1.5}
-                style={{ marginRight: SPACING.S }}
-              />
-            </Container>
-          </Swipeable>
+            </Swipeable>
+          </Container>
         )}
       />
     </View>
