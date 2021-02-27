@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Platform,
   KeyboardAvoidingView,
@@ -24,7 +24,7 @@ import {
   getStatusBarHeight,
 } from 'react-native-iphone-x-helper';
 
-import { Container, Unform } from './styles';
+import { Container, Unform, FieldDescription } from './styles';
 
 const ReleaseForm: React.FC = () => {
   const formRef = useRef<FormHandles>(null);
@@ -33,11 +33,15 @@ const ReleaseForm: React.FC = () => {
   const navigation = useNavigation();
 
   const { setReleases } = useReleases();
-  const { customers } = useCustomers();
+  const { customers, loadApiCustomers, loadLocalCustomers } = useCustomers();
 
   const onPickerChange = useCallback(value => {
     setSelectedValue(value);
   }, []);
+
+  useEffect(() => {
+    loadApiCustomers().catch(() => loadLocalCustomers());
+  }, [loadApiCustomers, loadLocalCustomers]);
 
   const handleSubmit = useCallback(
     async data => {
@@ -61,7 +65,9 @@ const ReleaseForm: React.FC = () => {
           customer_id: selectedValue,
         });
 
-        setReleases(state => [response.data, ...state]);
+        const customer = customers.find(c => c.id === selectedValue);
+
+        setReleases(state => [{ ...response.data, customer }, ...state]);
 
         const realm = await getRealm();
 
@@ -79,7 +85,7 @@ const ReleaseForm: React.FC = () => {
         setLoadingButton(false);
       }
     },
-    [navigation, setReleases, selectedValue],
+    [navigation, setReleases, selectedValue, customers],
   );
 
   return (
@@ -97,27 +103,26 @@ const ReleaseForm: React.FC = () => {
       >
         <Container>
           <View style={{ width: '100%' }}>
-            <ListHeader
-              title="Cadastrar lançamento"
-              description="Digite o nome do lançamento:"
-            />
+            <ListHeader title="Registrar lançamento" />
 
             <Unform ref={formRef} onSubmit={handleSubmit}>
+              <FieldDescription>Informe o nome do lançamento:</FieldDescription>
               <Input
                 name="name"
                 placeholder="Nome"
                 placeholderTextColor={COLORS.FONT_LIGHT}
-                returnKeyType="send"
-                onSubmitEditing={() => formRef.current?.submitForm()}
+                returnKeyType="default"
               />
             </Unform>
+
+            <FieldDescription>Relacione o cliente:</FieldDescription>
             <Picker
               mode="dialog"
               selectedValue={selectedValue}
               onValueChange={onPickerChange}
               style={{
                 color: COLORS.FONT,
-                width: '100%',
+                marginHorizontal: SPACING.L,
               }}
               dropdownIconColor={COLORS.FONT}
             >
@@ -125,7 +130,7 @@ const ReleaseForm: React.FC = () => {
                 color={
                   Platform.OS === 'ios' ? COLORS.FONT : COLORS.BACKGROUND_DARK
                 }
-                label="Selecione o cliente..."
+                label="Selecionar..."
                 value={undefined}
               />
               {customers.map(customer => (

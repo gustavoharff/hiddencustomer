@@ -15,5 +15,11 @@ export const Content = styled.View`
 
 export const Name = styled.Text`
   color: ${COLORS.FONT};
+  font-weight: 500;
   font-size: 15px;
+`;
+export const Customer = styled.Text`
+  color: ${COLORS.FONT_LIGHT};
+  font-size: 15px;
+  margin-top: ${SPACING.S}px;
 `;

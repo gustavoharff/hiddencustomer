@@ -19,7 +19,7 @@ const DrawerNavigation: React.FC = () => (
     drawerType="slide"
     overlayColor="rgba(0, 0, 0, 0.3)"
     drawerStyle={{ width: width * 0.8 }}
-    drawerContent={props => <Drawer {...props} />}
+    drawerContent={props => <Drawer {...props} activeBackgroundColor="#fff" />}
   >
     <DrawerNavigator.Screen name="Releases" component={ReleasesRoutes} />
     <DrawerNavigator.Screen name="Customers" component={CustomersRoutes} />

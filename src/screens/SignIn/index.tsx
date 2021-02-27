@@ -4,12 +4,12 @@ import {
   KeyboardAvoidingView,
   Platform,
   TextInput,
+  ScrollView,
   View,
 } from 'react-native';
 import RNBootSplash from 'react-native-bootsplash';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
-import { ScrollView } from 'react-native-gesture-handler';
 
 import { Button, Input, Logo } from 'components';
 

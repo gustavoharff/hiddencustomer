@@ -5,24 +5,16 @@ import { COLORS, SPACING } from 'styles';
 
 export const Container = styled.View`
   flex: 1;
-  padding: 10px;
-
   justify-content: space-between;
 `;
 
-export const Title = styled.Text`
-  padding: 0 ${SPACING.L}px;
-  color: ${COLORS.FONT};
-  font-size: 20px;
+export const FieldDescription = styled.Text`
+  width: 100%;
+  color: ${COLORS.FONT_LIGHT};
+  font-size: 16px;
   font-weight: 600;
-`;
-
-export const Text = styled.Text`
-  color: ${COLORS.FONT};
-  padding: 0 ${SPACING.L}px;
-  font-size: 15px;
-  font-weight: normal;
-  margin-top: 10px;
+  padding: ${SPACING.L}px ${SPACING.L}px 0 ${SPACING.L}px;
+  text-align: left;
 `;
 
 export const Unform = styled(Form)`

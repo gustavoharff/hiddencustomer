@@ -12,7 +12,7 @@ type Props = {
 const BackHeaderIcon: React.FC<Props> = ({ onPress }) => (
   <View style={{ marginLeft: SPACING.S }}>
     <TouchableOpacity onPress={onPress}>
-      <Icon name="arrow-left" color={COLORS.WHITE} size={SPACING.L * 2} />
+      <Icon name="arrow-left" color={COLORS.ALERT} size={SPACING.L * 2} />
     </TouchableOpacity>
   </View>
 );

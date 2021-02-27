@@ -13,7 +13,7 @@ import { Release } from 'types';
 
 import { COLORS, SPACING } from 'styles';
 
-import { Container, Content, Name } from './styles';
+import { Container, Content, Name, Customer } from './styles';
 
 type ReleasesListProps = {
   releases: Release[];
@@ -87,6 +87,7 @@ const ReleasesList: React.FC<ReleasesListProps> = ({
             tintColor="rgba(255,255,255,0.75)"
             refreshing={refreshing}
             onRefresh={handleRefresh}
+            colors={[COLORS.ALERT]}
           />
         }
         keyExtractor={(item, index) => `${item.id} - ${index}`}
@@ -115,6 +116,9 @@ const ReleasesList: React.FC<ReleasesListProps> = ({
               >
                 <Content>
                   <Name>{release.name}</Name>
+                  {release.customer?.name && (
+                    <Customer>{release.customer.name}</Customer>
+                  )}
                   <View style={{ marginTop: SPACING.S }}>
                     <Text
                       style={{

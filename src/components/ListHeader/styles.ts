@@ -7,8 +7,6 @@ export const Header = styled.View`
   padding: 20px 10px;
   justify-content: center;
   align-items: center;
-
-  /* background: ${COLORS.DARKEN_10}; */
 `;
 
 export const Content = styled.View`

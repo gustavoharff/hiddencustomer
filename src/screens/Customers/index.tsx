@@ -2,47 +2,18 @@ import React, { useCallback, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { BottomButton, CustomersList, ListHeader } from 'components';
 
-import { api, getRealm } from 'services';
-
-import { Customer } from 'types';
-
 import { useCustomers, useAuth } from 'hooks';
 
 import { Container } from './styles';
 
 const Customers: React.FC = () => {
-  const { customers, setCustomers } = useCustomers();
+  const {
+    customers,
+    setCustomers,
+    loadApiCustomers,
+    loadLocalCustomers,
+  } = useCustomers();
   const navigation = useNavigation();
-
-  const loadLocalCustomers = useCallback(async () => {
-    const realm = await getRealm();
-
-    const data = realm.objects<Customer>('Customer').sorted('name', true);
-
-    const formattedCustomers = data.map(customer => ({
-      id: customer.id,
-      name: customer.name,
-      created_at: customer.created_at,
-      updated_at: customer.updated_at,
-    }));
-
-    setCustomers(formattedCustomers);
-  }, [setCustomers]);
-
-  const loadApiCustomers = useCallback(async () => {
-    const response = await api.get('/customers/me');
-    setCustomers(response.data);
-
-    const realm = await getRealm();
-    realm.write(() => {
-      const data = realm.objects('Customer');
-
-      realm.delete(data);
-      response.data.map((customer: Customer) =>
-        realm.create('Customer', customer),
-      );
-    });
-  }, [setCustomers]);
 
   useEffect(() => {
     loadApiCustomers().catch(() => {

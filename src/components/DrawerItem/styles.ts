@@ -10,7 +10,7 @@ export const Container = styled.View`
 `;
 
 export const Title = styled.Text`
-  color: ${COLORS.FONT};
+  color: ${COLORS.FONT_LIGHT};
 `;
 
 export const Content = styled.View`

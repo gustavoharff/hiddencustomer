@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-import { Input, Button } from 'components';
+import { Input, Button, ListHeader } from 'components';
 
 import { api, getRealm } from 'services';
 
@@ -22,7 +22,7 @@ import { useCustomers } from 'hooks';
 
 import { COLORS, SPACING } from 'styles';
 
-import { Container, Title, Text, Unform } from './styles';
+import { Container, FieldDescription, Unform } from './styles';
 
 const CustomerForm: React.FC = () => {
   const [loadingButton, setLoadingButton] = useState(false);
@@ -83,10 +83,10 @@ const CustomerForm: React.FC = () => {
       >
         <Container>
           <View>
-            <Title>Adicionar cliente</Title>
-            <Text>Adicione um cliente à sua lista de clientes.</Text>
+            <ListHeader title="Registrar cliente" />
 
             <Unform ref={formRef} onSubmit={handleSubmit}>
+              <FieldDescription>Informe o nome do cliente:</FieldDescription>
               <Input
                 name="name"
                 placeholder="Nome do cliente"
