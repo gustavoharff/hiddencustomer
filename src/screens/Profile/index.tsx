@@ -8,7 +8,12 @@ import {
 } from 'react-native';
 import { TabBar, TabView } from 'react-native-tab-view';
 
-import { Avatar, ListHeader, Logo, ChangeUserPassword } from 'components';
+import {
+  Avatar,
+  ListHeader,
+  ChangeUserPassword,
+  ChangeUserInfo,
+} from 'components';
 
 import { COLORS, SPACING } from 'styles';
 
@@ -25,7 +30,7 @@ const Profile: React.FC = () => {
   const renderScene = useCallback(({ route: tabRoute }) => {
     switch (tabRoute.key) {
       case 'data':
-        return <Logo size={20} />;
+        return <ChangeUserInfo />;
       case 'change-password':
         return <ChangeUserPassword />;
       default:

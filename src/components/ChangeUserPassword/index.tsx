@@ -46,7 +46,7 @@ const ChangeUserPassword: React.FC = () => {
 
         await schema.validate(data, { abortEarly: false });
 
-        const response = await api.put('/me', data);
+        const response = await api.put('/me/password', data);
 
         updateUser(response.data);
 
