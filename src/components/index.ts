@@ -3,6 +3,7 @@ export * from './BottomButton';
 export * from './Button';
 export * from './CustomerReleaseList';
 export * from './CustomersList';
+export * from './ChangeUserPassword';
 export * from './DateTimeInput';
 export * from './DeleteItem';
 export * from './DrawerIcons';

@@ -13,8 +13,8 @@ export const Container = styled.View<ContainerProps>`
   border-color: ${COLORS.FONT_LIGHT};
   border-style: solid;
   border-radius: ${BODY.M.HEIGHT / 2}px;
-  margin-bottom: ${SPACING.XL}px;
-  margin-top: ${SPACING.XL}px;
+  margin-bottom: ${SPACING.L}px;
+  margin-top: ${SPACING.L}px;
   background: ${COLORS.BACKGROUND};
 
   ${props =>
