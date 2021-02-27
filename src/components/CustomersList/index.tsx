@@ -13,6 +13,7 @@ import { api, getRealm } from 'services';
 
 import { RectButton } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
+import { COLORS } from 'styles';
 import { Container, Name, Content, UpdatedAt, UpdatedAtText } from './styles';
 
 type CustomersListProps = {
@@ -87,6 +88,7 @@ const CustomersList: React.FC<CustomersListProps> = ({
             tintColor="rgba(255,255,255,0.75)"
             refreshing={refreshing}
             onRefresh={handleRefresh}
+            colors={[COLORS.ALERT]}
           />
         }
         keyExtractor={(item, index) => `${item.id} - ${index}`}

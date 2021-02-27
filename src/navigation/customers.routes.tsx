@@ -28,6 +28,8 @@ const CustomersRoutes: React.FC = () => (
       ),
       headerStyle: {
         backgroundColor: COLORS.BACKGROUND_DARK,
+        shadowColor: 'transparent',
+        elevation: 0,
       },
     })}
   >

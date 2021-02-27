@@ -23,6 +23,8 @@ const AdministrationRoutes: React.FC = () => (
       headerTintColor: COLORS.FONT,
       headerStyle: {
         backgroundColor: COLORS.BACKGROUND_DARK,
+        shadowColor: 'transparent',
+        elevation: 0,
       },
     })}
   >

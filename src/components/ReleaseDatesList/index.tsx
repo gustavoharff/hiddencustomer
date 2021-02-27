@@ -11,6 +11,7 @@ import { api, getRealm } from 'services';
 
 import { ReleaseDate } from 'types';
 
+import { COLORS } from 'styles';
 import { Container, Content, Date } from './styles';
 
 type ReleaseDatesListProps = {
@@ -90,6 +91,7 @@ const ReleaseDatesList: React.FC<ReleaseDatesListProps> = ({
             tintColor="rgba(255,255,255,0.75)"
             refreshing={refreshing}
             onRefresh={handleRefresh}
+            colors={[COLORS.ALERT]}
           />
         }
         keyExtractor={(item, index) => `${item.id} - ${index}`}
@@ -108,10 +110,8 @@ const ReleaseDatesList: React.FC<ReleaseDatesListProps> = ({
                 setSelectedDate(date);
               }}
             >
-              <Content>
-                <Date past={moment(date.date).isSameOrBefore()}>
-                  {moment(date.date).locale('pt-br').format('LLL')}
-                </Date>
+              <Content past={moment(date.date).isSameOrBefore()}>
+                <Date>{moment(date.date).locale('pt-br').format('LLL')}</Date>
               </Content>
             </Swipeable>
           </Container>

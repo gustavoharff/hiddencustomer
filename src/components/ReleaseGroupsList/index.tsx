@@ -10,7 +10,7 @@ import { api, getRealm } from 'services';
 
 import { ReleaseGroup } from 'types';
 
-import { SPACING } from 'styles';
+import { COLORS, SPACING } from 'styles';
 
 import { useGroups } from 'hooks';
 import { Container, Content, Name } from './styles';
@@ -94,6 +94,7 @@ const ReleaseGroupsList: React.FC<ReleaseGroupsListProps> = ({
             tintColor="rgba(255,255,255,0.75)"
             refreshing={refreshing}
             onRefresh={handleRefresh}
+            colors={[COLORS.ALERT]}
           />
         }
         keyExtractor={(item, index) => `${item.id} - ${index}`}

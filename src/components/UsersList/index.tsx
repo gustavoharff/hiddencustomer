@@ -2,9 +2,7 @@ import React, { useCallback, useState } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import moment from 'moment';
 import produce from 'immer';
-import 'moment/locale/pt-br';
 
 import { api } from 'services';
 
@@ -79,6 +77,7 @@ const UsersList: React.FC<UsersListProps> = ({
             tintColor="rgba(255,255,255,0.75)"
             refreshing={refreshing}
             onRefresh={handleRefresh}
+            colors={[COLORS.ALERT]}
           />
         }
         keyExtractor={(item, index) => `${item.id} - ${index}`}
