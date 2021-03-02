@@ -13,6 +13,7 @@ import {
   ReleaseForm,
   ReleaseDetails,
   ReleaseGroupForm,
+  ReleaseAnnotationsForm,
 } from 'screens';
 
 import { COLORS, SPACING } from 'styles';
@@ -69,6 +70,16 @@ const ReleasesRoutes: React.FC = () => (
           <CloseHeaderIcon
             onPress={() => navigation.navigate('ReleaseDetails')}
           />
+        ),
+      })}
+    />
+
+    <ReleasesNavigator.Screen
+      name="ReleaseAnnotationsForm"
+      component={ReleaseAnnotationsForm}
+      options={({ navigation }) => ({
+        headerLeft: () => (
+          <BackHeaderIcon onPress={() => navigation.goBack()} />
         ),
       })}
     />

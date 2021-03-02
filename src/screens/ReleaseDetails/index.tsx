@@ -7,7 +7,12 @@ import { Release, Customer } from 'types';
 
 import { api, getRealm } from 'services';
 
-import { ListHeader, ReleaseDates, ReleaseGroups } from 'components';
+import {
+  ListHeader,
+  ReleaseDates,
+  ReleaseGroups,
+  ReleaseAnnotations,
+} from 'components';
 
 import { COLORS } from 'styles';
 
@@ -30,6 +35,7 @@ const ReleaseDetails: React.FC<Props> = ({ route }) => {
   const tabRoutes = [
     { key: 'groups', title: 'Grupos' },
     { key: 'dates', title: 'Datas' },
+    { key: 'annotations', title: 'Anotações' },
   ];
 
   const loadLocalRelease = useCallback(async () => {
@@ -107,11 +113,13 @@ const ReleaseDetails: React.FC<Props> = ({ route }) => {
           return <ReleaseDates release_id={route.params.release_id} />;
         case 'groups':
           return <ReleaseGroups release_id={route.params.release_id} />;
+        case 'annotations':
+          return <ReleaseAnnotations release_id={release.id} />;
         default:
           return null;
       }
     },
-    [route.params.release_id],
+    [route.params.release_id, release],
   );
 
   return (

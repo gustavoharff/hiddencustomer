@@ -17,6 +17,8 @@ export * from './HeaderIcons';
 export * from './Input';
 export * from './ListHeader';
 export * from './Logo';
+export * from './TextArea';
+export * from './ReleaseAnnotations';
 export * from './ReleaseDates';
 export * from './ReleaseDatesList';
 export * from './ReleaseGroups';
