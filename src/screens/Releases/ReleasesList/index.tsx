@@ -164,8 +164,20 @@ const ReleasesList: React.FC<ReleasesListProps> = ({
             </Top>
             {release.interval && release.interval.length > 0 && (
               <Bottom>
-                <BottomContent>
-                  <Title>Período</Title>
+                <BottomContent
+                  between={moment(new Date()).isBetween(
+                    moment(release.interval[0]),
+                    moment(release.interval[1]),
+                  )}
+                >
+                  {moment(new Date()).isBetween(
+                    moment(release.interval[0]),
+                    moment(release.interval[1]),
+                  ) ? (
+                    <Title>Período ativo</Title>
+                  ) : ( // eslint-disable-line
+                      <Title>Período</Title> // eslint-disable-line
+                  )}{/*   eslint-disable-line */}
                   <TimeContent>
                     <TimeText>
                       {moment(release.interval[0]).format('L')}

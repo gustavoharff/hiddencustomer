@@ -1,6 +1,13 @@
-import { FormHandles } from '@unform/core';
-import { ListHeader } from 'components';
 import React, { useCallback, useRef, useState } from 'react';
+import { FormHandles } from '@unform/core';
+import { Picker } from '@react-native-picker/picker';
+import { useNavigation } from '@react-navigation/native';
+import { StackScreenProps } from '@react-navigation/stack';
+import * as Yup from 'yup';
+import {
+  getBottomSpace,
+  getStatusBarHeight,
+} from 'react-native-iphone-x-helper';
 import {
   Alert,
   KeyboardAvoidingView,
@@ -8,24 +15,16 @@ import {
   ScrollView,
   View,
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
-import { useNavigation } from '@react-navigation/native';
-import { StackScreenProps } from '@react-navigation/stack';
-import * as Yup from 'yup';
 
 import { Input, Button } from 'components';
 
-import { COLORS, SPACING } from 'styles';
+import { SPACING } from 'styles';
 
 import { api, getRealm } from 'services';
 
 import { useGroups } from 'hooks';
 
-import {
-  getBottomSpace,
-  getStatusBarHeight,
-} from 'react-native-iphone-x-helper';
-import { Container, Unform } from './styles';
+import { Container, Unform, FieldDescription } from './styles';
 
 type Params = {
   ReleaseDetails: {
@@ -107,55 +106,46 @@ const ReleaseGroupForm: React.FC<Props> = ({ route }) => {
       >
         <Container>
           <View style={{ width: '100%' }}>
-            <ListHeader
-              title="Cadastrar grupo para o lançamento"
-              description="Digite o nome do grupo do lançamento:"
-            />
-
             <Unform ref={formRef} onSubmit={handleSubmit}>
+              <FieldDescription>Informe o nome do grupo:</FieldDescription>
               <Input
                 name="name"
                 placeholder="Nome"
-                placeholderTextColor={COLORS.FONT_LIGHT}
                 returnKeyType="send"
                 onSubmitEditing={() => formRef.current?.submitForm()}
               />
             </Unform>
+            <FieldDescription>Informe o tipo do grupo:</FieldDescription>
             <Picker
               mode="dialog"
               selectedValue={selectedValue}
               onValueChange={onPickerChange}
-              style={{ color: COLORS.FONT, width: '95%' }}
-              dropdownIconColor={COLORS.FONT}
+              style={{
+                color: '#3D3D4D',
+                marginHorizontal: SPACING.L,
+              }}
+              dropdownIconColor="#3D3D4D"
             >
               <Picker.Item
-                color={
-                  Platform.OS === 'ios' ? COLORS.FONT : COLORS.BACKGROUND_DARK
-                }
-                label="Selecione o tipo de grupo..."
+                color="#3D3D4D"
+                label="Selecionar..."
                 value={undefined}
               />
 
               <Picker.Item
-                color={
-                  Platform.OS === 'ios' ? COLORS.FONT : COLORS.BACKGROUND_DARK
-                }
+                color="#3D3D4D"
                 key="whatsapp"
                 label="WhatsApp"
                 value="whatsapp"
               />
               <Picker.Item
-                color={
-                  Platform.OS === 'ios' ? COLORS.FONT : COLORS.BACKGROUND_DARK
-                }
+                color="#3D3D4D"
                 key="discord"
                 label="Discord"
                 value="discord"
               />
               <Picker.Item
-                color={
-                  Platform.OS === 'ios' ? COLORS.FONT : COLORS.BACKGROUND_DARK
-                }
+                color="#3D3D4D"
                 key="telegram"
                 label="Telegram"
                 value="telegram"

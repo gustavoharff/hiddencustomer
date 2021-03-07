@@ -78,6 +78,7 @@ const ReleasesRoutes: React.FC = () => {
         name="ReleaseGroupForm"
         component={ReleaseGroupForm}
         options={({ navigation }) => ({
+          headerTitle: 'Cadastrar grupo',
           headerLeft: () => (
             <CloseHeaderIcon
               onPress={() => navigation.navigate('ReleaseDetails')}

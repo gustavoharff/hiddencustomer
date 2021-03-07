@@ -1,5 +1,9 @@
 import styled from 'styled-components/native';
 
+interface BottomContentProps {
+  between: boolean;
+}
+
 export const Container = styled.View`
   padding: 16px;
 `;
@@ -34,9 +38,9 @@ export const Bottom = styled.View`
   margin-top: 5px;
 `;
 
-export const BottomContent = styled.View`
+export const BottomContent = styled.View<BottomContentProps>`
   padding: 10px 24px;
-  background: #f4f5f6;
+  background: ${({ between }) => (between ? '#DAF3E5' : '#f4f5f6')};
   border-bottom-width: 1px;
   border-bottom-color: #ebebf0;
   flex-direction: row;

@@ -17,8 +17,6 @@ import { useAuth } from 'hooks';
 
 import { getValidationErrors } from 'utils';
 
-import { COLORS } from 'styles';
-
 import { Container, HeaderTitle, HeaderContent, Unform } from './styles';
 
 type SignInFormData = {
@@ -106,7 +104,6 @@ const SignIn: React.FC = () => {
               name="email"
               returnKeyType="next"
               placeholder="E-mail"
-              placeholderTextColor={COLORS.FONT_LIGHT}
               onSubmitEditing={() => passwordInputRef.current?.focus()}
             />
 
@@ -116,7 +113,6 @@ const SignIn: React.FC = () => {
               name="password"
               returnKeyType="send"
               placeholder="Senha"
-              placeholderTextColor={COLORS.FONT_LIGHT}
               onSubmitEditing={() => formRef.current?.submitForm()}
             />
 
