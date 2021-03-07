@@ -6,7 +6,7 @@ import { useNavigation } from '@react-navigation/native';
 
 import { api } from 'services';
 
-import { TextArea, ListHeader, Button } from 'components';
+import { TextArea, Button } from 'components';
 
 import { useReleases } from 'hooks';
 
@@ -46,7 +46,6 @@ const ReleaseAnnotationsForm: React.FC<Props> = ({ route }) => {
 
   return (
     <Container>
-      <ListHeader title="Alterar anotações" />
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === 'ios' ? 'padding' : undefined}

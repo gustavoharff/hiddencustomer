@@ -1,7 +1,5 @@
 import styled from 'styled-components/native';
 
-import { COLORS } from 'styles';
-
 export const Container = styled.View`
   width: 100%;
   align-items: center;
@@ -9,5 +7,5 @@ export const Container = styled.View`
 `;
 
 export const Text = styled.Text`
-  color: ${COLORS.FONT};
+  color: #47474d;
 `;

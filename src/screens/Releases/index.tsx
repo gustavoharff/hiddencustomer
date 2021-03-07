@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useCallback, useEffect } from 'react';
 import RNBootSplash from 'react-native-bootsplash';
 
-import { BottomButton, ReleasesList, ListHeader } from 'components';
+import { BottomButton, ReleasesList } from 'components';
 
 import { useAuth, useReleases } from 'hooks';
 
@@ -10,6 +10,7 @@ import { Container } from './styles';
 
 const Releases: React.FC = () => {
   const { user } = useAuth();
+
   const {
     releases,
     setReleases,
@@ -39,10 +40,6 @@ const Releases: React.FC = () => {
 
   return (
     <>
-      <ListHeader
-        title="Lançamentos"
-        description={`Total de lançamentos cadastrados: ${releases.length}`}
-      />
       <Container>
         <ReleasesList
           releases={releases}

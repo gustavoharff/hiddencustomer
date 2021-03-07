@@ -1,8 +1,7 @@
 import styled from 'styled-components/native';
-import { shade } from 'polished';
 import { RectButton } from 'react-native-gesture-handler';
 
-import { COLORS, BODY, SPACING } from 'styles';
+import { SPACING } from 'styles';
 
 type ContainerProps = {
   backgroundColor?: string;
@@ -17,16 +16,12 @@ export const Container = styled(RectButton)<ContainerProps>`
   margin-top: 10px;
   height: ${SPACING.XXL * 2}px;
 
-  background: ${props => props.backgroundColor || COLORS.WHITE};
-  border-radius: ${BODY.S.HEIGHT}px;
-  border: 1px solid
-    ${props => shade(0.2, props.backgroundColor || COLORS.WHITE)};
+  background: ${props => props.backgroundColor || '#DC1637'};
   justify-content: center;
   align-items: center;
 `;
 
 export const ButtonText = styled.Text<ButtonTextProps>`
-  color: ${props => props.textColor || COLORS.BACKGROUND};
+  color: ${props => props.textColor || '#fff'};
   font-family: 'Arial';
-  font-weight: bold;
 `;

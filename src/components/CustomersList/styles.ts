@@ -1,28 +1,29 @@
 import styled from 'styled-components/native';
 
-import { COLORS, SPACING } from 'styles';
-
 export const Container = styled.View`
-  padding: ${SPACING.S}px ${SPACING.M}px;
+  padding: 16px;
+`;
+
+export const Title = styled.Text`
+  color: #aeaeb3;
+  font-size: 15px;
+  text-transform: uppercase;
 `;
 
 export const Content = styled.View`
-  padding: ${SPACING.M}px;
-  background: ${COLORS.BACKGROUND};
-  border: 1px solid ${COLORS.FONT_LIGHTEST};
-  border-radius: ${SPACING.M / 2}px;
+  padding: 24px;
+  background: #f4f5f6;
+  border-bottom-width: 1px;
+  border-bottom-color: #ebebf0;
 `;
 
-export const Name = styled.Text`
-  color: ${COLORS.FONT};
+export const Description = styled.Text`
+  color: #47474d;
+  font-weight: bold;
   font-size: 15px;
-`;
-export const UpdatedAt = styled.View`
-  margin-top: 10px;
-  flex-direction: row;
-  justify-content: space-between;
+  margin-top: 5px;
 `;
 
-export const UpdatedAtText = styled.Text`
-  color: ${COLORS.FONT_LIGHT};
+export const Item = styled.View`
+  margin-top: 17px;
 `;

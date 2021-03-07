@@ -1,7 +1,7 @@
 import styled from 'styled-components/native';
 import { Form } from '@unform/mobile';
 
-import { COLORS, SPACING } from 'styles';
+import { SPACING } from 'styles';
 
 export const Container = styled.View`
   flex: 1;
@@ -10,7 +10,7 @@ export const Container = styled.View`
 
 export const FieldDescription = styled.Text`
   width: 100%;
-  color: ${COLORS.FONT_LIGHT};
+  color: #7a7a80;
   font-size: 16px;
   font-weight: 600;
   padding: ${SPACING.L}px ${SPACING.L}px 0 ${SPACING.L}px;

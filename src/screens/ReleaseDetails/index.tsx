@@ -14,8 +14,6 @@ import {
   ReleaseAnnotations,
 } from 'components';
 
-import { COLORS } from 'styles';
-
 type Params = {
   ReleaseDetails: {
     release_id: string;
@@ -137,8 +135,10 @@ const ReleaseDetails: React.FC<Props> = ({ route }) => {
         renderTabBar={props => (
           <TabBar
             {...props}
-            indicatorStyle={{ backgroundColor: COLORS.LIGHTEN_10 }}
-            style={{ backgroundColor: COLORS.DARKEN_5 }}
+            indicatorStyle={{ backgroundColor: '#DC1637' }}
+            activeColor="#fff"
+            inactiveColor="#f3f3f3"
+            style={{ backgroundColor: '#AEAEB3' }}
           />
         )}
       />

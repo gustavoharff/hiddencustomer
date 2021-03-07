@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components/native';
 
-import { COLORS, SPACING, BODY } from 'styles';
+import { COLORS, SPACING } from 'styles';
 
 type ContainerProps = {
   isFocused: boolean;
@@ -12,10 +12,9 @@ export const Container = styled.View<ContainerProps>`
   border-width: 1px;
   border-color: ${COLORS.FONT_LIGHT};
   border-style: solid;
-  border-radius: ${BODY.M.HEIGHT / 2}px;
   margin-bottom: ${SPACING.L}px;
   margin-top: ${SPACING.L}px;
-  background: ${COLORS.BACKGROUND};
+  background: #f2f2fa;
 
   ${props =>
     props.isFocused &&
@@ -29,6 +28,6 @@ export const TextInput = styled.TextInput`
   font-size: 15px;
   border: 0;
   padding: 15px 15px;
-  color: ${COLORS.FONT};
+  color: #3d3d4d;
   font-family: 'Arial';
 `;

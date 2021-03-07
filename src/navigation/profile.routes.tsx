@@ -3,9 +3,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 
 import { Profile } from 'screens';
 
-import { LoggoutHeaderIcon, Logo, MenuHeaderIcon } from 'components';
+import { LoggoutHeaderIcon } from 'components';
 
-import { COLORS, SPACING } from 'styles';
 import { useAuth } from 'hooks';
 
 const ProfileNavigator = createStackNavigator();
@@ -15,25 +14,31 @@ const ProfileRoutes: React.FC = () => {
 
   return (
     <ProfileNavigator.Navigator
-      screenOptions={({ navigation }) => ({
+      screenOptions={{
         cardStyle: {
-          backgroundColor: COLORS.BACKGROUND_DARK,
+          backgroundColor: '#ffff',
         },
-        headerTitle: () => <Logo size={SPACING.XXL} />,
-        headerTitleAlign: 'center',
-        headerLeft: () => (
-          <MenuHeaderIcon onPress={() => navigation.toggleDrawer()} />
-        ),
-        headerRight: () => <LoggoutHeaderIcon onPress={signOut} />,
-        headerTintColor: COLORS.FONT,
+        headerTitleAlign: 'left',
+        headerTintColor: '#ffff',
+        headerTitleStyle: {
+          fontSize: 20,
+        },
         headerStyle: {
-          backgroundColor: COLORS.BACKGROUND_DARK,
+          height: 100,
+          backgroundColor: '#1B1B1F',
           shadowColor: 'transparent',
           elevation: 0,
         },
-      })}
+      }}
     >
-      <ProfileNavigator.Screen name="Profile" component={Profile} />
+      <ProfileNavigator.Screen
+        name="Profile"
+        component={Profile}
+        options={{
+          headerTitle: 'Meu perfil',
+          headerRight: () => <LoggoutHeaderIcon onPress={signOut} />,
+        }}
+      />
     </ProfileNavigator.Navigator>
   );
 };

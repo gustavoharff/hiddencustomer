@@ -11,7 +11,6 @@ import { api, getRealm } from 'services';
 
 import { ReleaseDate } from 'types';
 
-import { COLORS } from 'styles';
 import { Container, Content, Date } from './styles';
 
 type ReleaseDatesListProps = {
@@ -88,16 +87,16 @@ const ReleaseDatesList: React.FC<ReleaseDatesListProps> = ({
         ListEmptyComponent={<EmptyList text={emptyListText} />}
         refreshControl={
           <RefreshControl
-            tintColor="rgba(255,255,255,0.75)"
+            tintColor="rgba(0, 0, 0, 0.5)"
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            colors={[COLORS.ALERT]}
+            colors={['#DC1637']}
           />
         }
         keyExtractor={(item, index) => `${item.id} - ${index}`}
         data={dates}
         renderItem={({ item: date, index }) => (
-          <Container>
+          <Container style={{ paddingTop: index !== 0 ? 0 : 16 }}>
             <Swipeable
             ref={ref => (row[index] = ref)} // eslint-disable-line
               friction={1.5}

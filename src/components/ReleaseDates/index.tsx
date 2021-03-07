@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { View } from 'react-native';
 
-import { COLORS, SPACING } from 'styles';
+import { SPACING } from 'styles';
 
 import { DateTimeInput, Button, ReleaseDatesList } from 'components';
 
@@ -124,8 +124,8 @@ const ReleaseDates: React.FC<ReleaseDatedProps> = ({ release_id }) => {
             <Button
               title="Cancelar"
               onPress={() => setIsAddingDate(false)}
-              backgroundColor={COLORS.ALERT}
-              textColor={COLORS.FONT}
+              backgroundColor="#1B1B1F"
+              textColor="#FFF"
               style={{ marginBottom: SPACING.XL }}
             />
           </View>

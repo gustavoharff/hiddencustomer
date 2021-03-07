@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import { COLORS, SPACING } from 'styles';
+import { SPACING } from 'styles';
 
 type Props = {
   onPress?: () => void;
@@ -12,7 +12,7 @@ type Props = {
 const BackHeaderIcon: React.FC<Props> = ({ onPress }) => (
   <View style={{ marginLeft: SPACING.S }}>
     <TouchableOpacity onPress={onPress}>
-      <Icon name="arrow-left" color={COLORS.ALERT} size={SPACING.L * 2} />
+      <Icon name="arrow-left" color="#DC1637" size={SPACING.L * 2} />
     </TouchableOpacity>
   </View>
 );

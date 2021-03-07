@@ -1,59 +1,61 @@
 import React from 'react';
+import { Text } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import {
-  Logo,
-  BackHeaderIcon,
-  MenuHeaderIcon,
-  CloseHeaderIcon,
-} from 'components';
+import { Customers, CustomerForm } from 'screens';
 
-import { Customers, CustomerForm, CustomerDetails } from 'screens';
+import { useCustomers } from 'hooks';
+import { BackHeaderIcon } from 'components';
 
-import { COLORS, SPACING } from 'styles';
+const { Navigator, Screen } = createStackNavigator();
+const CustomersRoutes: React.FC = () => {
+  const { customers } = useCustomers();
 
-const CustomersNavigator = createStackNavigator();
+  return (
+    <Navigator
+      mode="card"
+      screenOptions={{
+        cardStyle: {
+          backgroundColor: '#ffff',
+        },
+        headerTitleAlign: 'left',
+        headerTintColor: '#ffff',
+        headerTitleStyle: {
+          fontSize: 20,
+        },
+        headerStyle: {
+          height: 100,
+          backgroundColor: '#1B1B1F',
+          shadowColor: 'transparent',
+          elevation: 0,
+        },
+      }}
+    >
+      <Screen
+        name="Customers"
+        component={Customers}
+        options={{
+          headerTitle: 'Clientes',
+          headerRight: () => (
+            <Text style={{ color: '#7A7A80', marginRight: 20 }}>
+              {customers.length} cliente(s)
+            </Text>
+          ),
+        }}
+      />
 
-const CustomersRoutes: React.FC = () => (
-  <CustomersNavigator.Navigator
-    mode="card"
-    screenOptions={({ navigation }) => ({
-      cardStyle: {
-        backgroundColor: COLORS.BACKGROUND_DARK,
-      },
-      headerTitle: () => <Logo size={SPACING.XXL} />,
-      headerTitleAlign: 'center',
-      headerLeft: () => (
-        <MenuHeaderIcon onPress={() => navigation.toggleDrawer()} />
-      ),
-      headerStyle: {
-        backgroundColor: COLORS.BACKGROUND_DARK,
-        shadowColor: 'transparent',
-        elevation: 0,
-      },
-    })}
-  >
-    <CustomersNavigator.Screen name="Customers" component={Customers} />
-    <CustomersNavigator.Screen
-      name="CustomerForm"
-      component={CustomerForm}
-      options={({ navigation }) => ({
-        headerLeft: () => (
-          <CloseHeaderIcon onPress={() => navigation.navigate('Customers')} />
-        ),
-      })}
-    />
-
-    <CustomersNavigator.Screen
-      name="CustomerDetails"
-      component={CustomerDetails}
-      options={({ navigation }) => ({
-        headerLeft: () => (
-          <BackHeaderIcon onPress={() => navigation.navigate('Customers')} />
-        ),
-      })}
-    />
-  </CustomersNavigator.Navigator>
-);
+      <Screen
+        name="CustomerForm"
+        component={CustomerForm}
+        options={({ navigation }) => ({
+          headerTitle: 'Registrar cliente',
+          headerLeft: () => (
+            <BackHeaderIcon onPress={() => navigation.navigate('Customers')} />
+          ),
+        })}
+      />
+    </Navigator>
+  );
+};
 
 export { CustomersRoutes };

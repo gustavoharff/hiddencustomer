@@ -1,7 +1,6 @@
 export * from './Avatar';
 export * from './BottomButton';
 export * from './Button';
-export * from './CustomerReleaseList';
 export * from './CustomersList';
 export * from './ChangeUserPassword';
 export * from './ChangeUserInfo';
@@ -25,3 +24,4 @@ export * from './ReleaseGroups';
 export * from './ReleaseGroupsList';
 export * from './ReleasesList';
 export * from './UsersList';
+export * from './ScreenIndicator';

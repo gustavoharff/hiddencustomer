@@ -1,7 +1,6 @@
 import React from 'react';
 import { ActivityIndicator } from 'react-native';
 import { BaseButtonProperties } from 'react-native-gesture-handler';
-import { COLORS } from 'styles';
 
 import { Container, ButtonText } from './styles';
 
@@ -21,7 +20,7 @@ const Button: React.FC<ButtonProps> = ({
 }) => (
   <Container backgroundColor={backgroundColor} {...rest}>
     {loading ? (
-      <ActivityIndicator color={COLORS.BACKGROUND_DARK} />
+      <ActivityIndicator color="#fff" />
     ) : (
       <ButtonText textColor={textColor}>{title}</ButtonText>
     )}

@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { BottomButton, CustomersList, ListHeader } from 'components';
+
+import { BottomButton, CustomersList } from 'components';
 
 import { useCustomers, useAuth } from 'hooks';
 
@@ -31,10 +32,6 @@ const Customers: React.FC = () => {
 
   return (
     <>
-      <ListHeader
-        title="Clientes"
-        description={`Total de clientes cadastrados: ${customers.length}`}
-      />
       <Container>
         <CustomersList
           customers={customers}

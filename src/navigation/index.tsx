@@ -4,7 +4,7 @@ import { ActivityIndicator, View } from 'react-native';
 import { useAuth } from 'hooks';
 
 import { AuthRoutes } from './auth.routes';
-import { DrawerNavigation } from './app.routes';
+import { TabRoutes } from './app.routes';
 
 const Routes: React.FC = () => {
   const { user, loading } = useAuth();
@@ -17,7 +17,7 @@ const Routes: React.FC = () => {
     );
   }
 
-  return user ? <DrawerNavigation /> : <AuthRoutes />;
+  return user ? <TabRoutes /> : <AuthRoutes />;
 };
 
 export default Routes;

@@ -1,25 +1,54 @@
 import styled from 'styled-components/native';
 
-import { COLORS, SPACING } from 'styles';
-
 export const Container = styled.View`
-  padding: ${SPACING.S}px ${SPACING.M}px;
+  padding: 16px;
 `;
+
+export const Top = styled.View``;
 
 export const Content = styled.View`
-  padding: ${SPACING.M}px;
-  background: ${COLORS.BACKGROUND};
-  border: 1px solid ${COLORS.FONT_LIGHTEST};
-  border-radius: ${SPACING.M / 2}px;
+  padding: 24px;
+  background: #f4f5f6;
+  border-bottom-width: 1px;
+  border-bottom-color: #ebebf0;
 `;
 
-export const Name = styled.Text`
-  color: ${COLORS.FONT};
-  font-weight: 500;
+export const Title = styled.Text`
+  color: #aeaeb3;
   font-size: 15px;
+  text-transform: uppercase;
 `;
-export const Customer = styled.Text`
-  color: ${COLORS.FONT_LIGHT};
+
+export const Description = styled.Text`
+  color: #47474d;
+  font-weight: bold;
   font-size: 15px;
-  margin-top: ${SPACING.S}px;
+  margin-top: 5px;
+`;
+
+export const Item = styled.View`
+  margin-top: 17px;
+`;
+
+export const Bottom = styled.View`
+  margin-top: 5px;
+`;
+
+export const BottomContent = styled.View`
+  padding: 10px 24px;
+  background: #f4f5f6;
+  border-bottom-width: 1px;
+  border-bottom-color: #ebebf0;
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
+export const TimeContent = styled.View`
+  margin-left: 20px;
+  flex-direction: row;
+  align-items: center;
+`;
+
+export const TimeText = styled.Text`
+  color: #47474d;
 `;

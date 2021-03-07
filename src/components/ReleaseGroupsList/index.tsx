@@ -10,10 +10,10 @@ import { api, getRealm } from 'services';
 
 import { ReleaseGroup } from 'types';
 
-import { COLORS, SPACING } from 'styles';
+import { SPACING } from 'styles';
 
 import { useGroups } from 'hooks';
-import { Container, Content, Name } from './styles';
+import { Container, Content, Description } from './styles';
 
 type ReleaseGroupsListProps = {
   groups: ReleaseGroup[];
@@ -91,16 +91,16 @@ const ReleaseGroupsList: React.FC<ReleaseGroupsListProps> = ({
         ListEmptyComponent={<EmptyList text={emptyListText} />}
         refreshControl={
           <RefreshControl
-            tintColor="rgba(255,255,255,0.75)"
+            tintColor="rgba(0, 0, 0, 0.5)"
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            colors={[COLORS.ALERT]}
+            colors={['#DC1637']}
           />
         }
         keyExtractor={(item, index) => `${item.id} - ${index}`}
         data={groups}
         renderItem={({ item: group, index }) => (
-          <Container>
+          <Container style={{ paddingTop: index !== 0 ? 0 : 16 }}>
             <Swipeable
             ref={ref => (row[index] = ref)} // eslint-disable-line
               friction={1.5}
@@ -114,7 +114,8 @@ const ReleaseGroupsList: React.FC<ReleaseGroupsListProps> = ({
               }}
             >
               <Content>
-                <Name>{group.name}</Name>
+                <Description>{group.name}</Description>
+
                 {group.type === 'discord' && (
                   <Icon name="discord" color="#7289d9" size={SPACING.L * 1.5} />
                 )}

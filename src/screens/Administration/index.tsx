@@ -2,7 +2,7 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { User } from 'types';
 
-import { ListHeader, UsersList } from 'components';
+import { UsersList } from 'components';
 
 import { api } from 'services';
 
@@ -24,8 +24,6 @@ const Administration: React.FC = () => {
 
   return (
     <Container>
-      <ListHeader title="Listagem de usuários" />
-
       <Container>
         <UsersList
           users={users}

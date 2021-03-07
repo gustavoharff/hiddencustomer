@@ -8,14 +8,9 @@ import {
 } from 'react-native';
 import { TabBar, TabView } from 'react-native-tab-view';
 
-import {
-  Avatar,
-  ListHeader,
-  ChangeUserPassword,
-  ChangeUserInfo,
-} from 'components';
+import { Avatar, ChangeUserPassword, ChangeUserInfo } from 'components';
 
-import { COLORS, SPACING } from 'styles';
+import { SPACING } from 'styles';
 
 import { Container } from './styles';
 
@@ -48,17 +43,17 @@ const Profile: React.FC = () => {
       <ScrollView keyboardShouldPersistTaps="never">
         <Container>
           <View style={{ flex: 1, width: '100%' }}>
-            <ListHeader title="Meu perfil" />
             <View
               style={{
                 width: '100%',
                 alignItems: 'center',
-                marginBottom: SPACING.L,
+                paddingVertical: SPACING.L,
+                backgroundColor: '#47474d',
               }}
             >
               <Avatar
                 url="https://iupac.org/wp-content/uploads/2018/05/default-avatar.png"
-                size={SPACING.XL * 8}
+                size={SPACING.XL * 6}
               />
             </View>
 
@@ -70,8 +65,10 @@ const Profile: React.FC = () => {
               renderTabBar={props => (
                 <TabBar
                   {...props}
-                  indicatorStyle={{ backgroundColor: COLORS.LIGHTEN_10 }}
-                  style={{ backgroundColor: COLORS.DARKEN_5 }}
+                  indicatorStyle={{ backgroundColor: '#DC1637' }}
+                  activeColor="#fff"
+                  inactiveColor="#f3f3f3"
+                  style={{ backgroundColor: '#AEAEB3' }}
                 />
               )}
             />

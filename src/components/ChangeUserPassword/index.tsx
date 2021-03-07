@@ -5,8 +5,6 @@ import * as Yup from 'yup';
 
 import { Input, Button } from 'components';
 
-import { COLORS } from 'styles';
-
 import { api } from 'services';
 
 import { getValidationErrors } from 'utils';
@@ -81,7 +79,6 @@ const ChangeUserPassword: React.FC = () => {
             placeholder="Senha atual"
             textContentType="newPassword"
             secureTextEntry
-            placeholderTextColor={COLORS.FONT_LIGHTEST}
             returnKeyType="next"
             onSubmitEditing={() => {
               passwordInputRef.current?.focus();
@@ -93,7 +90,6 @@ const ChangeUserPassword: React.FC = () => {
             placeholder="Nova senha"
             textContentType="newPassword"
             secureTextEntry
-            placeholderTextColor={COLORS.FONT_LIGHTEST}
             returnKeyType="next"
             onSubmitEditing={() => {
               confirmPasswordInputRef.current?.focus();
@@ -105,7 +101,6 @@ const ChangeUserPassword: React.FC = () => {
             placeholder="Confirmação de senha"
             textContentType="newPassword"
             secureTextEntry
-            placeholderTextColor={COLORS.FONT_LIGHTEST}
             returnKeyType="send"
             onSubmitEditing={() => formRef.current?.submitForm()}
           />

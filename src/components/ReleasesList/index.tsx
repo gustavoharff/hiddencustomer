@@ -1,8 +1,9 @@
 import React, { useCallback, useState } from 'react';
-import { View, FlatList, RefreshControl, Alert, Text } from 'react-native';
+import { View, FlatList, RefreshControl, Alert } from 'react-native';
 import { RectButton } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
+import Icon from 'react-native-vector-icons/FontAwesome';
 import produce from 'immer';
 
 import { EmptyList, DeleteItem } from 'components';
@@ -11,9 +12,18 @@ import { api, getRealm } from 'services';
 
 import { Release } from 'types';
 
-import { COLORS, SPACING } from 'styles';
-
-import { Container, Content, Name, Customer } from './styles';
+import {
+  Container,
+  Content,
+  Title,
+  Description,
+  Item,
+  Top,
+  Bottom,
+  BottomContent,
+  TimeContent,
+  TimeText,
+} from './styles';
 
 type ReleasesListProps = {
   releases: Release[];
@@ -84,55 +94,86 @@ const ReleasesList: React.FC<ReleasesListProps> = ({
         ListEmptyComponent={<EmptyList text={emptyListText} />}
         refreshControl={
           <RefreshControl
-            tintColor="rgba(255,255,255,0.75)"
+            tintColor="rgba(0,0,0,0.5)"
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            colors={[COLORS.ALERT]}
+            colors={['#DC1637']}
           />
         }
         keyExtractor={(item, index) => `${item.id} - ${index}`}
         data={releases}
         renderItem={({ item: release, index }) => (
-          <Container>
-            <Swipeable
+          <Container style={{ paddingTop: index !== 0 ? 0 : 16 }}>
+            <Top>
+              <Swipeable
               ref={ref => (row[index] = ref)} // eslint-disable-line
-              friction={1.5}
-              rightThreshold={30}
-              renderRightActions={() => <DeleteItem onPress={onDeleteItem} />}
-              activeOffsetX={-1}
-              activeOffsetY={500}
-              onSwipeableOpen={() => {
-                closeRow(index);
-                setSelectedRelease(release);
-              }}
-            >
-              <RectButton
-                onPress={() => {
-                  navigation.navigate('ReleaseDetails', {
-                    release_id: release.id,
-                    customer_id: release.customer_id,
-                  });
+                friction={1.5}
+                rightThreshold={30}
+                renderRightActions={() => <DeleteItem onPress={onDeleteItem} />}
+                activeOffsetX={-1}
+                activeOffsetY={500}
+                onSwipeableOpen={() => {
+                  closeRow(index);
+                  setSelectedRelease(release);
                 }}
               >
-                <Content>
-                  <Name>{release.name}</Name>
-                  {release.customer?.name && (
-                    <Customer>{release.customer.name}</Customer>
-                  )}
-                  <View style={{ marginTop: SPACING.S }}>
-                    <Text
+                <RectButton
+                  onPress={() => {
+                    navigation.navigate('ReleaseDetails', {
+                      release_id: release.id,
+                      customer_id: release.customer_id,
+                    });
+                  }}
+                >
+                  <Content>
+                    <View>
+                      {release.customer?.name && (
+                        <Title>{release.customer.name}</Title>
+                      )}
+                      <Description>{release.name}</Description>
+                    </View>
+                    <View
                       style={{
-                        color: release.paid ? COLORS.SUCCESS : COLORS.ALERT,
+                        flexDirection: 'row',
+                        justifyContent: 'space-between',
                       }}
                     >
-                      {release.paid
-                        ? 'Pagamento realizado!'
-                        : 'Pagamento ainda não realizado!'}
-                    </Text>
-                  </View>
-                </Content>
-              </RectButton>
-            </Swipeable>
+                      <Item>
+                        <Title>Pagamento</Title>
+                        <Description
+                          style={{
+                            color: release.paid ? '#03B252' : '#DC1637',
+                          }}
+                        >
+                          {release.paid ? 'Realizado' : 'Não realizado'}
+                        </Description>
+                      </Item>
+                      <Item>
+                        <Title>Datas</Title>
+                        <Description>5</Description>
+                      </Item>
+                      <Item>
+                        <Title>Grupos</Title>
+                        <Description>5</Description>
+                      </Item>
+                    </View>
+                  </Content>
+                </RectButton>
+              </Swipeable>
+            </Top>
+            <Bottom>
+              <BottomContent>
+                <Title>Período</Title>
+                <TimeContent>
+                  <TimeText>18 Junho 2019</TimeText>
+                  <Icon
+                    name="long-arrow-right"
+                    style={{ marginHorizontal: 10, color: '#AEAEB3' }}
+                  />
+                  <TimeText>20 Junho 2019</TimeText>
+                </TimeContent>
+              </BottomContent>
+            </Bottom>
           </Container>
         )}
       />

@@ -11,7 +11,7 @@ import * as Yup from 'yup';
 import { FormHandles } from '@unform/core';
 import { useNavigation } from '@react-navigation/native';
 
-import { Button, ListHeader, Input } from 'components';
+import { Button, Input } from 'components';
 
 import { useCustomers, useReleases } from 'hooks';
 
@@ -103,8 +103,6 @@ const ReleaseForm: React.FC = () => {
       >
         <Container>
           <View style={{ width: '100%' }}>
-            <ListHeader title="Registrar lançamento" />
-
             <Unform ref={formRef} onSubmit={handleSubmit}>
               <FieldDescription>Informe o nome do lançamento:</FieldDescription>
               <Input
@@ -121,23 +119,19 @@ const ReleaseForm: React.FC = () => {
               selectedValue={selectedValue}
               onValueChange={onPickerChange}
               style={{
-                color: COLORS.FONT,
+                color: '#3D3D4D',
                 marginHorizontal: SPACING.L,
               }}
-              dropdownIconColor={COLORS.FONT}
+              dropdownIconColor="#3D3D4D"
             >
               <Picker.Item
-                color={
-                  Platform.OS === 'ios' ? COLORS.FONT : COLORS.BACKGROUND_DARK
-                }
+                color="#3D3D4D"
                 label="Selecionar..."
                 value={undefined}
               />
               {customers.map(customer => (
                 <Picker.Item
-                  color={
-                    Platform.OS === 'ios' ? COLORS.FONT : COLORS.BACKGROUND_DARK
-                  }
+                  color="#3D3D4D"
                   key={customer.id}
                   label={customer.name}
                   value={customer.id}

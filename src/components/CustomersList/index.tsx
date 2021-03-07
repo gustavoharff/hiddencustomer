@@ -2,7 +2,6 @@ import React, { useCallback, useState } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import produce from 'immer';
-import moment from 'moment';
 import 'moment/locale/pt-br';
 
 import { DeleteItem, EmptyList } from 'components';
@@ -11,10 +10,7 @@ import { Customer } from 'types';
 
 import { api, getRealm } from 'services';
 
-import { RectButton } from 'react-native-gesture-handler';
-import { useNavigation } from '@react-navigation/native';
-import { COLORS } from 'styles';
-import { Container, Name, Content, UpdatedAt, UpdatedAtText } from './styles';
+import { Container, Description, Content, Title, Item } from './styles';
 
 type CustomersListProps = {
   customers: Customer[];
@@ -35,7 +31,6 @@ const CustomersList: React.FC<CustomersListProps> = ({
   const [selectedCustomer, setSelectedCustomer] = useState<Customer>(
     {} as Customer,
   );
-  const navigation = useNavigation();
 
   const handleDelete = useCallback(async () => {
     await api.delete(`/customers/${selectedCustomer.id}`);
@@ -85,16 +80,16 @@ const CustomersList: React.FC<CustomersListProps> = ({
         ListEmptyComponent={<EmptyList text={emptyListText} />}
         refreshControl={
           <RefreshControl
-            tintColor="rgba(255,255,255,0.75)"
+            tintColor="rgba(0,0,0,0.5)"
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            colors={[COLORS.ALERT]}
+            colors={['#DC1637']}
           />
         }
         keyExtractor={(item, index) => `${item.id} - ${index}`}
         data={customers}
         renderItem={({ item: customer, index }) => (
-          <Container>
+          <Container style={{ paddingTop: index !== 0 ? 0 : 16 }}>
             <Swipeable
             ref={ref => (row[index] = ref)} // eslint-disable-line
               friction={1.5}
@@ -107,27 +102,15 @@ const CustomersList: React.FC<CustomersListProps> = ({
                 setSelectedCustomer(customer);
               }}
             >
-              <RectButton
-                onPress={() => {
-                  navigation.navigate('CustomerDetails', {
-                    customer_id: customer.id,
-                  });
-                }}
-              >
-                <Content>
-                  <Name>{customer.name}</Name>
-                  <UpdatedAt>
-                    <UpdatedAtText>
-                      Atualizado{' '}
-                      {moment(customer.updated_at)
-                        .utc(true)
-                        .locale('pt-br')
-                        .fromNow()}
-                    </UpdatedAtText>
-                    <UpdatedAtText />
-                  </UpdatedAt>
-                </Content>
-              </RectButton>
+              <Content>
+                <Description style={{ marginTop: 0 }}>
+                  {customer.name}
+                </Description>
+                <Item>
+                  <Title>Lançamentos</Title>
+                  <Description>5</Description>
+                </Item>
+              </Content>
             </Swipeable>
           </Container>
         )}

@@ -1,19 +1,20 @@
 import styled from 'styled-components/native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 
-import { COLORS, SPACING } from 'styles';
+import { SPACING } from 'styles';
 
 export const Container = styled.View`
-  height: ${SPACING.L * 4.5}px;
-  width: ${SPACING.L * 4.5}px;
+  height: ${SPACING.L * 4.2}px;
+  width: ${SPACING.L * 4.2}px;
   border-radius: ${(SPACING.L * 4.5) / 2}px;
-  background: ${COLORS.BACKGROUND};
-  border: 1px solid ${COLORS.DARKEN_5};
+  background: #dc1637;
   align-items: center;
 
   position: absolute;
   right: 4%;
   bottom: 4%;
+
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.75);
 `;
 
 export const Button = styled(TouchableOpacity)`

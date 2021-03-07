@@ -83,7 +83,7 @@ const UsersList: React.FC<UsersListProps> = ({
         keyExtractor={(item, index) => `${item.id} - ${index}`}
         data={users}
         renderItem={({ item: user, index }) => (
-          <Container>
+          <Container style={{ paddingTop: index !== 0 ? 0 : 16 }}>
             <Swipeable
             ref={ref => (row[index] = ref)} // eslint-disable-line
               friction={1.5}

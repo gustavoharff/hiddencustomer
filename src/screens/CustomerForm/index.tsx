@@ -14,7 +14,7 @@ import {
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-import { Input, Button, ListHeader } from 'components';
+import { Input, Button } from 'components';
 
 import { api, getRealm } from 'services';
 
@@ -83,8 +83,6 @@ const CustomerForm: React.FC = () => {
       >
         <Container>
           <View>
-            <ListHeader title="Registrar cliente" />
-
             <Unform ref={formRef} onSubmit={handleSubmit}>
               <FieldDescription>Informe o nome do cliente:</FieldDescription>
               <Input
@@ -96,7 +94,12 @@ const CustomerForm: React.FC = () => {
               />
             </Unform>
           </View>
-          <View style={{ width: '100%', alignItems: 'center' }}>
+          <View
+            style={{
+              width: '100%',
+              alignItems: 'center',
+            }}
+          >
             <Button
               title="Enviar"
               loading={loadingButton}

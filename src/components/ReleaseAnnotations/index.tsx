@@ -6,8 +6,8 @@ import { BottomButton } from 'components';
 import { Release } from 'types';
 
 import { useReleases } from 'hooks';
-import { COLORS } from 'styles';
-import { Container, Annotation } from './styles';
+
+import { Container, Annotation, Content } from './styles';
 
 type ReleaseAnnotationsProps = {
   release_id: string;
@@ -33,7 +33,9 @@ const ReleaseAnnotations: React.FC<ReleaseAnnotationsProps> = ({
     <Container>
       <ScrollView keyboardShouldPersistTaps="never">
         {release.annotations ? (
-          <Annotation>{release.annotations}</Annotation>
+          <Content>
+            <Annotation>{release.annotations}</Annotation>
+          </Content>
         ) : (
           <View
             style={{
@@ -44,7 +46,7 @@ const ReleaseAnnotations: React.FC<ReleaseAnnotationsProps> = ({
           >
             <Text
               style={{
-                color: COLORS.WHITE,
+                color: '#47474d',
               }}
             >
               Não há anotações definidas para este lançamento!

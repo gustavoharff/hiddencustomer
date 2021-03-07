@@ -1,34 +1,141 @@
 import React from 'react';
-import { Dimensions } from 'react-native';
-import { createDrawerNavigator } from '@react-navigation/drawer';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import { Drawer } from 'screens';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
+import { ScreenIndicator } from 'components';
+import { useAuth } from 'hooks';
 import { ReleasesRoutes } from './releases.routes';
 import { CustomersRoutes } from './customers.routes';
 import { ProfileRoutes } from './profile.routes';
 import { AdministrationRoutes } from './administration.routes';
 
-const { width } = Dimensions.get('window');
+const { Navigator, Screen } = createBottomTabNavigator();
 
-const DrawerNavigator = createDrawerNavigator();
+const TabRoutes: React.FC = () => {
+  const { user } = useAuth();
 
-const DrawerNavigation: React.FC = () => (
-  <DrawerNavigator.Navigator
-    initialRouteName="Releases"
-    drawerType="slide"
-    overlayColor="rgba(0, 0, 0, 0.3)"
-    drawerStyle={{ width: width * 0.8 }}
-    drawerContent={props => <Drawer {...props} activeBackgroundColor="#fff" />}
-  >
-    <DrawerNavigator.Screen name="Releases" component={ReleasesRoutes} />
-    <DrawerNavigator.Screen name="Customers" component={CustomersRoutes} />
-    <DrawerNavigator.Screen name="Profile" component={ProfileRoutes} />
-    <DrawerNavigator.Screen
-      name="Administration"
-      component={AdministrationRoutes}
-    />
-  </DrawerNavigator.Navigator>
-);
+  return (
+    <Navigator>
+      <Screen
+        name="Releases"
+        component={ReleasesRoutes}
+        options={({ navigation }) => {
+          const { routes, index } = navigation.dangerouslyGetState();
+          const { state: exploreState } = routes[index];
+          let tabBarVisible = true;
+          if (exploreState) {
+            const { routes: exploreRoutes, index: exploreIndex } = exploreState;
+            const exploreActiveRoute = exploreRoutes[exploreIndex];
+            if (
+              exploreActiveRoute.name === 'ReleaseForm' ||
+              exploreActiveRoute.name === 'ReleaseAnnotationsForm'
+            ) {
+              tabBarVisible = false;
+            }
+          }
+          return {
+            tabBarLabel: () => null,
+            tabBarVisible,
+            tabBarIcon: ({ size, focused }) => (
+              <>
+                <Icon
+                  name="rocket-launch-outline"
+                  size={size}
+                  color={focused ? '#DC1637' : '#A8A8B3'}
+                />
+                {focused && (
+                  <ScreenIndicator
+                    style={{ backgroundColor: focused ? '#DC1637' : '#A8A8B3' }}
+                  />
+                )}
+              </>
+            ),
+          };
+        }}
+      />
 
-export { DrawerNavigation };
+      <Screen
+        name="Customers"
+        component={CustomersRoutes}
+        options={({ navigation }) => {
+          const { routes, index } = navigation.dangerouslyGetState();
+          const { state: exploreState } = routes[index];
+          let tabBarVisible = true;
+          if (exploreState) {
+            const { routes: exploreRoutes, index: exploreIndex } = exploreState;
+            const exploreActiveRoute = exploreRoutes[exploreIndex];
+            if (exploreActiveRoute.name === 'CustomerForm') {
+              tabBarVisible = false;
+            }
+          }
+          return {
+            tabBarVisible,
+            tabBarLabel: () => null,
+            tabBarIcon: ({ size, focused }) => (
+              <>
+                <Icon
+                  name="account-group-outline"
+                  size={size}
+                  color={focused ? '#DC1637' : '#A8A8B3'}
+                />
+                {focused && (
+                  <ScreenIndicator
+                    style={{ backgroundColor: focused ? '#DC1637' : '#A8A8B3' }}
+                  />
+                )}
+              </>
+            ),
+          };
+        }}
+      />
+      {user.permission === 'admin' && (
+        <Screen
+          name="Administration"
+          component={AdministrationRoutes}
+          options={{
+            tabBarLabel: () => null,
+            tabBarIcon: ({ size, focused }) => (
+              <>
+                <Icon
+                  name="account-cog-outline"
+                  size={size}
+                  color={focused ? '#DC1637' : '#A8A8B3'}
+                />
+                {focused && (
+                  <ScreenIndicator
+                    style={{ backgroundColor: focused ? '#DC1637' : '#A8A8B3' }}
+                  />
+                )}
+              </>
+            ),
+          }}
+        />
+      )}
+
+      <Screen
+        name="Profile"
+        component={ProfileRoutes}
+        options={{
+          tabBarLabel: () => null,
+          tabBarIcon: ({ size, focused }) => (
+            <>
+              <Icon
+                name="account-outline"
+                size={size}
+                color={focused ? '#DC1637' : '#A8A8B3'}
+              />
+              {focused && (
+                <ScreenIndicator
+                  style={{ backgroundColor: focused ? '#DC1637' : '#A8A8B3' }}
+                />
+              )}
+            </>
+          ),
+        }}
+      />
+    </Navigator>
+  );
+};
+
+export { TabRoutes };

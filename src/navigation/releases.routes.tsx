@@ -1,12 +1,8 @@
 import React from 'react';
+import { Text } from 'react-native';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import {
-  BackHeaderIcon,
-  CloseHeaderIcon,
-  Logo,
-  MenuHeaderIcon,
-} from 'components';
+import { BackHeaderIcon, CloseHeaderIcon } from 'components';
 
 import {
   Releases,
@@ -15,75 +11,93 @@ import {
   ReleaseGroupForm,
   ReleaseAnnotationsForm,
 } from 'screens';
+import { useReleases } from 'hooks';
 
-import { COLORS, SPACING } from 'styles';
+const { Navigator, Screen } = createStackNavigator();
 
-const ReleasesNavigator = createStackNavigator();
+const ReleasesRoutes: React.FC = () => {
+  const { releases } = useReleases();
 
-const ReleasesRoutes: React.FC = () => (
-  <ReleasesNavigator.Navigator
-    mode="card"
-    initialRouteName="Releases"
-    screenOptions={({ navigation }) => ({
-      cardStyle: {
-        backgroundColor: COLORS.BACKGROUND_DARK,
-      },
-      animationEnabled: true,
-      headerTitle: () => <Logo size={SPACING.XXL} />,
-      headerTitleAlign: 'center',
-      headerLeft: () => (
-        <MenuHeaderIcon onPress={() => navigation.toggleDrawer()} />
-      ),
-      headerTintColor: COLORS.FONT,
-      headerStyle: {
-        backgroundColor: COLORS.BACKGROUND_DARK,
-        shadowColor: 'transparent',
-        elevation: 0,
-      },
-    })}
-  >
-    <ReleasesNavigator.Screen name="Releases" component={Releases} />
-    <ReleasesNavigator.Screen
-      name="ReleaseForm"
-      component={ReleaseForm}
-      options={({ navigation }) => ({
-        headerLeft: () => (
-          <BackHeaderIcon onPress={() => navigation.navigate('Releases')} />
-        ),
-      })}
-    />
-    <ReleasesNavigator.Screen
-      name="ReleaseDetails"
-      component={ReleaseDetails}
-      options={({ navigation }) => ({
-        headerLeft: () => (
-          <BackHeaderIcon onPress={() => navigation.goBack()} />
-        ),
-      })}
-    />
+  return (
+    <Navigator
+      mode="card"
+      initialRouteName="Releases"
+      screenOptions={{
+        cardStyle: {
+          backgroundColor: '#ffff',
+        },
+        headerTitleAlign: 'left',
+        headerTintColor: '#ffff',
+        headerTitleStyle: {
+          fontSize: 20,
+        },
+        headerStyle: {
+          height: 100,
+          backgroundColor: '#1B1B1F',
+          shadowColor: 'transparent',
+          elevation: 0,
+        },
+      }}
+    >
+      <Screen
+        name="Releases"
+        component={Releases}
+        options={{
+          headerTitle: 'Lançamentos',
+          headerRight: () => (
+            <Text style={{ color: '#7A7A80', marginRight: 20 }}>
+              {releases.length} lançamento(s)
+            </Text>
+          ),
+        }}
+      />
 
-    <ReleasesNavigator.Screen
-      name="ReleaseGroupForm"
-      component={ReleaseGroupForm}
-      options={({ navigation }) => ({
-        headerLeft: () => (
-          <CloseHeaderIcon
-            onPress={() => navigation.navigate('ReleaseDetails')}
-          />
-        ),
-      })}
-    />
+      <Screen
+        name="ReleaseForm"
+        component={ReleaseForm}
+        options={({ navigation }) => ({
+          headerTitle: 'Registrar lançamento',
+          headerLeft: () => (
+            <BackHeaderIcon onPress={() => navigation.navigate('Releases')} />
+          ),
+        })}
+      />
 
-    <ReleasesNavigator.Screen
-      name="ReleaseAnnotationsForm"
-      component={ReleaseAnnotationsForm}
-      options={({ navigation }) => ({
-        headerLeft: () => (
-          <BackHeaderIcon onPress={() => navigation.goBack()} />
-        ),
-      })}
-    />
-  </ReleasesNavigator.Navigator>
-);
+      <Screen
+        name="ReleaseDetails"
+        component={ReleaseDetails}
+        options={({ navigation }) => ({
+          headerTitle: 'Detalhes',
+          headerLeft: () => (
+            <BackHeaderIcon onPress={() => navigation.goBack()} />
+          ),
+        })}
+      />
+
+      <Screen
+        name="ReleaseGroupForm"
+        component={ReleaseGroupForm}
+        options={({ navigation }) => ({
+          headerLeft: () => (
+            <CloseHeaderIcon
+              onPress={() => navigation.navigate('ReleaseDetails')}
+            />
+          ),
+        })}
+      />
+
+      <Screen
+        name="ReleaseAnnotationsForm"
+        component={ReleaseAnnotationsForm}
+        options={({ navigation }) => ({
+          headerTitle: 'Editar anotação',
+          headerLeft: () => (
+            <BackHeaderIcon onPress={() => navigation.goBack()} />
+          ),
+        })}
+      />
+    </Navigator>
+  );
+};
 
 export { ReleasesRoutes };

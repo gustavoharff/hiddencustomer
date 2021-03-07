@@ -3,16 +3,16 @@ import { View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import { COLORS, SPACING } from 'styles';
+import { SPACING } from 'styles';
 
 type Props = {
   onPress?: () => void;
 };
 
 const LoggoutHeaderIcon: React.FC<Props> = ({ onPress }) => (
-  <View style={{ marginRight: SPACING.S }}>
+  <View style={{ marginRight: SPACING.L }}>
     <TouchableOpacity onPress={onPress}>
-      <Icon name="exit-to-app" color={COLORS.ALERT} size={SPACING.L * 2} />
+      <Icon name="exit-to-app" color="#DC1637" size={SPACING.L * 2} />
     </TouchableOpacity>
   </View>
 );
