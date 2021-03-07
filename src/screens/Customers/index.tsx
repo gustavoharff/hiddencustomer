@@ -1,9 +1,11 @@
 import React, { useCallback, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 
-import { BottomButton, CustomersList } from 'components';
+import { BottomButton } from 'components';
 
 import { useCustomers, useAuth } from 'hooks';
+
+import { CustomersList } from './CustomersList';
 
 import { Container } from './styles';
 

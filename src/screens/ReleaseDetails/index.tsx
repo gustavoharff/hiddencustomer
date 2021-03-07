@@ -7,12 +7,11 @@ import { Release, Customer } from 'types';
 
 import { api, getRealm } from 'services';
 
-import {
-  ListHeader,
-  ReleaseDates,
-  ReleaseGroups,
-  ReleaseAnnotations,
-} from 'components';
+import { ListHeader } from 'components';
+
+import { ReleaseAnnotations } from './ReleaseAnnotations';
+import { ReleaseDates } from './ReleaseDates';
+import { ReleaseGroups } from './ReleaseGroups';
 
 type Params = {
   ReleaseDetails: {

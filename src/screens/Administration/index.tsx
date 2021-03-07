@@ -2,9 +2,9 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { User } from 'types';
 
-import { UsersList } from 'components';
-
 import { api } from 'services';
+
+import { UsersList } from './UsersList';
 
 import { Container } from './styles';
 

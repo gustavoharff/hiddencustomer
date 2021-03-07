@@ -2,9 +2,10 @@ import { useNavigation } from '@react-navigation/native';
 import React, { useCallback, useEffect } from 'react';
 import RNBootSplash from 'react-native-bootsplash';
 
-import { BottomButton, ReleasesList } from 'components';
-
+import { BottomButton } from 'components';
 import { useAuth, useReleases } from 'hooks';
+
+import { ReleasesList } from './ReleasesList';
 
 import { Container } from './styles';
 

@@ -3,11 +3,13 @@ import { View } from 'react-native';
 
 import { SPACING } from 'styles';
 
-import { DateTimeInput, Button, ReleaseDatesList } from 'components';
+import { DateTimeInput, Button } from 'components';
 
 import { api, getRealm } from 'services';
 
 import { ReleaseDate } from 'types';
+
+import { ReleaseDatesList } from './ReleaseDatesList';
 
 import { Container } from './styles';
 

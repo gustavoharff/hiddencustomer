@@ -1,6 +1,5 @@
 export * from './Administration';
 export * from './CustomerForm';
-export * from './Drawer';
 export * from './Customers';
 export * from './Profile';
 export * from './ReleaseDetails';

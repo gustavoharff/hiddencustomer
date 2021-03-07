@@ -2,7 +2,7 @@ import React, { useCallback, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { View } from 'react-native';
 
-import { ReleaseGroupsList, Button } from 'components';
+import { Button } from 'components';
 
 import { api, getRealm } from 'services';
 
@@ -11,6 +11,8 @@ import { ReleaseGroup } from 'types';
 import { SPACING } from 'styles';
 
 import { useGroups } from 'hooks';
+
+import { ReleaseGroupsList } from './ReleaseGroupsList';
 
 import { Container } from './styles';
 

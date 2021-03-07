@@ -19,7 +19,6 @@ const ReleasesProvider: React.FC = ({ children }) => {
 
   const loadApiReleases = useCallback(async () => {
     const response = await api.get('/releases');
-
     setReleases(response.data);
 
     const realm = await getRealm();

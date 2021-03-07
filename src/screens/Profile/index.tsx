@@ -8,9 +8,12 @@ import {
 } from 'react-native';
 import { TabBar, TabView } from 'react-native-tab-view';
 
-import { Avatar, ChangeUserPassword, ChangeUserInfo } from 'components';
+import { Avatar } from 'components';
 
 import { SPACING } from 'styles';
+
+import { ChangeUserPassword } from './ChangeUserPassword';
+import { ChangeUserInfo } from './ChangeUserInfo';
 
 import { Container } from './styles';
 

@@ -12,6 +12,7 @@ import { api, getRealm } from 'services';
 
 import { Release } from 'types';
 
+import moment from 'moment';
 import {
   Container,
   Content,
@@ -150,30 +151,36 @@ const ReleasesList: React.FC<ReleasesListProps> = ({
                       </Item>
                       <Item>
                         <Title>Datas</Title>
-                        <Description>5</Description>
+                        <Description>{release.dates_counter}</Description>
                       </Item>
                       <Item>
                         <Title>Grupos</Title>
-                        <Description>5</Description>
+                        <Description>{release.groups_counter}</Description>
                       </Item>
                     </View>
                   </Content>
                 </RectButton>
               </Swipeable>
             </Top>
-            <Bottom>
-              <BottomContent>
-                <Title>Período</Title>
-                <TimeContent>
-                  <TimeText>18 Junho 2019</TimeText>
-                  <Icon
-                    name="long-arrow-right"
-                    style={{ marginHorizontal: 10, color: '#AEAEB3' }}
-                  />
-                  <TimeText>20 Junho 2019</TimeText>
-                </TimeContent>
-              </BottomContent>
-            </Bottom>
+            {release.interval && release.interval.length > 0 && (
+              <Bottom>
+                <BottomContent>
+                  <Title>Período</Title>
+                  <TimeContent>
+                    <TimeText>
+                      {moment(release.interval[0]).format('L')}
+                    </TimeText>
+                    <Icon
+                      name="long-arrow-right"
+                      style={{ marginHorizontal: 10, color: '#AEAEB3' }}
+                    />
+                    <TimeText>
+                      {moment(release.interval[1]).format('L')}
+                    </TimeText>
+                  </TimeContent>
+                </BottomContent>
+              </Bottom>
+            )}
           </Container>
         )}
       />
