@@ -3,6 +3,7 @@ export * from './CustomerForm';
 export * from './Customers';
 export * from './Profile';
 export * from './ReleaseDetails';
+export * from './ReleaseChange';
 export * from './ReleaseForm';
 export * from './ReleaseGroupForm';
 export * from './ReleaseAnnotationsForm';

@@ -10,7 +10,9 @@ import {
   ReleaseDetails,
   ReleaseGroupForm,
   ReleaseAnnotationsForm,
+  ReleaseChange,
 } from 'screens';
+
 import { useReleases } from 'hooks';
 
 const { Navigator, Screen } = createStackNavigator();
@@ -92,6 +94,17 @@ const ReleasesRoutes: React.FC = () => {
         component={ReleaseAnnotationsForm}
         options={({ navigation }) => ({
           headerTitle: 'Editar anotação',
+          headerLeft: () => (
+            <BackHeaderIcon onPress={() => navigation.goBack()} />
+          ),
+        })}
+      />
+
+      <Screen
+        name="ReleaseChange"
+        component={ReleaseChange}
+        options={({ navigation }) => ({
+          headerTitle: 'Editar lançamento',
           headerLeft: () => (
             <BackHeaderIcon onPress={() => navigation.goBack()} />
           ),

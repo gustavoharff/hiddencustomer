@@ -3,6 +3,7 @@ export * from './BottomButton';
 export * from './Button';
 export * from './DateTimeInput';
 export * from './DeleteItem';
+export * from './EditItem';
 export * from './EmptyList';
 export * from './HeaderIcons';
 export * from './Input';

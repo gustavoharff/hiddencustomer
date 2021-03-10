@@ -6,7 +6,7 @@ import Swipeable from 'react-native-gesture-handler/Swipeable';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import produce from 'immer';
 
-import { EmptyList, DeleteItem } from 'components';
+import { EmptyList, DeleteItem, EditItem } from 'components';
 
 import { api, getRealm } from 'services';
 
@@ -110,7 +110,19 @@ const ReleasesList: React.FC<ReleasesListProps> = ({
               ref={ref => (row[index] = ref)} // eslint-disable-line
                 friction={1.5}
                 rightThreshold={30}
-                renderRightActions={() => <DeleteItem onPress={onDeleteItem} />}
+                renderRightActions={() => (
+                  <>
+                    <DeleteItem onPress={onDeleteItem} />
+                    <EditItem
+                      onPress={() => {
+                        prevOpenedRow?.close();
+                        navigation.navigate('ReleaseChange', {
+                          release_id: release.id,
+                        });
+                      }}
+                    />
+                  </>
+                )}
                 activeOffsetX={-1}
                 activeOffsetY={500}
                 onSwipeableOpen={() => {
