@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View } from 'react-native';
+import { ActivityIndicator, Platform, View } from 'react-native';
 
-import { SPACING } from 'styles';
+import { COLORS, SPACING } from 'styles';
 
 import { DateTimeInput, Button } from 'components';
 
@@ -11,13 +11,14 @@ import { ReleaseDate } from 'types';
 
 import { ReleaseDatesList } from './ReleaseDatesList';
 
-import { Container } from './styles';
+import { Container, Center } from './styles';
 
 type ReleaseDatedProps = {
   release_id: string;
 };
 
-const ReleaseDates: React.FC<ReleaseDatedProps> = ({ release_id }) => {
+export function ReleaseDates({ release_id }: ReleaseDatedProps) {
+  const [loading, setLoading] = useState(true);
   const [date, setDate] = useState(new Date());
   const [isAddingDate, setIsAddingDate] = useState(false);
   const [dates, setDates] = useState<ReleaseDate[]>([]);
@@ -73,9 +74,11 @@ const ReleaseDates: React.FC<ReleaseDatedProps> = ({ release_id }) => {
   }, [release_id]);
 
   useEffect(() => {
-    loadApiReleaseDates().catch(() => {
-      loadLocalReleaseDates();
-    });
+    loadApiReleaseDates()
+      .catch(() => {
+        loadLocalReleaseDates();
+      })
+      .finally(() => setLoading(false));
   }, [loadApiReleaseDates, loadLocalReleaseDates, release_id]);
 
   const onRefresh = useCallback(async () => {
@@ -101,6 +104,17 @@ const ReleaseDates: React.FC<ReleaseDatedProps> = ({ release_id }) => {
     setLoadingButton(false);
     setIsAddingDate(false);
   }, [date, release_id]);
+
+  if (loading) {
+    return (
+      <Center>
+        <ActivityIndicator
+          color={Platform.OS === 'ios' ? COLORS.BACKGROUND_LIGHT : COLORS.ALERT}
+          size={30}
+        />
+      </Center>
+    );
+  }
 
   return (
     <Container>
@@ -144,5 +158,4 @@ const ReleaseDates: React.FC<ReleaseDatedProps> = ({ release_id }) => {
       )}
     </Container>
   );
-};
-export { ReleaseDates };
+}

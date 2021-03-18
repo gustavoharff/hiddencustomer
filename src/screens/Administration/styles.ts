@@ -4,3 +4,9 @@ export const Container = styled.View`
   flex: 1;
   justify-content: space-between;
 `;
+
+export const Center = styled.View`
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+`;

@@ -1,15 +1,18 @@
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import React, { useCallback, useEffect } from 'react';
 import RNBootSplash from 'react-native-bootsplash';
-
+import { ActivityIndicator, Platform } from 'react-native';
 import { BottomButton } from 'components';
 import { useAuth, useReleases } from 'hooks';
 
+import { COLORS } from 'styles';
+
 import { ReleasesList } from './ReleasesList';
 
-import { Container } from './styles';
+import { Container, Center } from './styles';
 
-const Releases: React.FC = () => {
+export function Releases() {
+  const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
   const {
@@ -28,9 +31,11 @@ const Releases: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    loadApiReleases().catch(() => {
-      loadLocalReleases();
-    });
+    loadApiReleases()
+      .catch(() => {
+        loadLocalReleases();
+      })
+      .finally(() => setLoading(false));
   }, [loadApiReleases, loadLocalReleases]);
 
   const onRefresh = useCallback(async () => {
@@ -38,6 +43,17 @@ const Releases: React.FC = () => {
       loadLocalReleases();
     });
   }, [loadApiReleases, loadLocalReleases]);
+
+  if (loading) {
+    return (
+      <Center>
+        <ActivityIndicator
+          color={Platform.OS === 'ios' ? COLORS.BACKGROUND_LIGHT : COLORS.ALERT}
+          size={30}
+        />
+      </Center>
+    );
+  }
 
   return (
     <>
@@ -57,6 +73,4 @@ const Releases: React.FC = () => {
       )}
     </>
   );
-};
-
-export { Releases };
+}

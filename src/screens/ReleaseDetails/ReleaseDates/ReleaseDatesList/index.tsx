@@ -27,52 +27,50 @@ const ReleaseDatesList: React.FC<ReleaseDatesListProps> = ({
   emptyListText,
 }) => {
   const [refreshing, setRefreshing] = useState(false);
-  const [row] = useState<Array<any>>([]);
+  const [row] = useState<Array<Swipeable | null>>([]);
   const [prevOpenedRow, setPrevOpenedRow] = useState<any>();
-  const [selectedDate, setSelectedDate] = useState<ReleaseDate>(
-    {} as ReleaseDate,
+
+  const handleDelete = useCallback(
+    async (dateId: string) => {
+      try {
+        await api.delete(`/release/dates/${dateId}`);
+        setDates(state =>
+          produce(state, drafts => drafts.filter(draft => draft.id !== dateId)),
+        );
+
+        const realm = await getRealm();
+
+        realm.write(() => {
+          realm.delete(realm.objectForPrimaryKey('ReleaseDate', dateId));
+        });
+      } catch (err) {
+        Alert.alert('Erro!', 'Ocorreu um erro, reporte aos desenvolvedores!');
+        prevOpenedRow.close();
+        await onRefresh();
+      }
+    },
+    [setDates, prevOpenedRow, onRefresh],
   );
 
-  const handleDelete = useCallback(async () => {
-    try {
-      await api.delete(`/release/dates/${selectedDate.id}`);
-      setDates(state =>
-        produce(state, drafts =>
-          drafts.filter(draft => draft.id !== selectedDate.id),
-        ),
-      );
-
-      const realm = await getRealm();
-
-      realm.write(() => {
-        realm.delete(realm.objectForPrimaryKey('ReleaseDate', selectedDate.id));
-      });
-    } catch (err) {
-      Alert.alert('Erro!', 'Ocorreu um erro, reporte aos desenvolvedores!');
-      prevOpenedRow.close();
-      await onRefresh();
-    }
-  }, [setDates, selectedDate.id, prevOpenedRow, onRefresh]);
-
-  const onDeleteItem = useCallback(async () => {
-    Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
-      {
-        text: 'Cancelar',
-        onPress: () => prevOpenedRow.close(),
-        style: 'cancel',
-      },
-      { text: 'Sim', onPress: handleDelete },
-    ]);
-  }, [prevOpenedRow, handleDelete]);
+  const onDeleteItem = useCallback(
+    async (dateId: string) => {
+      Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
+        {
+          text: 'Cancelar',
+          onPress: () => prevOpenedRow.close(),
+          style: 'cancel',
+        },
+        { text: 'Sim', onPress: () => handleDelete(dateId) },
+      ]);
+    },
+    [prevOpenedRow, handleDelete],
+  );
 
   const closeRow = useCallback(
     index => {
-      if (prevOpenedRow && prevOpenedRow !== row[index]) {
-        prevOpenedRow.close();
-      }
       setPrevOpenedRow(row[index]);
     },
-    [prevOpenedRow, row],
+    [row],
   );
 
   const handleRefresh = async () => {
@@ -98,16 +96,21 @@ const ReleaseDatesList: React.FC<ReleaseDatesListProps> = ({
         renderItem={({ item: date, index }) => (
           <Container style={{ paddingTop: index !== 0 ? 0 : 16 }}>
             <Swipeable
-            ref={ref => (row[index] = ref)} // eslint-disable-line
+              ref={ref => {
+                row[index] = ref;
+              }}
               friction={1.5}
               rightThreshold={30}
-              renderRightActions={() => <DeleteItem onPress={onDeleteItem} />}
+              renderRightActions={() => (
+                <DeleteItem
+                  onPress={() => {
+                    onDeleteItem(date.id);
+                  }}
+                />
+              )}
               activeOffsetX={-1}
               activeOffsetY={500}
-              onSwipeableOpen={() => {
-                closeRow(index);
-                setSelectedDate(date);
-              }}
+              onSwipeableOpen={() => closeRow(index)}
             >
               <Content past={moment(date.date).isSameOrBefore()}>
                 <Date>{moment(date.date).locale('pt-br').format('LLL')}</Date>

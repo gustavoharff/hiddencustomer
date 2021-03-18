@@ -28,38 +28,38 @@ const UsersList: React.FC<UsersListProps> = ({
   emptyListText,
 }) => {
   const [refreshing, setRefreshing] = useState(false);
-  const [row] = useState<Array<any>>([]);
+  const [row] = useState<Array<Swipeable | null>>([]);
   const [prevOpenedRow, setPrevOpenedRow] = useState<any>();
-  const [selectedUser, setSelectedUser] = useState<User>({} as User);
 
-  const handleDelete = useCallback(async () => {
-    await api.delete(`/users/${selectedUser.id}`);
-    setUsers(
-      produce(users, drafts =>
-        drafts.filter(draft => draft.id !== selectedUser.id),
-      ),
-    );
-  }, [setUsers, users, selectedUser.id]);
+  const handleDelete = useCallback(
+    async (userId: string) => {
+      await api.delete(`/users/${userId}`);
+      setUsers(
+        produce(users, drafts => drafts.filter(draft => draft.id !== userId)),
+      );
+    },
+    [setUsers, users],
+  );
 
-  const onDeleteItem = useCallback(() => {
-    Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
-      {
-        text: 'Cancelar',
-        onPress: () => prevOpenedRow.close(),
-        style: 'cancel',
-      },
-      { text: 'Sim', onPress: () => handleDelete() },
-    ]);
-  }, [prevOpenedRow, handleDelete]);
+  const onDeleteItem = useCallback(
+    (userId: string) => {
+      Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
+        {
+          text: 'Cancelar',
+          onPress: () => prevOpenedRow.close(),
+          style: 'cancel',
+        },
+        { text: 'Sim', onPress: () => handleDelete(userId) },
+      ]);
+    },
+    [prevOpenedRow, handleDelete],
+  );
 
   const closeRow = useCallback(
     index => {
-      if (prevOpenedRow && prevOpenedRow !== row[index]) {
-        prevOpenedRow.close();
-      }
       setPrevOpenedRow(row[index]);
     },
-    [prevOpenedRow, row],
+    [row],
   );
 
   const handleRefresh = async () => {
@@ -85,16 +85,21 @@ const UsersList: React.FC<UsersListProps> = ({
         renderItem={({ item: user, index }) => (
           <Container style={{ paddingTop: index !== 0 ? 0 : 16 }}>
             <Swipeable
-            ref={ref => (row[index] = ref)} // eslint-disable-line
+              ref={ref => {
+                row[index] = ref;
+              }}
               friction={1.5}
               rightThreshold={30}
-              renderRightActions={() => <DeleteItem onPress={onDeleteItem} />}
+              renderRightActions={() => (
+                <DeleteItem
+                  onPress={() => {
+                    onDeleteItem(user.id);
+                  }}
+                />
+              )}
               activeOffsetX={-1}
               activeOffsetY={500}
-              onSwipeableOpen={() => {
-                closeRow(index);
-                setSelectedUser(user);
-              }}
+              onSwipeableOpen={() => closeRow(index)}
             >
               <Content>
                 <Avatar

@@ -1,15 +1,20 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
+import { ActivityIndicator, Platform } from 'react-native';
 
 import { BottomButton } from 'components';
 
 import { useCustomers, useAuth } from 'hooks';
 
+import { COLORS } from 'styles';
+
 import { CustomersList } from './CustomersList';
 
-import { Container } from './styles';
+import { Container, Center } from './styles';
 
-const Customers: React.FC = () => {
+export function Customers() {
+  const [loading, setLoading] = useState(true);
+
   const {
     customers,
     setCustomers,
@@ -19,9 +24,11 @@ const Customers: React.FC = () => {
   const navigation = useNavigation();
 
   useEffect(() => {
-    loadApiCustomers().catch(() => {
-      loadLocalCustomers();
-    });
+    loadApiCustomers()
+      .catch(() => {
+        loadLocalCustomers();
+      })
+      .finally(() => setLoading(false));
   }, [loadApiCustomers, loadLocalCustomers]);
 
   const onRefresh = useCallback(async () => {
@@ -31,6 +38,17 @@ const Customers: React.FC = () => {
   }, [loadApiCustomers, loadLocalCustomers]);
 
   const { user } = useAuth();
+
+  if (loading) {
+    return (
+      <Center>
+        <ActivityIndicator
+          color={Platform.OS === 'ios' ? COLORS.BACKGROUND_LIGHT : COLORS.ALERT}
+          size={30}
+        />
+      </Center>
+    );
+  }
 
   return (
     <>
@@ -50,6 +68,4 @@ const Customers: React.FC = () => {
       )}
     </>
   );
-};
-
-export { Customers };
+}

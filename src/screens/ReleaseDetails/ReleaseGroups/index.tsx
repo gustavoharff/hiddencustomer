@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { View } from 'react-native';
+import { ActivityIndicator, Platform, View } from 'react-native';
 
 import { Button } from 'components';
 
@@ -8,19 +8,20 @@ import { api, getRealm } from 'services';
 
 import { ReleaseGroup } from 'types';
 
-import { SPACING } from 'styles';
+import { COLORS, SPACING } from 'styles';
 
 import { useGroups } from 'hooks';
 
 import { ReleaseGroupsList } from './ReleaseGroupsList';
 
-import { Container } from './styles';
+import { Container, Center } from './styles';
 
 type ReleaseGroupsProps = {
   release_id: string;
 };
 
-const ReleaseGroups: React.FC<ReleaseGroupsProps> = ({ release_id }) => {
+export function ReleaseGroups({ release_id }: ReleaseGroupsProps) {
+  const [loading, setLoading] = useState(true);
   const { groups, setGroups } = useGroups();
 
   const navigation = useNavigation();
@@ -74,9 +75,11 @@ const ReleaseGroups: React.FC<ReleaseGroupsProps> = ({ release_id }) => {
   }, [release_id, setGroups]);
 
   useEffect(() => {
-    loadApiGroups().catch(() => {
-      loadLocalGroups();
-    });
+    loadApiGroups()
+      .catch(() => {
+        loadLocalGroups();
+      })
+      .finally(() => setLoading(false));
   }, [loadApiGroups, loadLocalGroups]);
 
   const onRefresh = useCallback(async () => {
@@ -84,6 +87,17 @@ const ReleaseGroups: React.FC<ReleaseGroupsProps> = ({ release_id }) => {
       loadLocalGroups();
     });
   }, [loadApiGroups, loadLocalGroups]);
+
+  if (loading) {
+    return (
+      <Center>
+        <ActivityIndicator
+          color={Platform.OS === 'ios' ? COLORS.BACKGROUND_LIGHT : COLORS.ALERT}
+          size={30}
+        />
+      </Center>
+    );
+  }
 
   return (
     <Container>
@@ -104,5 +118,4 @@ const ReleaseGroups: React.FC<ReleaseGroupsProps> = ({ release_id }) => {
       </View>
     </Container>
   );
-};
-export { ReleaseGroups };
+}

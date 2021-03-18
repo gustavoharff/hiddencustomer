@@ -133,11 +133,11 @@ const ReleaseDetails: React.FC<Props> = ({ route }) => {
         initialLayout={{ width: Dimensions.get('window').width }}
         renderTabBar={props => (
           <TabBar
-            {...props}
             indicatorStyle={{ backgroundColor: '#DC1637' }}
             activeColor="#fff"
             inactiveColor="#f3f3f3"
             style={{ backgroundColor: '#AEAEB3' }}
+            {...props}
           />
         )}
       />

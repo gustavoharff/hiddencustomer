@@ -19,53 +19,53 @@ type CustomersListProps = {
   emptyListText: string;
 };
 
-const CustomersList: React.FC<CustomersListProps> = ({
+export function CustomersList({
   customers,
   setCustomers,
   onRefresh,
   emptyListText,
-}) => {
+}: CustomersListProps) {
   const [refreshing, setRefreshing] = useState(false);
-  const [row] = useState<Array<any>>([]);
+  const [row] = useState<Array<Swipeable | null>>([]);
   const [prevOpenedRow, setPrevOpenedRow] = useState<any>();
-  const [selectedCustomer, setSelectedCustomer] = useState<Customer>(
-    {} as Customer,
+
+  const handleDelete = useCallback(
+    async (customerId: string) => {
+      await api.delete(`/customers/${customerId}`);
+      setCustomers(
+        produce(customers, drafts =>
+          drafts.filter(draft => draft.id !== customerId),
+        ),
+      );
+
+      const realm = await getRealm();
+
+      realm.write(() => {
+        realm.delete(realm.objectForPrimaryKey('Customer', customerId));
+      });
+    },
+    [setCustomers, customers],
   );
 
-  const handleDelete = useCallback(async () => {
-    await api.delete(`/customers/${selectedCustomer.id}`);
-    setCustomers(
-      produce(customers, drafts =>
-        drafts.filter(draft => draft.id !== selectedCustomer.id),
-      ),
-    );
-
-    const realm = await getRealm();
-
-    realm.write(() => {
-      realm.delete(realm.objectForPrimaryKey('Customer', selectedCustomer.id));
-    });
-  }, [selectedCustomer, setCustomers, customers]);
-
-  const onDeleteItem = useCallback(() => {
-    Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
-      {
-        text: 'Cancelar',
-        onPress: () => prevOpenedRow.close(),
-        style: 'cancel',
-      },
-      { text: 'Sim', onPress: () => handleDelete() },
-    ]);
-  }, [prevOpenedRow, handleDelete]);
+  const onDeleteItem = useCallback(
+    (customerId: string) => {
+      Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
+        {
+          text: 'Cancelar',
+          onPress: () => prevOpenedRow.close(),
+          style: 'cancel',
+        },
+        { text: 'Sim', onPress: () => handleDelete(customerId) },
+      ]);
+    },
+    [prevOpenedRow, handleDelete],
+  );
 
   const closeRow = useCallback(
     index => {
-      if (prevOpenedRow && prevOpenedRow !== row[index]) {
-        prevOpenedRow.close();
-      }
       setPrevOpenedRow(row[index]);
     },
-    [prevOpenedRow, row],
+    [row],
   );
 
   const handleRefresh = async () => {
@@ -91,16 +91,21 @@ const CustomersList: React.FC<CustomersListProps> = ({
         renderItem={({ item: customer, index }) => (
           <Container style={{ paddingTop: index !== 0 ? 0 : 16 }}>
             <Swipeable
-            ref={ref => (row[index] = ref)} // eslint-disable-line
+              ref={ref => {
+                row[index] = ref;
+              }}
               friction={1.5}
               rightThreshold={30}
-              renderRightActions={() => <DeleteItem onPress={onDeleteItem} />}
+              renderRightActions={() => (
+                <DeleteItem
+                  onPress={() => {
+                    onDeleteItem(customer.id);
+                  }}
+                />
+              )}
               activeOffsetX={-1}
               activeOffsetY={500}
-              onSwipeableOpen={() => {
-                closeRow(index);
-                setSelectedCustomer(customer);
-              }}
+              onSwipeableOpen={() => closeRow(index)}
             >
               <Content>
                 <Description style={{ marginTop: 0 }}>
@@ -117,6 +122,4 @@ const CustomersList: React.FC<CustomersListProps> = ({
       />
     </View>
   );
-};
-
-export { CustomersList };
+}

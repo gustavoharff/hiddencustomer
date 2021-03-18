@@ -27,56 +27,54 @@ const ReleaseGroupsList: React.FC<ReleaseGroupsListProps> = ({
   emptyListText,
 }) => {
   const [refreshing, setRefreshing] = useState(false);
-  const [row] = useState<Array<any>>([]);
+  const [row] = useState<Array<Swipeable | null>>([]);
   const [prevOpenedRow, setPrevOpenedRow] = useState<any>();
-  const [selectedGroup, setSelectedGroup] = useState<ReleaseGroup>(
-    {} as ReleaseGroup,
-  );
 
   const { setGroups } = useGroups();
 
-  const handleDelete = useCallback(async () => {
-    try {
-      await api.delete(`/release/groups/${selectedGroup.id}`);
-      setGroups(
-        produce(groups, drafts =>
-          drafts.filter(draft => draft.id !== selectedGroup.id),
-        ),
-      );
-
-      const realm = await getRealm();
-
-      realm.write(() => {
-        realm.delete(
-          realm.objectForPrimaryKey('ReleaseGroup', selectedGroup.id),
+  const handleDelete = useCallback(
+    async (groupId: string) => {
+      try {
+        await api.delete(`/release/groups/${groupId}`);
+        setGroups(
+          produce(groups, drafts =>
+            drafts.filter(draft => draft.id !== groupId),
+          ),
         );
-      });
-    } catch (err) {
-      Alert.alert('Erro!', 'Ocorreu um erro , reporte aos desenvolvedores!');
-      prevOpenedRow.close();
-      await onRefresh();
-    }
-  }, [groups, setGroups, selectedGroup.id, prevOpenedRow, onRefresh]);
 
-  const onDeleteItem = useCallback(() => {
-    Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
-      {
-        text: 'Cancelar',
-        onPress: () => prevOpenedRow.close(),
-        style: 'cancel',
-      },
-      { text: 'Sim', onPress: () => handleDelete() },
-    ]);
-  }, [prevOpenedRow, handleDelete]);
+        const realm = await getRealm();
+
+        realm.write(() => {
+          realm.delete(realm.objectForPrimaryKey('ReleaseGroup', groupId));
+        });
+      } catch (err) {
+        Alert.alert('Erro!', 'Ocorreu um erro , reporte aos desenvolvedores!');
+        prevOpenedRow.close();
+        await onRefresh();
+      }
+    },
+    [groups, setGroups, prevOpenedRow, onRefresh],
+  );
+
+  const onDeleteItem = useCallback(
+    (groupId: string) => {
+      Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
+        {
+          text: 'Cancelar',
+          onPress: () => prevOpenedRow.close(),
+          style: 'cancel',
+        },
+        { text: 'Sim', onPress: () => handleDelete(groupId) },
+      ]);
+    },
+    [prevOpenedRow, handleDelete],
+  );
 
   const closeRow = useCallback(
     index => {
-      if (prevOpenedRow && prevOpenedRow !== row[index]) {
-        prevOpenedRow.close();
-      }
       setPrevOpenedRow(row[index]);
     },
-    [prevOpenedRow, row],
+    [row],
   );
 
   const handleRefresh = async () => {
@@ -102,16 +100,21 @@ const ReleaseGroupsList: React.FC<ReleaseGroupsListProps> = ({
         renderItem={({ item: group, index }) => (
           <Container style={{ paddingTop: index !== 0 ? 0 : 16 }}>
             <Swipeable
-            ref={ref => (row[index] = ref)} // eslint-disable-line
+              ref={ref => {
+                row[index] = ref;
+              }}
               friction={1.5}
               rightThreshold={30}
-              renderRightActions={() => <DeleteItem onPress={onDeleteItem} />}
+              renderRightActions={() => (
+                <DeleteItem
+                  onPress={() => {
+                    onDeleteItem(group.id);
+                  }}
+                />
+              )}
               activeOffsetX={-1}
               activeOffsetY={500}
-              onSwipeableOpen={() => {
-                closeRow(index);
-                setSelectedGroup(group);
-              }}
+              onSwipeableOpen={() => closeRow(index)}
             >
               <Content>
                 <Description>{group.name}</Description>

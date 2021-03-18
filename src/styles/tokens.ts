@@ -50,7 +50,6 @@ const BODY = {
 
 const COLORS = {
   WHITE: '#E1E1E6',
-  // BACKGROUND_DARK: '#1e1d20',
   BACKGROUND_DARK: 'rgb(24, 23, 25)',
   BACKGROUND_LIGHT: '#303033',
   BACKGROUND: '#1e1d20',

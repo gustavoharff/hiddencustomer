@@ -40,49 +40,50 @@ const ReleasesList: React.FC<ReleasesListProps> = ({
   emptyListText,
 }) => {
   const [refreshing, setRefreshing] = useState(false);
-  const [row] = useState<Array<any>>([]);
+  const [row] = useState<Array<Swipeable | null>>([]);
   const [prevOpenedRow, setPrevOpenedRow] = useState<any>();
-  const [selectedRelease, setSelectedRelease] = useState<Release>(
-    {} as Release,
-  );
 
   const navigation = useNavigation();
 
-  const handleDelete = useCallback(async () => {
-    await api.delete(`/releases/${selectedRelease.id}`);
-    setReleases(
-      produce(releases, drafts =>
-        drafts.filter(draft => draft.id !== selectedRelease.id),
-      ),
-    );
+  const handleDelete = useCallback(
+    async (releaseId: string) => {
+      await api.delete(`/releases/${releaseId}`);
+      setReleases(
+        produce(releases, drafts =>
+          drafts.filter(draft => draft.id !== releaseId),
+        ),
+      );
 
-    const realm = await getRealm();
+      const realm = await getRealm();
 
-    realm.write(() => {
-      realm.delete(realm.objectForPrimaryKey('Release', selectedRelease.id));
-    });
-  }, [setReleases, releases, selectedRelease]);
+      realm.write(() => {
+        realm.delete(realm.objectForPrimaryKey('Release', releaseId));
+      });
+    },
+    [setReleases, releases],
+  );
 
-  const onDeleteItem = useCallback(() => {
-    Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
-      {
-        text: 'Cancelar',
-        onPress: () => prevOpenedRow.close(),
-        style: 'cancel',
-      },
-      { text: 'Sim', onPress: () => handleDelete() },
-    ]);
-  }, [prevOpenedRow, handleDelete]);
+  const onDeleteItem = useCallback(
+    (releaseId: string) => {
+      Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
+        {
+          text: 'Cancelar',
+          onPress: () => prevOpenedRow.close(),
+          style: 'cancel',
+        },
+        { text: 'Sim', onPress: () => handleDelete(releaseId) },
+      ]);
+    },
+    [prevOpenedRow, handleDelete],
+  );
 
   const closeRow = useCallback(
     index => {
-      if (prevOpenedRow && prevOpenedRow !== row[index]) {
-        prevOpenedRow.close();
-      }
       setPrevOpenedRow(row[index]);
     },
-    [prevOpenedRow, row],
+    [row],
   );
+
   const handleRefresh = async () => {
     setRefreshing(true);
     await onRefresh();
@@ -107,12 +108,18 @@ const ReleasesList: React.FC<ReleasesListProps> = ({
           <Container style={{ paddingTop: index !== 0 ? 0 : 16 }}>
             <Top>
               <Swipeable
-              ref={ref => (row[index] = ref)} // eslint-disable-line
+                ref={ref => {
+                  row[index] = ref;
+                }}
                 friction={1.5}
                 rightThreshold={30}
                 renderRightActions={() => (
                   <>
-                    <DeleteItem onPress={onDeleteItem} />
+                    <DeleteItem
+                      onPress={() => {
+                        onDeleteItem(release.id);
+                      }}
+                    />
                     <EditItem
                       onPress={() => {
                         prevOpenedRow?.close();
@@ -125,10 +132,7 @@ const ReleasesList: React.FC<ReleasesListProps> = ({
                 )}
                 activeOffsetX={-1}
                 activeOffsetY={500}
-                onSwipeableOpen={() => {
-                  closeRow(index);
-                  setSelectedRelease(release);
-                }}
+                onSwipeableOpen={() => closeRow(index)}
               >
                 <RectButton
                   onPress={() => {
@@ -187,9 +191,9 @@ const ReleasesList: React.FC<ReleasesListProps> = ({
                     moment(release.interval[1]),
                   ) ? (
                     <Title>Período ativo</Title>
-                  ) : ( // eslint-disable-line
-                      <Title>Período</Title> // eslint-disable-line
-                  )}{/*   eslint-disable-line */}
+                  ) : (
+                    <Title>Período</Title>
+                  )}
                   <TimeContent>
                     <TimeText>
                       {moment(release.interval[0]).format('L')}
