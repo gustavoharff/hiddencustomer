@@ -2,11 +2,10 @@ import React, { useCallback, useState } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import produce from 'immer';
 
 import { api } from 'services';
 
-import { Avatar, EmptyList, DeleteItem } from 'components';
+import { Avatar, EmptyList, ActivateItem, DisableItem } from 'components';
 
 import { User } from 'types';
 
@@ -31,28 +30,66 @@ const UsersList: React.FC<UsersListProps> = ({
   const [row] = useState<Array<Swipeable | null>>([]);
   const [prevOpenedRow, setPrevOpenedRow] = useState<any>();
 
-  const handleDelete = useCallback(
+  const handleActivate = useCallback(
     async (userId: string) => {
-      await api.delete(`/users/${userId}`);
-      setUsers(
-        produce(users, drafts => drafts.filter(draft => draft.id !== userId)),
-      );
+      const response = await api.put(`/users/${userId}`, {
+        active: true,
+      });
+
+      setUsers(users.map(u => (u.id === response.data.id ? response.data : u)));
     },
     [setUsers, users],
   );
 
-  const onDeleteItem = useCallback(
+  const handleDisable = useCallback(
+    async (userId: string) => {
+      const response = await api.put(`/users/${userId}`, {
+        active: false,
+      });
+
+      setUsers(users.map(u => (u.id === response.data.id ? response.data : u)));
+    },
+    [setUsers, users],
+  );
+
+  const onActivateItem = useCallback(
     (userId: string) => {
-      Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
+      Alert.alert('Atenção!', 'Deseja mesmo ativar este usuário?', [
         {
           text: 'Cancelar',
           onPress: () => prevOpenedRow.close(),
           style: 'cancel',
         },
-        { text: 'Sim', onPress: () => handleDelete(userId) },
+        {
+          text: 'Sim',
+          onPress: () => {
+            prevOpenedRow.close();
+            handleActivate(userId);
+          },
+        },
       ]);
     },
-    [prevOpenedRow, handleDelete],
+    [prevOpenedRow, handleActivate],
+  );
+
+  const onDisableItem = useCallback(
+    (userId: string) => {
+      Alert.alert('Atenção!', 'Deseja mesmo desativar este usuário?', [
+        {
+          text: 'Cancelar',
+          onPress: () => prevOpenedRow.close(),
+          style: 'cancel',
+        },
+        {
+          text: 'Sim',
+          onPress: () => {
+            prevOpenedRow.close();
+            handleDisable(userId);
+          },
+        },
+      ]);
+    },
+    [prevOpenedRow, handleDisable],
   );
 
   const closeRow = useCallback(
@@ -90,13 +127,25 @@ const UsersList: React.FC<UsersListProps> = ({
               }}
               friction={1.5}
               rightThreshold={30}
-              renderRightActions={() => (
-                <DeleteItem
-                  onPress={() => {
-                    onDeleteItem(user.id);
-                  }}
-                />
-              )}
+              renderRightActions={() => {
+                if (!user.active) {
+                  return (
+                    <ActivateItem
+                      onPress={() => {
+                        onActivateItem(user.id);
+                      }}
+                    />
+                  );
+                }
+
+                return (
+                  <DisableItem
+                    onPress={() => {
+                      onDisableItem(user.id);
+                    }}
+                  />
+                );
+              }}
               activeOffsetX={-1}
               activeOffsetY={500}
               onSwipeableOpen={() => closeRow(index)}
@@ -112,6 +161,7 @@ const UsersList: React.FC<UsersListProps> = ({
                 <UserInfo>
                   <Name>{user.name}</Name>
                   <Email>{user.email}</Email>
+                  <Email>{user.company?.name}</Email>
                 </UserInfo>
                 <Icon
                   name={user.active ? 'check' : 'close'}
