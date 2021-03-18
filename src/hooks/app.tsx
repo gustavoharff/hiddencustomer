@@ -5,15 +5,18 @@ import {
   CustomerProvider,
   ReleasesProvider,
   GroupProvider,
+  UsersProvider,
 } from 'hooks';
 
 const AppProvider: React.FC = ({ children }) => (
   <AuthProvider>
-    <CustomerProvider>
-      <ReleasesProvider>
-        <GroupProvider>{children}</GroupProvider>
-      </ReleasesProvider>
-    </CustomerProvider>
+    <UsersProvider>
+      <CustomerProvider>
+        <ReleasesProvider>
+          <GroupProvider>{children}</GroupProvider>
+        </ReleasesProvider>
+      </CustomerProvider>
+    </UsersProvider>
   </AuthProvider>
 );
 

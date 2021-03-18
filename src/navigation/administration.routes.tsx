@@ -1,7 +1,8 @@
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
-import { Administration } from 'screens';
+import { Administration, UserForm } from 'screens';
+import { BackHeaderIcon } from 'components';
 
 const { Navigator, Screen } = createStackNavigator();
 
@@ -30,6 +31,17 @@ const AdministrationRoutes: React.FC = () => (
       options={{
         headerTitle: 'Administração',
       }}
+    />
+
+    <Screen
+      name="UserForm"
+      component={UserForm}
+      options={({ navigation }) => ({
+        headerTitle: 'Cadastrar usuário',
+        headerLeft: () => (
+          <BackHeaderIcon onPress={() => navigation.goBack()} />
+        ),
+      })}
     />
   </Navigator>
 );

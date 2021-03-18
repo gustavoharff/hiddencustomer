@@ -7,25 +7,20 @@ import { api } from 'services';
 
 import { Avatar, EmptyList, ActivateItem, DisableItem } from 'components';
 
-import { User } from 'types';
-
 import { COLORS, SPACING } from 'styles';
+
+import { useUsers } from 'hooks';
 
 import { Container, Name, Email, UserInfo, Content } from './styles';
 
 type UsersListProps = {
-  users: User[];
-  setUsers: React.Dispatch<React.SetStateAction<User[]>>;
   onRefresh: () => Promise<void>;
   emptyListText: string;
 };
 
-const UsersList: React.FC<UsersListProps> = ({
-  users,
-  setUsers,
-  onRefresh,
-  emptyListText,
-}) => {
+const UsersList: React.FC<UsersListProps> = ({ onRefresh, emptyListText }) => {
+  const { users, setUsers } = useUsers();
+
   const [refreshing, setRefreshing] = useState(false);
   const [row] = useState<Array<Swipeable | null>>([]);
   const [prevOpenedRow, setPrevOpenedRow] = useState<any>();
@@ -111,10 +106,10 @@ const UsersList: React.FC<UsersListProps> = ({
         ListEmptyComponent={<EmptyList text={emptyListText} />}
         refreshControl={
           <RefreshControl
-            tintColor="rgba(255,255,255,0.75)"
+            tintColor="rgba(0,0,0,0.5)"
             refreshing={refreshing}
             onRefresh={handleRefresh}
-            colors={[COLORS.ALERT]}
+            colors={['#DC1637']}
           />
         }
         keyExtractor={(item, index) => `${item.id} - ${index}`}
