@@ -1,13 +1,10 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { ActivityIndicator, Platform } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 
 import { COLORS } from 'styles';
 
-import { User } from 'types';
-
-import { api } from 'services';
-
-import { useAuth } from 'hooks';
+import { useAuth, useUsers } from 'hooks';
 
 import { BottomButton } from 'components';
 import { UsersList } from './UsersList';
@@ -16,24 +13,26 @@ import { Container, Center } from './styles';
 
 const Administration: React.FC = () => {
   const [loading, setLoading] = useState(true);
-  const [users, setUsers] = useState<User[]>([]);
+
+  const { loadApiUsers, loadLocalUsers } = useUsers();
+
+  const navigation = useNavigation();
 
   const { user } = useAuth();
 
   useEffect(() => {
-    api
-      .get('/users')
-      .then(response => {
-        setUsers(response.data.filter((u: User) => u.id !== user.id));
-      })
+    loadApiUsers(user.id)
+      .catch(() => loadLocalUsers())
       .finally(() => setLoading(false));
-  }, [user.id]);
+  }, [loadApiUsers, user.id, loadLocalUsers]);
 
   const onRefresh = useCallback(async () => {
-    const response = await api.get('/users');
-
-    setUsers(response.data.filter((u: User) => u.id !== user.id));
-  }, [user.id]);
+    try {
+      await loadApiUsers(user.id);
+    } catch {
+      await loadLocalUsers();
+    }
+  }, [user.id, loadApiUsers, loadLocalUsers]);
 
   if (loading) {
     return (
@@ -51,8 +50,6 @@ const Administration: React.FC = () => {
       <Container>
         <Container>
           <UsersList
-            users={users}
-            setUsers={setUsers}
             onRefresh={onRefresh}
             emptyListText="Nenhum usuário cadastrado."
           />
@@ -61,7 +58,7 @@ const Administration: React.FC = () => {
       {user.permission === 'admin' && (
         <BottomButton
           name="plus"
-          // onPress={() => navigation.navigate('ReleaseForm')}
+          onPress={() => navigation.navigate('UserForm')}
         />
       )}
     </>

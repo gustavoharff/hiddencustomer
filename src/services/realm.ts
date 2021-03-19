@@ -6,6 +6,7 @@ import {
   ReleaseSchema,
   ReleaseDateSchema,
   ReleaseGroupSchema,
+  UserSchema,
 } from 'schemas';
 
 export async function getRealm(): Promise<Realm> {
@@ -16,7 +17,8 @@ export async function getRealm(): Promise<Realm> {
       ReleaseSchema,
       ReleaseDateSchema,
       ReleaseGroupSchema,
+      UserSchema,
     ],
-    schemaVersion: 6,
+    schemaVersion: 9,
   });
 }

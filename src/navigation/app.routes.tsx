@@ -93,22 +93,40 @@ const TabRoutes: React.FC = () => {
         <Screen
           name="Administration"
           component={AdministrationRoutes}
-          options={{
-            tabBarLabel: () => null,
-            tabBarIcon: ({ size, focused }) => (
-              <>
-                <Icon
-                  name="account-cog-outline"
-                  size={size}
-                  color={focused ? '#DC1637' : '#A8A8B3'}
-                />
-                {focused && (
-                  <ScreenIndicator
-                    style={{ backgroundColor: focused ? '#DC1637' : '#A8A8B3' }}
+          options={({ navigation }) => {
+            const { routes, index } = navigation.dangerouslyGetState();
+            const { state: exploreState } = routes[index];
+            let tabBarVisible = true;
+            if (exploreState) {
+              const {
+                routes: exploreRoutes,
+                index: exploreIndex,
+              } = exploreState;
+              const exploreActiveRoute = exploreRoutes[exploreIndex];
+              if (exploreActiveRoute.name === 'UserForm') {
+                tabBarVisible = false;
+              }
+            }
+            return {
+              tabBarVisible,
+              tabBarLabel: () => null,
+              tabBarIcon: ({ size, focused }) => (
+                <>
+                  <Icon
+                    name="account-cog-outline"
+                    size={size}
+                    color={focused ? '#DC1637' : '#A8A8B3'}
                   />
-                )}
-              </>
-            ),
+                  {focused && (
+                    <ScreenIndicator
+                      style={{
+                        backgroundColor: focused ? '#DC1637' : '#A8A8B3',
+                      }}
+                    />
+                  )}
+                </>
+              ),
+            };
           }}
         />
       )}

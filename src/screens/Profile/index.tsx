@@ -51,7 +51,7 @@ const Profile: React.FC = () => {
                 width: '100%',
                 alignItems: 'center',
                 paddingVertical: SPACING.L,
-                backgroundColor: '#47474d',
+                backgroundColor: '#29292E',
               }}
             >
               <Avatar

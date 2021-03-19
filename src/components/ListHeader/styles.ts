@@ -5,7 +5,7 @@ export const Header = styled.View`
   padding: 20px 10px;
   justify-content: center;
   align-items: center;
-  background: #47474d;
+  background: #29292e;
 `;
 
 export const Content = styled.View`

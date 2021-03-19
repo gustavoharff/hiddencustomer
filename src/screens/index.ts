@@ -9,3 +9,4 @@ export * from './ReleaseGroupForm';
 export * from './ReleaseAnnotationsForm';
 export * from './Releases';
 export * from './SignIn';
+export * from './UserForm';
