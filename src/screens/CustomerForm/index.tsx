@@ -16,8 +16,6 @@ import { useNavigation } from '@react-navigation/native';
 
 import { Input, Button } from 'components';
 
-import { api, getRealm } from 'services';
-
 import { useCustomers } from 'hooks';
 
 import { COLORS, SPACING } from 'styles';
@@ -28,7 +26,7 @@ const CustomerForm: React.FC = () => {
   const [loadingButton, setLoadingButton] = useState(false);
   const formRef = useRef<FormHandles>(null);
 
-  const { setCustomers } = useCustomers();
+  const { createCustomer } = useCustomers();
 
   const navigation = useNavigation();
 
@@ -43,17 +41,7 @@ const CustomerForm: React.FC = () => {
 
         await schema.validate(data, { abortEarly: false });
 
-        const response = await api.post('/customers', {
-          name: data.name,
-        });
-
-        setCustomers(state => [response.data, ...state]);
-
-        const realm = await getRealm();
-
-        realm.write(() => {
-          realm.create('Customer', response.data);
-        });
+        await createCustomer(data.name);
 
         navigation.navigate('Customers');
       } catch (err) {
@@ -65,7 +53,7 @@ const CustomerForm: React.FC = () => {
         setLoadingButton(false);
       }
     },
-    [setCustomers, navigation],
+    [createCustomer, navigation],
   );
 
   return (

@@ -1,8 +1,17 @@
-import React, { createContext, useState, useContext, useCallback } from 'react';
+import React, {
+  createContext,
+  useState,
+  useContext,
+  useCallback,
+  ReactNode,
+} from 'react';
+import { Alert } from 'react-native';
 
 import { api, getRealm } from 'services';
 
 import { User } from 'types';
+
+import { useAuth } from 'hooks';
 
 type UsersContextData = {
   users: User[];
@@ -11,27 +20,41 @@ type UsersContextData = {
   loadLocalUsers: () => Promise<void>;
 };
 
+type UsersProviderProps = {
+  children: ReactNode;
+};
+
 const UsersContext = createContext<UsersContextData>({} as UsersContextData);
 
-const UsersProvider: React.FC = ({ children }) => {
+export function UsersProvider({ children }: UsersProviderProps) {
   const [users, setUsers] = useState<User[]>([]);
 
-  const loadApiUsers = useCallback(async (userId: string) => {
-    const response = await api.get('/users');
+  const { signOut } = useAuth();
 
-    setUsers(response.data.filter((u: User) => u.id !== userId));
+  const loadApiUsers = useCallback(
+    async (userId: string) => {
+      try {
+        const response = await api.get('/users');
 
-    const realm = await getRealm();
+        setUsers(response.data.filter((u: User) => u.id !== userId));
 
-    console.log(realm.path);
+        const realm = await getRealm();
 
-    realm.write(() => {
-      const data = realm.objects('User');
-      realm.delete(data);
+        realm.write(() => {
+          const data = realm.objects('User');
+          realm.delete(data);
 
-      response.data.map((user: User) => realm.create('User', user));
-    });
-  }, []);
+          response.data.map((user: User) => realm.create('User', user));
+        });
+      } catch (err) {
+        if (err.response.status === 440) {
+          Alert.alert('Sessão expirada', 'Realize o login novamente!');
+          signOut();
+        }
+      }
+    },
+    [signOut],
+  );
 
   const loadLocalUsers = useCallback(async () => {
     const realm = await getRealm();
@@ -63,12 +86,10 @@ const UsersProvider: React.FC = ({ children }) => {
       {children}
     </UsersContext.Provider>
   );
-};
+}
 
-function useUsers(): UsersContextData {
+export function useUsers(): UsersContextData {
   const context = useContext(UsersContext);
 
   return context;
 }
-
-export { UsersProvider, useUsers };

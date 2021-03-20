@@ -17,7 +17,7 @@ import { ChangeUserInfo } from './ChangeUserInfo';
 
 import { Container } from './styles';
 
-const Profile: React.FC = () => {
+export function Profile() {
   const [tabIndex, setTabIndex] = useState(0);
 
   const tabRoutes = [
@@ -80,6 +80,4 @@ const Profile: React.FC = () => {
       </ScrollView>
     </KeyboardAvoidingView>
   );
-};
-
-export { Profile };
+}

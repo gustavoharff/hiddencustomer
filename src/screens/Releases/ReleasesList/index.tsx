@@ -4,15 +4,11 @@ import { RectButton } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import produce from 'immer';
 
 import { EmptyList, DeleteItem, EditItem } from 'components';
 
-import { api, getRealm } from 'services';
-
-import { Release } from 'types';
-
 import moment from 'moment';
+import { useReleases } from 'hooks';
 import {
   Container,
   Content,
@@ -27,15 +23,11 @@ import {
 } from './styles';
 
 type ReleasesListProps = {
-  releases: Release[];
-  setReleases: React.Dispatch<React.SetStateAction<Release[]>>;
   onRefresh: () => Promise<void>;
   emptyListText: string;
 };
 
 const ReleasesList: React.FC<ReleasesListProps> = ({
-  releases,
-  setReleases,
   onRefresh,
   emptyListText,
 }) => {
@@ -43,25 +35,9 @@ const ReleasesList: React.FC<ReleasesListProps> = ({
   const [row] = useState<Array<Swipeable | null>>([]);
   const [prevOpenedRow, setPrevOpenedRow] = useState<any>();
 
+  const { releases, deleteRelease } = useReleases();
+
   const navigation = useNavigation();
-
-  const handleDelete = useCallback(
-    async (releaseId: string) => {
-      await api.delete(`/releases/${releaseId}`);
-      setReleases(
-        produce(releases, drafts =>
-          drafts.filter(draft => draft.id !== releaseId),
-        ),
-      );
-
-      const realm = await getRealm();
-
-      realm.write(() => {
-        realm.delete(realm.objectForPrimaryKey('Release', releaseId));
-      });
-    },
-    [setReleases, releases],
-  );
 
   const onDeleteItem = useCallback(
     (releaseId: string) => {
@@ -71,10 +47,10 @@ const ReleasesList: React.FC<ReleasesListProps> = ({
           onPress: () => prevOpenedRow.close(),
           style: 'cancel',
         },
-        { text: 'Sim', onPress: () => handleDelete(releaseId) },
+        { text: 'Sim', onPress: () => deleteRelease(releaseId) },
       ]);
     },
-    [prevOpenedRow, handleDelete],
+    [prevOpenedRow, deleteRelease],
   );
 
   const closeRow = useCallback(

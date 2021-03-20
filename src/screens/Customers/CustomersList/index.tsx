@@ -1,27 +1,20 @@
 import React, { useCallback, useState } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
-import produce from 'immer';
 import 'moment/locale/pt-br';
 
 import { DeleteItem, EmptyList } from 'components';
 
-import { Customer } from 'types';
-
-import { api, getRealm } from 'services';
+import { useCustomers } from 'hooks';
 
 import { Container, Description, Content, Title, Item } from './styles';
 
 type CustomersListProps = {
-  customers: Customer[];
-  setCustomers: React.Dispatch<React.SetStateAction<Customer[]>>;
   onRefresh: () => Promise<void>;
   emptyListText: string;
 };
 
 export function CustomersList({
-  customers,
-  setCustomers,
   onRefresh,
   emptyListText,
 }: CustomersListProps) {
@@ -29,23 +22,7 @@ export function CustomersList({
   const [row] = useState<Array<Swipeable | null>>([]);
   const [prevOpenedRow, setPrevOpenedRow] = useState<any>();
 
-  const handleDelete = useCallback(
-    async (customerId: string) => {
-      await api.delete(`/customers/${customerId}`);
-      setCustomers(
-        produce(customers, drafts =>
-          drafts.filter(draft => draft.id !== customerId),
-        ),
-      );
-
-      const realm = await getRealm();
-
-      realm.write(() => {
-        realm.delete(realm.objectForPrimaryKey('Customer', customerId));
-      });
-    },
-    [setCustomers, customers],
-  );
+  const { customers, deleteCustomer } = useCustomers();
 
   const onDeleteItem = useCallback(
     (customerId: string) => {
@@ -55,10 +32,10 @@ export function CustomersList({
           onPress: () => prevOpenedRow.close(),
           style: 'cancel',
         },
-        { text: 'Sim', onPress: () => handleDelete(customerId) },
+        { text: 'Sim', onPress: () => deleteCustomer(customerId) },
       ]);
     },
-    [prevOpenedRow, handleDelete],
+    [prevOpenedRow, deleteCustomer],
   );
 
   const closeRow = useCallback(

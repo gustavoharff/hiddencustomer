@@ -1,37 +1,142 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, {
+  createContext,
+  useState,
+  useContext,
+  ReactNode,
+  useCallback,
+} from 'react';
+import { Alert } from 'react-native';
+
+import { api, getRealm } from 'services';
 
 import { ReleaseGroup } from 'types';
 
+import { useAuth } from './auth';
+
+type CreateGroupProps = {
+  name: string;
+  type: string;
+  release_id: string;
+};
+
 type GroupsContextData = {
   groups: ReleaseGroup[];
-  setGroups: React.Dispatch<React.SetStateAction<ReleaseGroup[]>>;
+  loadApiGroups: (releaseId: string) => Promise<void>;
+  loadLocalGroups: (releaseId: string) => Promise<void>;
+  createGroup: (data: CreateGroupProps) => Promise<void>;
+};
+
+type GroupProviderProps = {
+  children: ReactNode;
 };
 
 const GroupsContext = createContext<GroupsContextData>({} as GroupsContextData);
 
-const GroupProvider: React.FC = ({ children }) => {
+export function GroupProvider({ children }: GroupProviderProps) {
   const [groups, setGroups] = useState<ReleaseGroup[]>([]);
+
+  const { signOut } = useAuth();
+
+  const loadApiGroups = useCallback(
+    async (releaseId: string) => {
+      if (!releaseId) {
+        return;
+      }
+
+      try {
+        const response = await api.get(`/release/groups/${releaseId}`);
+
+        setGroups(response.data);
+
+        const realm = await getRealm();
+
+        realm.write(() => {
+          const data = realm
+            .objects('ReleaseGroup')
+            .filtered(`release_id == '${releaseId}'`);
+
+          realm.delete(data);
+          response.data.map((releaseGroup: ReleaseGroup) =>
+            realm.create('ReleaseGroup', releaseGroup),
+          );
+        });
+      } catch (err) {
+        if (err.response.status === 440) {
+          Alert.alert('Sessão expirada', 'Realize o login novamente!');
+          signOut();
+        }
+      }
+    },
+    [signOut],
+  );
+
+  const loadLocalGroups = useCallback(async (releaseId: string) => {
+    if (!releaseId) {
+      return;
+    }
+
+    const realm = await getRealm();
+
+    realm.write(() => {
+      const data = realm
+        .objects<ReleaseGroup>('ReleaseGroup')
+        .filtered(`release_id == '${releaseId}'`);
+
+      const formattedGroups = data.map(group => ({
+        id: group.id,
+        name: group.name,
+        type: group.type,
+        release_id: group.release_id,
+        created_at: group.created_at,
+        updated_at: group.updated_at,
+      }));
+
+      setGroups(formattedGroups);
+    });
+  }, []);
+
+  const createGroup = useCallback(
+    async ({ name, type, release_id }: CreateGroupProps) => {
+      try {
+        const response = await api.post('/release/groups', {
+          name,
+          type,
+          release_id,
+        });
+
+        setGroups(state => [response.data, ...state]);
+
+        const realm = await getRealm();
+
+        realm.write(() => {
+          realm.create('ReleaseGroup', response.data);
+        });
+      } catch (err) {
+        if (err.response.status === 440) {
+          Alert.alert('Sessão expirada', 'Realize o login novamente!');
+          signOut();
+        }
+      }
+    },
+    [signOut],
+  );
 
   return (
     <GroupsContext.Provider
       value={{
         groups,
-        setGroups,
+        loadApiGroups,
+        loadLocalGroups,
+        createGroup,
       }}
     >
       {children}
     </GroupsContext.Provider>
   );
-};
+}
 
-function useGroups(): GroupsContextData {
+export function useGroups(): GroupsContextData {
   const context = useContext(GroupsContext);
-
-  if (!context) {
-    throw new Error('useGroupsmust be used within an CustomerProvider');
-  }
 
   return context;
 }
-
-export { GroupProvider, useGroups };

@@ -1,35 +1,74 @@
-import React, { createContext, useState, useContext, useCallback } from 'react';
+import React, {
+  createContext,
+  useState,
+  useContext,
+  useCallback,
+  ReactNode,
+} from 'react';
+import { Alert } from 'react-native';
+
 import { api, getRealm } from 'services';
 
 import { Release } from 'types';
 
+import { useAuth } from 'hooks';
+
+type CreateReleaseData = {
+  name: string;
+  customer_id: string;
+};
+
+type UpdateReleaseData = {
+  release_id: string;
+  name: string;
+  paid: boolean;
+  customer_id: string;
+};
+
 type ReleasesContextData = {
   releases: Release[];
-  setReleases: React.Dispatch<React.SetStateAction<Release[]>>;
   loadApiReleases: () => Promise<void>;
   loadLocalReleases: () => Promise<void>;
+  createRelease: (data: CreateReleaseData) => Promise<void>;
+  updateRelease: (data: UpdateReleaseData) => Promise<void>;
+  deleteRelease: (releaseId: string) => Promise<void>;
+};
+
+type ReleasesProviderProps = {
+  children: ReactNode;
 };
 
 const ReleasesContext = createContext<ReleasesContextData>(
   {} as ReleasesContextData,
 );
 
-const ReleasesProvider: React.FC = ({ children }) => {
+export function ReleasesProvider({ children }: ReleasesProviderProps) {
   const [releases, setReleases] = useState<Release[]>([]);
 
+  const { signOut } = useAuth();
+
   const loadApiReleases = useCallback(async () => {
-    const response = await api.get('/releases');
-    setReleases(response.data);
+    try {
+      const response = await api.get('/releases');
+      setReleases(response.data);
 
-    const realm = await getRealm();
+      const realm = await getRealm();
 
-    realm.write(() => {
-      const data = realm.objects('Release');
-      realm.delete(data);
+      realm.write(() => {
+        const data = realm.objects('Release');
+        realm.delete(data);
 
-      response.data.map((release: Release) => realm.create('Release', release));
-    });
-  }, [setReleases]);
+        response.data.map((release: Release) =>
+          realm.create('Release', release),
+        );
+      });
+    } catch (err) {
+      if (err.response.status === 440) {
+        Alert.alert('Sessão expirada', 'Realize o login novamente!');
+        signOut();
+      }
+    }
+  }, [setReleases, signOut]);
 
   const loadLocalReleases = useCallback(async () => {
     const realm = await getRealm();
@@ -50,21 +89,83 @@ const ReleasesProvider: React.FC = ({ children }) => {
     setReleases(formattedReleases);
   }, [setReleases]);
 
+  const createRelease = useCallback(
+    async ({ name, customer_id }: CreateReleaseData) => {
+      try {
+        const response = await api.post('/releases', {
+          name,
+          customer_id,
+        });
+
+        setReleases(state => [response.data, ...state]);
+
+        const realm = await getRealm();
+
+        realm.write(() => {
+          realm.create('Release', response.data);
+        });
+      } catch (err) {
+        if (err.response.status === 440) {
+          Alert.alert('Sessão expirada', 'Realize o login novamente!');
+          signOut();
+        }
+      }
+    },
+    [signOut],
+  );
+
+  const updateRelease = useCallback(
+    async ({ release_id, name, paid, customer_id }: UpdateReleaseData) => {
+      try {
+        const response = await api.put(`/release/${release_id}`, {
+          name,
+          customer_id,
+          paid,
+        });
+
+        setReleases(state =>
+          state.map(release =>
+            release.id === release_id ? response.data : release,
+          ),
+        );
+      } catch (err) {
+        if (err.response.status === 440) {
+          Alert.alert('Sessão expirada', 'Realize o login novamente!');
+          signOut();
+        }
+      }
+    },
+    [signOut],
+  );
+
+  const deleteRelease = useCallback(async (releaseId: string) => {
+    await api.delete(`/releases/${releaseId}`);
+    setReleases(state => state.filter(release => release.id !== releaseId));
+
+    const realm = await getRealm();
+
+    realm.write(() => {
+      realm.delete(realm.objectForPrimaryKey('Release', releaseId));
+    });
+  }, []);
+
   return (
     <ReleasesContext.Provider
       value={{
         releases,
-        setReleases,
         loadApiReleases,
         loadLocalReleases,
+        createRelease,
+        updateRelease,
+        deleteRelease,
       }}
     >
       {children}
     </ReleasesContext.Provider>
   );
-};
+}
 
-function useReleases(): ReleasesContextData {
+export function useReleases(): ReleasesContextData {
   const context = useContext(ReleasesContext);
 
   if (!context) {
@@ -73,5 +174,3 @@ function useReleases(): ReleasesContextData {
 
   return context;
 }
-
-export { ReleasesProvider, useReleases };

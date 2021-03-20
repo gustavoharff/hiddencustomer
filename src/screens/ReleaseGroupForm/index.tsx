@@ -20,8 +20,6 @@ import { Input, Button } from 'components';
 
 import { SPACING } from 'styles';
 
-import { api, getRealm } from 'services';
-
 import { useGroups } from 'hooks';
 
 import { Container, Unform, FieldDescription } from './styles';
@@ -41,7 +39,7 @@ const ReleaseGroupForm: React.FC<Props> = ({ route }) => {
 
   const [loadingButton, setLoadingButton] = useState(false);
 
-  const { setGroups } = useGroups();
+  const { createGroup } = useGroups();
 
   const onPickerChange = useCallback(value => {
     setSelectedValue(value);
@@ -64,18 +62,10 @@ const ReleaseGroupForm: React.FC<Props> = ({ route }) => {
           return;
         }
 
-        const response = await api.post('/release/groups', {
+        await createGroup({
           name: data.name,
           type: selectedValue,
           release_id: route.params.release_id,
-        });
-
-        setGroups(state => [response.data, ...state]);
-
-        const realm = await getRealm();
-
-        realm.write(() => {
-          realm.create('ReleaseGroup', response.data);
         });
 
         navigation.navigate('ReleaseDetails');
@@ -88,7 +78,7 @@ const ReleaseGroupForm: React.FC<Props> = ({ route }) => {
         setLoadingButton(false);
       }
     },
-    [navigation, selectedValue, setGroups, route.params.release_id],
+    [navigation, selectedValue, createGroup, route.params.release_id],
   );
 
   return (

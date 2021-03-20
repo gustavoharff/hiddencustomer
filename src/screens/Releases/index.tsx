@@ -15,12 +15,7 @@ export function Releases() {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
-  const {
-    releases,
-    setReleases,
-    loadApiReleases,
-    loadLocalReleases,
-  } = useReleases();
+  const { loadApiReleases, loadLocalReleases } = useReleases();
 
   const navigation = useNavigation();
 
@@ -59,8 +54,6 @@ export function Releases() {
     <>
       <Container>
         <ReleasesList
-          releases={releases}
-          setReleases={setReleases}
           onRefresh={onRefresh}
           emptyListText="Nenhum lançamento cadastrado."
         />

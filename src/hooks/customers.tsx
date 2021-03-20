@@ -1,21 +1,58 @@
-import React, { createContext, useState, useContext, useCallback } from 'react';
+import React, {
+  createContext,
+  useState,
+  useContext,
+  useCallback,
+  ReactNode,
+} from 'react';
+import { Alert } from 'react-native';
 import { api, getRealm } from 'services';
 
 import { Customer } from 'types';
+import { useAuth } from './auth';
 
 type CustomersContextData = {
   customers: Customer[];
-  setCustomers: React.Dispatch<React.SetStateAction<Customer[]>>;
   loadLocalCustomers: () => Promise<void>;
   loadApiCustomers: () => Promise<void>;
+  createCustomer: (name: string) => Promise<void>;
+  deleteCustomer: (customerId: string) => Promise<void>;
+};
+
+type CustomerProviderProps = {
+  children: ReactNode;
 };
 
 const CustomersContext = createContext<CustomersContextData>(
   {} as CustomersContextData,
 );
 
-const CustomerProvider: React.FC = ({ children }) => {
+export function CustomerProvider({ children }: CustomerProviderProps) {
   const [customers, setCustomers] = useState<Customer[]>([]);
+
+  const { signOut } = useAuth();
+
+  const loadApiCustomers = useCallback(async () => {
+    try {
+      const response = await api.get('/customers/me');
+      setCustomers(response.data);
+
+      const realm = await getRealm();
+      realm.write(() => {
+        const data = realm.objects('Customer');
+
+        realm.delete(data);
+        response.data.map((customer: Customer) =>
+          realm.create('Customer', customer),
+        );
+      });
+    } catch (err) {
+      if (err.response.status === 440) {
+        Alert.alert('Sessão expirada', 'Realize o login novamente!');
+        signOut();
+      }
+    }
+  }, [setCustomers, signOut]);
 
   const loadLocalCustomers = useCallback(async () => {
     const realm = await getRealm();
@@ -32,43 +69,70 @@ const CustomerProvider: React.FC = ({ children }) => {
     setCustomers(formattedCustomers);
   }, [setCustomers]);
 
-  const loadApiCustomers = useCallback(async () => {
-    const response = await api.get('/customers/me');
-    setCustomers(response.data);
+  const createCustomer = useCallback(
+    async (name: string) => {
+      try {
+        const response = await api.post('/customers', {
+          name,
+        });
 
-    const realm = await getRealm();
-    realm.write(() => {
-      const data = realm.objects('Customer');
+        setCustomers(state => [response.data, ...state]);
 
-      realm.delete(data);
-      response.data.map((customer: Customer) =>
-        realm.create('Customer', customer),
-      );
-    });
-  }, [setCustomers]);
+        const realm = await getRealm();
+
+        realm.write(() => {
+          realm.create('Customer', response.data);
+        });
+      } catch (err) {
+        if (err.response.status === 440) {
+          Alert.alert('Sessão expirada', 'Realize o login novamente!');
+          signOut();
+        }
+      }
+    },
+    [signOut],
+  );
+
+  const deleteCustomer = useCallback(
+    async (customerId: string) => {
+      try {
+        await api.delete(`/customers/${customerId}`);
+        setCustomers(state =>
+          state.filter(customer => customer.id !== customerId),
+        );
+
+        const realm = await getRealm();
+
+        realm.write(() => {
+          realm.delete(realm.objectForPrimaryKey('Customer', customerId));
+        });
+      } catch (err) {
+        if (err.response.status === 440) {
+          Alert.alert('Sessão expirada', 'Realize o login novamente!');
+          signOut();
+        }
+      }
+    },
+    [signOut],
+  );
 
   return (
     <CustomersContext.Provider
       value={{
         customers,
-        setCustomers,
         loadApiCustomers,
         loadLocalCustomers,
+        createCustomer,
+        deleteCustomer,
       }}
     >
       {children}
     </CustomersContext.Provider>
   );
-};
+}
 
-function useCustomers(): CustomersContextData {
+export function useCustomers(): CustomersContextData {
   const context = useContext(CustomersContext);
-
-  if (!context) {
-    throw new Error('useCustomers must be used within an CustomerProvider');
-  }
 
   return context;
 }
-
-export { CustomerProvider, useCustomers };

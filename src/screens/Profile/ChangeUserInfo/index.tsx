@@ -15,8 +15,8 @@ import { useAuth } from 'hooks';
 
 import { Container, Unform } from './styles';
 
-const ChangeUserInfo: React.FC = () => {
-  const { updateUser, user } = useAuth();
+export function ChangeUserInfo() {
+  const { updateUser, user, signOut } = useAuth();
 
   const formRef = useRef<FormHandles>(null);
   const nameInputRef = useRef<TextInput>(null);
@@ -47,10 +47,16 @@ const ChangeUserInfo: React.FC = () => {
           return;
         }
 
+        if (err.response.status === 440) {
+          Alert.alert('Sessão expirada', 'Realize o login novamente!');
+          signOut();
+          return;
+        }
+
         Alert.alert('Atenção!', 'Ocorreu um erro ao alterar seus dados.');
       }
     },
-    [updateUser],
+    [updateUser, signOut],
   );
 
   return (
@@ -85,6 +91,4 @@ const ChangeUserInfo: React.FC = () => {
       />
     </Container>
   );
-};
-
-export { ChangeUserInfo };
+}

@@ -13,8 +13,8 @@ import { useAuth } from 'hooks';
 
 import { Container, Unform } from './styles';
 
-const ChangeUserPassword: React.FC = () => {
-  const { updateUser } = useAuth();
+export function ChangeUserPassword() {
+  const { updateUser, signOut } = useAuth();
 
   const formRef = useRef<FormHandles>(null);
   const oldPasswordInputRef = useRef<TextInput>(null);
@@ -60,13 +60,19 @@ const ChangeUserPassword: React.FC = () => {
           return;
         }
 
+        if (err.response.status === 440) {
+          Alert.alert('Sessão expirada', 'Realize o login novamente!');
+          signOut();
+          return;
+        }
+
         Alert.alert(
           'Atenção!',
           'Ocorreu um erro ao alterar sua senha, verifique seus dados.',
         );
       }
     },
-    [updateUser],
+    [updateUser, signOut],
   );
 
   return (
@@ -113,6 +119,4 @@ const ChangeUserPassword: React.FC = () => {
       </Unform>
     </Container>
   );
-};
-
-export { ChangeUserPassword };
+}

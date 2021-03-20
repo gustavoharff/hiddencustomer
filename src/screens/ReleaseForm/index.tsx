@@ -17,8 +17,6 @@ import { useCustomers, useReleases } from 'hooks';
 
 import { COLORS, SPACING } from 'styles';
 
-import { api, getRealm } from 'services';
-
 import {
   getBottomSpace,
   getStatusBarHeight,
@@ -32,7 +30,7 @@ const ReleaseForm: React.FC = () => {
   const [loadingButton, setLoadingButton] = useState(false);
   const navigation = useNavigation();
 
-  const { setReleases } = useReleases();
+  const { createRelease } = useReleases();
   const { customers, loadApiCustomers, loadLocalCustomers } = useCustomers();
 
   const onPickerChange = useCallback(value => {
@@ -60,19 +58,9 @@ const ReleaseForm: React.FC = () => {
           return;
         }
 
-        const response = await api.post('/releases', {
+        await createRelease({
           name: data.name,
           customer_id: selectedValue,
-        });
-
-        const customer = customers.find(c => c.id === selectedValue);
-
-        setReleases(state => [{ ...response.data, customer }, ...state]);
-
-        const realm = await getRealm();
-
-        realm.write(() => {
-          realm.create('Release', response.data);
         });
 
         navigation.navigate('Releases');
@@ -85,7 +73,7 @@ const ReleaseForm: React.FC = () => {
         setLoadingButton(false);
       }
     },
-    [navigation, setReleases, selectedValue, customers],
+    [navigation, createRelease, selectedValue],
   );
 
   return (

@@ -23,8 +23,6 @@ import { useCustomers, useReleases } from 'hooks';
 
 import { COLORS, SPACING } from 'styles';
 
-import { api } from 'services';
-
 import { Release } from 'types';
 
 import { Container, Unform, FieldDescription } from './styles';
@@ -38,7 +36,7 @@ type Params = {
 type Props = StackScreenProps<Params, 'ReleaseChange'>;
 
 const ReleaseChange: React.FC<Props> = ({ route }) => {
-  const { releases, loadApiReleases } = useReleases();
+  const { releases, updateRelease } = useReleases();
   const navigation = useNavigation();
   const { customers, loadApiCustomers, loadLocalCustomers } = useCustomers();
 
@@ -88,13 +86,13 @@ const ReleaseChange: React.FC<Props> = ({ route }) => {
           return;
         }
 
-        await api.put(`/release/${release.id}`, {
+        await updateRelease({
+          release_id: route.params.release_id,
           name: data.name,
           customer_id: selectedCustomer,
           paid: selectedPayment,
         });
 
-        await loadApiReleases();
         navigation.navigate('Releases');
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
@@ -107,10 +105,10 @@ const ReleaseChange: React.FC<Props> = ({ route }) => {
     },
     [
       navigation,
+      updateRelease,
+      route.params.release_id,
       selectedCustomer,
-      release.id,
       selectedPayment,
-      loadApiReleases,
     ],
   );
 
