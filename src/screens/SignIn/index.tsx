@@ -7,7 +7,7 @@ import {
   ScrollView,
   View,
 } from 'react-native';
-import RNBootSplash from 'react-native-bootsplash';
+import { hide } from 'react-native-bootsplash';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
 
@@ -28,7 +28,7 @@ const SignIn: React.FC = () => {
   const [loadingButton, setLoadingButton] = useState(false);
 
   useEffect(() => {
-    RNBootSplash.hide({ fade: true }); // fade
+    hide({ fade: true }); // fade
   }, []);
 
   const { signIn } = useAuth();
@@ -62,16 +62,15 @@ const SignIn: React.FC = () => {
 
           Alert.alert('Alerta', 'Complete os campos corretamente.');
 
-          setLoadingButton(false);
           return;
         }
 
-        if (err.response?.status === 402) {
+        if (err.response.status === 402) {
           Alert.alert('Erro', 'Usuário sem permissão de acesso ao sistema.');
         } else {
           Alert.alert('Erro', 'Erro na autenticação, verifique seus dados.');
         }
-
+      } finally {
         setLoadingButton(false);
       }
     },

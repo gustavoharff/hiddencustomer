@@ -2,11 +2,8 @@ import React, { useCallback, useState } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import produce from 'immer';
 
 import { EmptyList, DeleteItem } from 'components';
-
-import { api, getRealm } from 'services';
 
 import { ReleaseGroup } from 'types';
 
@@ -30,31 +27,7 @@ const ReleaseGroupsList: React.FC<ReleaseGroupsListProps> = ({
   const [row] = useState<Array<Swipeable | null>>([]);
   const [prevOpenedRow, setPrevOpenedRow] = useState<any>();
 
-  const { setGroups } = useGroups();
-
-  const handleDelete = useCallback(
-    async (groupId: string) => {
-      try {
-        await api.delete(`/release/groups/${groupId}`);
-        setGroups(
-          produce(groups, drafts =>
-            drafts.filter(draft => draft.id !== groupId),
-          ),
-        );
-
-        const realm = await getRealm();
-
-        realm.write(() => {
-          realm.delete(realm.objectForPrimaryKey('ReleaseGroup', groupId));
-        });
-      } catch (err) {
-        Alert.alert('Erro!', 'Ocorreu um erro , reporte aos desenvolvedores!');
-        prevOpenedRow.close();
-        await onRefresh();
-      }
-    },
-    [groups, setGroups, prevOpenedRow, onRefresh],
-  );
+  const { deleteGroup } = useGroups();
 
   const onDeleteItem = useCallback(
     (groupId: string) => {
@@ -64,10 +37,10 @@ const ReleaseGroupsList: React.FC<ReleaseGroupsListProps> = ({
           onPress: () => prevOpenedRow.close(),
           style: 'cancel',
         },
-        { text: 'Sim', onPress: () => handleDelete(groupId) },
+        { text: 'Sim', onPress: () => deleteGroup(groupId) },
       ]);
     },
-    [prevOpenedRow, handleDelete],
+    [prevOpenedRow, deleteGroup],
   );
 
   const closeRow = useCallback(

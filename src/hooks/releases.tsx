@@ -24,6 +24,10 @@ type UpdateReleaseData = {
   paid: boolean;
   customer_id: string;
 };
+type UpdateReleaseAnnotationsData = {
+  release_id: string;
+  annotations: string;
+};
 
 type ReleasesContextData = {
   releases: Release[];
@@ -32,6 +36,9 @@ type ReleasesContextData = {
   createRelease: (data: CreateReleaseData) => Promise<void>;
   updateRelease: (data: UpdateReleaseData) => Promise<void>;
   deleteRelease: (releaseId: string) => Promise<void>;
+  updateReleaseAnnotations: (
+    data: UpdateReleaseAnnotationsData,
+  ) => Promise<void>;
 };
 
 type ReleasesProviderProps = {
@@ -138,6 +145,28 @@ export function ReleasesProvider({ children }: ReleasesProviderProps) {
     [signOut],
   );
 
+  const updateReleaseAnnotations = useCallback(
+    async ({ release_id, annotations }: UpdateReleaseAnnotationsData) => {
+      try {
+        const response = await api.put(`/release/${release_id}`, {
+          annotations,
+        });
+
+        setReleases(state =>
+          state.map(release =>
+            release.id === release_id ? response.data : release,
+          ),
+        );
+      } catch (err) {
+        if (err.response.status === 440) {
+          Alert.alert('Sessão expirada', 'Realize o login novamente!');
+          signOut();
+        }
+      }
+    },
+    [signOut],
+  );
+
   const deleteRelease = useCallback(async (releaseId: string) => {
     await api.delete(`/releases/${releaseId}`);
     setReleases(state => state.filter(release => release.id !== releaseId));
@@ -158,6 +187,7 @@ export function ReleasesProvider({ children }: ReleasesProviderProps) {
         createRelease,
         updateRelease,
         deleteRelease,
+        updateReleaseAnnotations,
       }}
     >
       {children}

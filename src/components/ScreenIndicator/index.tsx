@@ -3,8 +3,6 @@ import { ViewProps } from 'react-native';
 
 import { Container } from './styles';
 
-type Props = ViewProps;
-
-const ScreenIndicator: React.FC<Props> = props => <Container {...props} />;
-
-export { ScreenIndicator };
+export function ScreenIndicator(props: ViewProps) {
+  return <Container {...props} />;
+}

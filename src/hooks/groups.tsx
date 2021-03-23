@@ -24,6 +24,7 @@ type GroupsContextData = {
   loadApiGroups: (releaseId: string) => Promise<void>;
   loadLocalGroups: (releaseId: string) => Promise<void>;
   createGroup: (data: CreateGroupProps) => Promise<void>;
+  deleteGroup: (groupId: string) => Promise<void>;
 };
 
 type GroupProviderProps = {
@@ -121,6 +122,20 @@ export function GroupProvider({ children }: GroupProviderProps) {
     [signOut],
   );
 
+  const deleteGroup = useCallback(
+    async (groupId: string) => {
+      await api.delete(`/release/groups/${groupId}`);
+      setGroups(groups.filter(group => group.id !== groupId));
+
+      const realm = await getRealm();
+
+      realm.write(() => {
+        realm.delete(realm.objectForPrimaryKey('ReleaseGroup', groupId));
+      });
+    },
+    [groups],
+  );
+
   return (
     <GroupsContext.Provider
       value={{
@@ -128,6 +143,7 @@ export function GroupProvider({ children }: GroupProviderProps) {
         loadApiGroups,
         loadLocalGroups,
         createGroup,
+        deleteGroup,
       }}
     >
       {children}

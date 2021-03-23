@@ -4,8 +4,6 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { FormHandles } from '@unform/core';
 import { useNavigation } from '@react-navigation/native';
 
-import { api } from 'services';
-
 import { TextArea, Button } from 'components';
 
 import { useReleases } from 'hooks';
@@ -25,23 +23,18 @@ const ReleaseAnnotationsForm: React.FC<Props> = ({ route }) => {
   const formRef = useRef<FormHandles>(null);
   const navigation = useNavigation();
 
-  const { setReleases } = useReleases();
+  const { updateReleaseAnnotations } = useReleases();
 
   const handleSubmit = useCallback(
     async data => {
-      const response = await api.put(`release/${route.params.release_id}`, {
+      await updateReleaseAnnotations({
+        release_id: route.params.release_id,
         annotations: data.annotations,
       });
 
-      setReleases(releases =>
-        releases.map(
-        release => release.id === route.params.release_id ? { ...release, ...response.data} : release // eslint-disable-line
-        ),
-      );
-
       navigation.goBack();
     },
-    [route.params.release_id, setReleases, navigation],
+    [route.params.release_id, updateReleaseAnnotations, navigation],
   );
 
   return (
