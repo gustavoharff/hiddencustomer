@@ -15,12 +15,8 @@ import { Container, Center } from './styles';
 export function Customers() {
   const [loading, setLoading] = useState(true);
 
-  const {
-    customers,
-    setCustomers,
-    loadApiCustomers,
-    loadLocalCustomers,
-  } = useCustomers();
+  const { loadApiCustomers, loadLocalCustomers } = useCustomers();
+
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -54,8 +50,6 @@ export function Customers() {
     <>
       <Container>
         <CustomersList
-          customers={customers}
-          setCustomers={setCustomers}
           onRefresh={onRefresh}
           emptyListText="Nenhum cliente cadastrado."
         />

@@ -90,7 +90,7 @@ export function CustomersList({
                 </Description>
                 <Item>
                   <Title>Lançamentos</Title>
-                  <Description>5</Description>
+                  <Description>{customer.releases_counter}</Description>
                 </Item>
               </Content>
             </Swipeable>

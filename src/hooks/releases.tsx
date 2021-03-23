@@ -92,7 +92,7 @@ export function ReleasesProvider({ children }: ReleasesProviderProps) {
   const createRelease = useCallback(
     async ({ name, customer_id }: CreateReleaseData) => {
       try {
-        const response = await api.post('/releases', {
+        const response = await api.post<Release>('/releases', {
           name,
           customer_id,
         });

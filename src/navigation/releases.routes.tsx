@@ -48,7 +48,7 @@ const ReleasesRoutes: React.FC = () => {
           headerTitle: 'Lançamentos',
           headerRight: () => (
             <Text style={{ color: '#7A7A80', marginRight: 20 }}>
-              {releases.length} lançamento(s)
+              {releases.length || 0} lançamento(s)
             </Text>
           ),
         }}
