@@ -1,8 +1,15 @@
 import React from 'react';
-import { View, ViewProps } from 'react-native';
+import { View } from 'react-native';
 
-import { Container } from './styles';
+import { styles } from './styles';
 
-export function ScreenIndicator(props: ViewProps) {
-  return <View {...props} />;
+type ScreenIndicatorProps = {
+  backgroundColor: string;
+};
+
+export function ScreenIndicator({
+  backgroundColor,
+  ...rest
+}: ScreenIndicatorProps) {
+  return <View style={[styles.container, { backgroundColor }]} {...rest} />;
 }

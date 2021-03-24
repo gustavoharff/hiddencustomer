@@ -1,8 +1,10 @@
-import styled from 'styled-components/native';
+import { StyleSheet } from 'react-native';
 
-export const Container = styled.View`
-  width: 4px;
-  height: 2px;
-  position: absolute;
-  bottom: 5px;
-`;
+export const styles = StyleSheet.create({
+  container: {
+    width: 4,
+    height: 2,
+    position: 'absolute',
+    bottom: 5,
+  },
+});

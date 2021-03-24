@@ -37,8 +37,6 @@ export function CustomerProvider({ children }: CustomerProviderProps) {
       const response = await api.get('/customers/me');
       setCustomers(response.data);
 
-      console.log(response.data);
-
       const realm = await getRealm();
       realm.write(() => {
         const data = realm.objects('Customer');

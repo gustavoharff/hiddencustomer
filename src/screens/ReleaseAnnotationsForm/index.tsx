@@ -54,12 +54,7 @@ const ReleaseAnnotationsForm: React.FC<Props> = ({ route }) => {
             onSubmit={handleSubmit}
             initialData={route.params}
           >
-            <TextArea
-              name="annotations"
-              multiline
-              numberOfLines={50}
-              style={{ flex: 1 }}
-            />
+            <TextArea name="annotations" multiline numberOfLines={50} />
 
             <Button
               title="Salvar"

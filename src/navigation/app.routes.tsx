@@ -46,7 +46,7 @@ const TabRoutes: React.FC = () => {
                 />
                 {focused && (
                   <ScreenIndicator
-                    style={{ backgroundColor: focused ? '#DC1637' : '#A8A8B3' }}
+                    backgroundColor={focused ? '#DC1637' : '#A8A8B3'}
                   />
                 )}
               </>
@@ -81,7 +81,7 @@ const TabRoutes: React.FC = () => {
                 />
                 {focused && (
                   <ScreenIndicator
-                    style={{ backgroundColor: focused ? '#DC1637' : '#A8A8B3' }}
+                    backgroundColor={focused ? '#DC1637' : '#A8A8B3'}
                   />
                 )}
               </>
@@ -119,9 +119,7 @@ const TabRoutes: React.FC = () => {
                   />
                   {focused && (
                     <ScreenIndicator
-                      style={{
-                        backgroundColor: focused ? '#DC1637' : '#A8A8B3',
-                      }}
+                      backgroundColor={focused ? '#DC1637' : '#A8A8B3'}
                     />
                   )}
                 </>
@@ -145,7 +143,7 @@ const TabRoutes: React.FC = () => {
               />
               {focused && (
                 <ScreenIndicator
-                  style={{ backgroundColor: focused ? '#DC1637' : '#A8A8B3' }}
+                  backgroundColor={focused ? '#DC1637' : '#A8A8B3'}
                 />
               )}
             </>

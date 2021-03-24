@@ -1,21 +1,23 @@
 import React from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { BaseButtonProperties } from 'react-native-gesture-handler';
+import { View } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
 import { SPACING } from 'styles';
 
-import { Container, Button } from './styles';
+import { styles } from './styles';
 
-interface ButtonProps extends BaseButtonProperties {
+interface ButtonProps {
   name: string;
+  onPress: () => void;
 }
 
-const BottomButton: React.FC<ButtonProps> = ({ name, ...rest }) => (
-  <Container style={{ elevation: 2 }}>
-    <Button {...rest}>
-      <Icon name={name} color="#fff" size={SPACING.XL * 2} />
-    </Button>
-  </Container>
-);
-
-export { BottomButton };
+export function BottomButton({ name, onPress, ...rest }: ButtonProps) {
+  return (
+    <View style={styles.container}>
+      <TouchableOpacity style={styles.button} onPress={onPress} {...rest}>
+        <Icon name={name} color="#fff" size={SPACING.XL * 2} />
+      </TouchableOpacity>
+    </View>
+  );
+}
