@@ -1,6 +1,9 @@
 import React from 'react';
 import { Text } from 'react-native';
-import { createStackNavigator } from '@react-navigation/stack';
+import {
+  CardStyleInterpolators,
+  createStackNavigator,
+} from '@react-navigation/stack';
 
 import { BackHeaderIcon, CloseHeaderIcon } from 'components';
 
@@ -17,14 +20,15 @@ import { useReleases } from 'hooks';
 
 const { Navigator, Screen } = createStackNavigator();
 
-const ReleasesRoutes: React.FC = () => {
+export function ReleasesRoutes() {
   const { releases } = useReleases();
 
   return (
     <Navigator
-      mode="card"
+      mode="modal"
       initialRouteName="Releases"
       screenOptions={{
+        cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         cardStyle: {
           backgroundColor: '#ffff',
         },
@@ -80,6 +84,7 @@ const ReleasesRoutes: React.FC = () => {
         name="ReleaseGroupForm"
         component={ReleaseGroupForm}
         options={({ navigation }) => ({
+          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
           headerTitle: 'Cadastrar grupo',
           headerLeft: () => (
             <CloseHeaderIcon
@@ -93,9 +98,10 @@ const ReleasesRoutes: React.FC = () => {
         name="ReleaseAnnotationsForm"
         component={ReleaseAnnotationsForm}
         options={({ navigation }) => ({
+          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
           headerTitle: 'Editar anotação',
           headerLeft: () => (
-            <BackHeaderIcon onPress={() => navigation.goBack()} />
+            <CloseHeaderIcon onPress={() => navigation.goBack()} />
           ),
         })}
       />
@@ -112,6 +118,4 @@ const ReleasesRoutes: React.FC = () => {
       />
     </Navigator>
   );
-};
-
-export { ReleasesRoutes };
+}

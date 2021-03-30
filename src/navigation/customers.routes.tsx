@@ -1,21 +1,26 @@
 import React from 'react';
 import { Text } from 'react-native';
-import { createStackNavigator } from '@react-navigation/stack';
+import {
+  CardStyleInterpolators,
+  createStackNavigator,
+} from '@react-navigation/stack';
 
-import { Customers, CustomerForm } from 'screens';
+import { Customers, CustomerForm, CustomerChange } from 'screens';
 
 import { useCustomers } from 'hooks';
+
 import { BackHeaderIcon } from 'components';
-import { CustomerChange } from 'screens/CustomerChange';
 
 const { Navigator, Screen } = createStackNavigator();
-const CustomersRoutes: React.FC = () => {
+
+export function CustomersRoutes() {
   const { customers } = useCustomers();
 
   return (
     <Navigator
-      mode="card"
+      mode="modal"
       screenOptions={{
+        cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         cardStyle: {
           backgroundColor: '#ffff',
         },
@@ -68,6 +73,4 @@ const CustomersRoutes: React.FC = () => {
       />
     </Navigator>
   );
-};
-
-export { CustomersRoutes };
+}

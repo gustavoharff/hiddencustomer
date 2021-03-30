@@ -1,4 +1,5 @@
 export * from './Administration';
+export * from './CustomerChange';
 export * from './CustomerForm';
 export * from './Customers';
 export * from './Profile';

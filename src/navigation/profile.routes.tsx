@@ -7,13 +7,13 @@ import { LoggoutHeaderIcon } from 'components';
 
 import { useAuth } from 'hooks';
 
-const ProfileNavigator = createStackNavigator();
+const { Navigator, Screen } = createStackNavigator();
 
-const ProfileRoutes: React.FC = () => {
+export function ProfileRoutes() {
   const { signOut } = useAuth();
 
   return (
-    <ProfileNavigator.Navigator
+    <Navigator
       screenOptions={{
         cardStyle: {
           backgroundColor: '#ffff',
@@ -31,7 +31,7 @@ const ProfileRoutes: React.FC = () => {
         },
       }}
     >
-      <ProfileNavigator.Screen
+      <Screen
         name="Profile"
         component={Profile}
         options={{
@@ -39,8 +39,6 @@ const ProfileRoutes: React.FC = () => {
           headerRight: () => <LoggoutHeaderIcon onPress={signOut} />,
         }}
       />
-    </ProfileNavigator.Navigator>
+    </Navigator>
   );
-};
-
-export { ProfileRoutes };
+}

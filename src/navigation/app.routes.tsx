@@ -1,10 +1,11 @@
 import React from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 import { ScreenIndicator } from 'components';
+
 import { useAuth } from 'hooks';
+
 import { ReleasesRoutes } from './releases.routes';
 import { CustomersRoutes } from './customers.routes';
 import { ProfileRoutes } from './profile.routes';
@@ -12,7 +13,7 @@ import { AdministrationRoutes } from './administration.routes';
 
 const { Navigator, Screen } = createBottomTabNavigator();
 
-const TabRoutes: React.FC = () => {
+export function TabRoutes() {
   const { user } = useAuth();
 
   return (
@@ -152,6 +153,4 @@ const TabRoutes: React.FC = () => {
       />
     </Navigator>
   );
-};
-
-export { TabRoutes };
+}
