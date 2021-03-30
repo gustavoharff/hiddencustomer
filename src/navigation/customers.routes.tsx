@@ -6,6 +6,7 @@ import { Customers, CustomerForm } from 'screens';
 
 import { useCustomers } from 'hooks';
 import { BackHeaderIcon } from 'components';
+import { CustomerChange } from 'screens/CustomerChange';
 
 const { Navigator, Screen } = createStackNavigator();
 const CustomersRoutes: React.FC = () => {
@@ -51,6 +52,17 @@ const CustomersRoutes: React.FC = () => {
           headerTitle: 'Registrar cliente',
           headerLeft: () => (
             <BackHeaderIcon onPress={() => navigation.navigate('Customers')} />
+          ),
+        })}
+      />
+
+      <Screen
+        name="CustomerChange"
+        component={CustomerChange}
+        options={({ navigation }) => ({
+          headerTitle: 'Editar cliente',
+          headerLeft: () => (
+            <BackHeaderIcon onPress={() => navigation.goBack()} />
           ),
         })}
       />

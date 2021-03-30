@@ -1,9 +1,10 @@
 import React, { useCallback, useState } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
+import { useNavigation } from '@react-navigation/native';
 import 'moment/locale/pt-br';
 
-import { DeleteItem, EmptyList } from 'components';
+import { DeleteItem, EditItem, EmptyList } from 'components';
 
 import { useCustomers } from 'hooks';
 
@@ -21,6 +22,8 @@ export function CustomersList({
   const [refreshing, setRefreshing] = useState(false);
   const [row] = useState<Array<Swipeable | null>>([]);
   const [prevOpenedRow, setPrevOpenedRow] = useState<any>();
+
+  const navigation = useNavigation();
 
   const { customers, deleteCustomer } = useCustomers();
 
@@ -74,11 +77,21 @@ export function CustomersList({
               friction={1.5}
               rightThreshold={30}
               renderRightActions={() => (
-                <DeleteItem
-                  onPress={() => {
-                    onDeleteItem(customer.id);
-                  }}
-                />
+                <>
+                  <DeleteItem
+                    onPress={() => {
+                      onDeleteItem(customer.id);
+                    }}
+                  />
+                  <EditItem
+                    onPress={() => {
+                      prevOpenedRow?.close();
+                      navigation.navigate('CustomerChange', {
+                        customer_id: customer.id,
+                      });
+                    }}
+                  />
+                </>
               )}
               activeOffsetX={-1}
               activeOffsetY={500}

@@ -11,12 +11,18 @@ import { api, getRealm } from 'services';
 import { Customer } from 'types';
 import { useAuth } from './auth';
 
+type UpdateCustomerData = {
+  customer_id: string;
+  name: string;
+};
+
 type CustomersContextData = {
   customers: Customer[];
   loadLocalCustomers: () => Promise<void>;
   loadApiCustomers: () => Promise<void>;
   createCustomer: (name: string) => Promise<void>;
   deleteCustomer: (customerId: string) => Promise<void>;
+  updateCustomer: (data: UpdateCustomerData) => Promise<void>;
 };
 
 type CustomerProviderProps = {
@@ -93,6 +99,33 @@ export function CustomerProvider({ children }: CustomerProviderProps) {
     [signOut],
   );
 
+  const updateCustomer = useCallback(
+    async ({ customer_id, name }: UpdateCustomerData) => {
+      try {
+        const response = await api.put(`/customer/${customer_id}`, {
+          name,
+        });
+
+        setCustomers(
+          customers.map(customer =>
+            customer.id === customer_id
+              ? {
+                  ...customer,
+                  ...response.data,
+                }
+              : customer,
+          ),
+        );
+      } catch (err) {
+        if (err.response.status === 440) {
+          Alert.alert('Sessão expirada', 'Realize o login novamente!');
+          signOut();
+        }
+      }
+    },
+    [customers, signOut],
+  );
+
   const deleteCustomer = useCallback(
     async (customerId: string) => {
       try {
@@ -123,6 +156,7 @@ export function CustomerProvider({ children }: CustomerProviderProps) {
         loadApiCustomers,
         loadLocalCustomers,
         createCustomer,
+        updateCustomer,
         deleteCustomer,
       }}
     >
