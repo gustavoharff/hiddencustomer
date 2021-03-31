@@ -1,4 +1,5 @@
 export * from './Administration';
+export * from './Calendar';
 export * from './CustomerChange';
 export * from './CustomerForm';
 export * from './Customers';

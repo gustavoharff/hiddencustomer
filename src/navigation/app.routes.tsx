@@ -10,6 +10,7 @@ import { ReleasesRoutes } from './releases.routes';
 import { CustomersRoutes } from './customers.routes';
 import { ProfileRoutes } from './profile.routes';
 import { AdministrationRoutes } from './administration.routes';
+import { CalendarRoutes } from './calendar.routes';
 
 const { Navigator, Screen } = createBottomTabNavigator();
 
@@ -90,6 +91,29 @@ export function TabRoutes() {
           };
         }}
       />
+
+      <Screen
+        name="Calendar"
+        component={CalendarRoutes}
+        options={{
+          tabBarLabel: () => null,
+          tabBarIcon: ({ size, focused }) => (
+            <>
+              <Icon
+                name="calendar-multiselect"
+                size={size}
+                color={focused ? '#DC1637' : '#A8A8B3'}
+              />
+              {focused && (
+                <ScreenIndicator
+                  backgroundColor={focused ? '#DC1637' : '#A8A8B3'}
+                />
+              )}
+            </>
+          ),
+        }}
+      />
+
       {user.permission === 'admin' && (
         <Screen
           name="Administration"
