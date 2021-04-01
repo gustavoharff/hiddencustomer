@@ -45,6 +45,7 @@ yarn-error.log
 buck-out/
 \.buckd/
 *.keystore
+!hiddencustomer.keystore
 !debug.keystore
 
 # fastlane

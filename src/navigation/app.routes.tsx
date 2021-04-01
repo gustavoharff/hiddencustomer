@@ -22,73 +22,44 @@ export function TabRoutes() {
       <Screen
         name="Releases"
         component={ReleasesRoutes}
-        options={({ navigation }) => {
-          const { routes, index } = navigation.dangerouslyGetState();
-          const { state: exploreState } = routes[index];
-          let tabBarVisible = true;
-          if (exploreState) {
-            const { routes: exploreRoutes, index: exploreIndex } = exploreState;
-            const exploreActiveRoute = exploreRoutes[exploreIndex];
-            if (
-              exploreActiveRoute.name === 'ReleaseForm' ||
-              exploreActiveRoute.name === 'ReleaseAnnotationsForm'
-            ) {
-              tabBarVisible = false;
-            }
-          }
-          return {
-            tabBarLabel: () => null,
-            tabBarVisible,
-            tabBarIcon: ({ size, focused }) => (
-              <>
-                <Icon
-                  name="rocket-launch-outline"
-                  size={size}
-                  color={focused ? '#DC1637' : '#A8A8B3'}
+        options={{
+          tabBarLabel: () => null,
+          tabBarIcon: ({ size, focused }) => (
+            <>
+              <Icon
+                name="rocket-launch-outline"
+                size={size}
+                color={focused ? '#DC1637' : '#A8A8B3'}
+              />
+              {focused && (
+                <ScreenIndicator
+                  backgroundColor={focused ? '#DC1637' : '#A8A8B3'}
                 />
-                {focused && (
-                  <ScreenIndicator
-                    backgroundColor={focused ? '#DC1637' : '#A8A8B3'}
-                  />
-                )}
-              </>
-            ),
-          };
+              )}
+            </>
+          ),
         }}
       />
 
       <Screen
         name="Customers"
         component={CustomersRoutes}
-        options={({ navigation }) => {
-          const { routes, index } = navigation.dangerouslyGetState();
-          const { state: exploreState } = routes[index];
-          let tabBarVisible = true;
-          if (exploreState) {
-            const { routes: exploreRoutes, index: exploreIndex } = exploreState;
-            const exploreActiveRoute = exploreRoutes[exploreIndex];
-            if (exploreActiveRoute.name === 'CustomerForm') {
-              tabBarVisible = false;
-            }
-          }
-          return {
-            tabBarVisible,
-            tabBarLabel: () => null,
-            tabBarIcon: ({ size, focused }) => (
-              <>
-                <Icon
-                  name="account-group-outline"
-                  size={size}
-                  color={focused ? '#DC1637' : '#A8A8B3'}
+        options={{
+          tabBarLabel: () => null,
+          tabBarIcon: ({ size, focused }) => (
+            <>
+              <Icon
+                name="account-group-outline"
+                size={size}
+                color={focused ? '#DC1637' : '#A8A8B3'}
+              />
+              {focused && (
+                <ScreenIndicator
+                  backgroundColor={focused ? '#DC1637' : '#A8A8B3'}
                 />
-                {focused && (
-                  <ScreenIndicator
-                    backgroundColor={focused ? '#DC1637' : '#A8A8B3'}
-                  />
-                )}
-              </>
-            ),
-          };
+              )}
+            </>
+          ),
         }}
       />
 
@@ -118,38 +89,22 @@ export function TabRoutes() {
         <Screen
           name="Administration"
           component={AdministrationRoutes}
-          options={({ navigation }) => {
-            const { routes, index } = navigation.dangerouslyGetState();
-            const { state: exploreState } = routes[index];
-            let tabBarVisible = true;
-            if (exploreState) {
-              const {
-                routes: exploreRoutes,
-                index: exploreIndex,
-              } = exploreState;
-              const exploreActiveRoute = exploreRoutes[exploreIndex];
-              if (exploreActiveRoute.name === 'UserForm') {
-                tabBarVisible = false;
-              }
-            }
-            return {
-              tabBarVisible,
-              tabBarLabel: () => null,
-              tabBarIcon: ({ size, focused }) => (
-                <>
-                  <Icon
-                    name="account-cog-outline"
-                    size={size}
-                    color={focused ? '#DC1637' : '#A8A8B3'}
+          options={{
+            tabBarLabel: () => null,
+            tabBarIcon: ({ size, focused }) => (
+              <>
+                <Icon
+                  name="account-cog-outline"
+                  size={size}
+                  color={focused ? '#DC1637' : '#A8A8B3'}
+                />
+                {focused && (
+                  <ScreenIndicator
+                    backgroundColor={focused ? '#DC1637' : '#A8A8B3'}
                   />
-                  {focused && (
-                    <ScreenIndicator
-                      backgroundColor={focused ? '#DC1637' : '#A8A8B3'}
-                    />
-                  )}
-                </>
-              ),
-            };
+                )}
+              </>
+            ),
           }}
         />
       )}

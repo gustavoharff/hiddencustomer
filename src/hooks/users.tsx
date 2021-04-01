@@ -15,13 +15,22 @@ import { useAuth } from 'hooks';
 
 type UsersContextData = {
   users: User[];
-  setUsers: React.Dispatch<React.SetStateAction<User[]>>;
   loadApiUsers: (userId: string) => Promise<void>;
   loadLocalUsers: () => Promise<void>;
+  createUser: (data: UserFormData) => Promise<void>;
+  activateUser: (userId: string) => Promise<void>;
+  disableUser: (userId: string) => Promise<void>;
 };
 
 type UsersProviderProps = {
   children: ReactNode;
+};
+
+type UserFormData = {
+  name: string;
+  email: string;
+  password: string;
+  company_id: string;
 };
 
 const UsersContext = createContext<UsersContextData>({} as UsersContextData);
@@ -74,13 +83,57 @@ export function UsersProvider({ children }: UsersProviderProps) {
     setUsers(formattedUsers);
   }, []);
 
+  const createUser = useCallback(
+    async ({ name, email, password, company_id }: UserFormData) => {
+      const response = await api.post('/users', {
+        name,
+        email,
+        password,
+        company_id,
+      });
+
+      setUsers([response.data, ...users]);
+
+      const realm = await getRealm();
+
+      realm.write(() => {
+        realm.create('User', response.data);
+      });
+    },
+    [users],
+  );
+
+  const activateUser = useCallback(
+    async (userId: string) => {
+      const response = await api.put(`/users/${userId}`, {
+        active: true,
+      });
+
+      setUsers(users.map(user => (user.id === userId ? response.data : user)));
+    },
+    [users],
+  );
+
+  const disableUser = useCallback(
+    async (userId: string) => {
+      const response = await api.put(`/users/${userId}`, {
+        active: false,
+      });
+
+      setUsers(users.map(user => (user.id === userId ? response.data : user)));
+    },
+    [users],
+  );
+
   return (
     <UsersContext.Provider
       value={{
         users,
-        setUsers,
         loadApiUsers,
         loadLocalUsers,
+        createUser,
+        activateUser,
+        disableUser,
       }}
     >
       {children}

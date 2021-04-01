@@ -3,8 +3,6 @@ import { View, FlatList, RefreshControl, Alert } from 'react-native';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import { api } from 'services';
-
 import { Avatar, EmptyList, ActivateItem, DisableItem } from 'components';
 
 import { COLORS, SPACING } from 'styles';
@@ -18,34 +16,12 @@ type UsersListProps = {
   emptyListText: string;
 };
 
-const UsersList: React.FC<UsersListProps> = ({ onRefresh, emptyListText }) => {
-  const { users, setUsers } = useUsers();
+export function UsersList({ onRefresh, emptyListText }: UsersListProps) {
+  const { users, activateUser, disableUser } = useUsers();
 
   const [refreshing, setRefreshing] = useState(false);
   const [row] = useState<Array<Swipeable | null>>([]);
   const [prevOpenedRow, setPrevOpenedRow] = useState<any>();
-
-  const handleActivate = useCallback(
-    async (userId: string) => {
-      const response = await api.put(`/users/${userId}`, {
-        active: true,
-      });
-
-      setUsers(users.map(u => (u.id === response.data.id ? response.data : u)));
-    },
-    [setUsers, users],
-  );
-
-  const handleDisable = useCallback(
-    async (userId: string) => {
-      const response = await api.put(`/users/${userId}`, {
-        active: false,
-      });
-
-      setUsers(users.map(u => (u.id === response.data.id ? response.data : u)));
-    },
-    [setUsers, users],
-  );
 
   const onActivateItem = useCallback(
     (userId: string) => {
@@ -59,12 +35,12 @@ const UsersList: React.FC<UsersListProps> = ({ onRefresh, emptyListText }) => {
           text: 'Sim',
           onPress: () => {
             prevOpenedRow.close();
-            handleActivate(userId);
+            activateUser(userId);
           },
         },
       ]);
     },
-    [prevOpenedRow, handleActivate],
+    [prevOpenedRow, activateUser],
   );
 
   const onDisableItem = useCallback(
@@ -79,12 +55,12 @@ const UsersList: React.FC<UsersListProps> = ({ onRefresh, emptyListText }) => {
           text: 'Sim',
           onPress: () => {
             prevOpenedRow.close();
-            handleDisable(userId);
+            disableUser(userId);
           },
         },
       ]);
     },
-    [prevOpenedRow, handleDisable],
+    [prevOpenedRow, disableUser],
   );
 
   const closeRow = useCallback(
@@ -171,6 +147,4 @@ const UsersList: React.FC<UsersListProps> = ({ onRefresh, emptyListText }) => {
       />
     </View>
   );
-};
-
-export { UsersList };
+}

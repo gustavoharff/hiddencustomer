@@ -62,6 +62,8 @@ const SignIn: React.FC = () => {
 
           Alert.alert('Alerta', 'Complete os campos corretamente.');
 
+          setLoadingButton(false);
+
           return;
         }
 
@@ -70,7 +72,7 @@ const SignIn: React.FC = () => {
         } else {
           Alert.alert('Erro', 'Erro na autenticação, verifique seus dados.');
         }
-      } finally {
+
         setLoadingButton(false);
       }
     },

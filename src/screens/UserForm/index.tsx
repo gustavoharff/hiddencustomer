@@ -18,7 +18,7 @@ import Modal from 'react-native-modal';
 
 import { Input, Button } from 'components';
 
-import { api, getRealm } from 'services';
+import { api } from 'services';
 
 import { COLORS, SPACING } from 'styles';
 
@@ -32,7 +32,7 @@ export function UserForm() {
   const [loadingButton, setLoadingButton] = useState(false);
   const formRef = useRef<FormHandles>(null);
 
-  const { setUsers } = useUsers();
+  const { createUser } = useUsers();
 
   const [companiesModalOpen, setCompaniesModalOpen] = useState(false);
 
@@ -71,23 +71,14 @@ export function UserForm() {
           return;
         }
 
-        const response = await api.post('/users', {
+        await createUser({
           name: data.name,
           email: data.email,
           password: data.password,
           company_id: selectedCompanyId,
         });
 
-        setUsers(state => [response.data, ...state]);
-
-        const realm = await getRealm();
-
-        realm.write(() => {
-          realm.create('User', response.data);
-        });
-
         navigation.navigate('Administration');
-        setLoadingButton(false);
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           Alert.alert('Atenção!', 'Complete o campo de nome');
@@ -97,7 +88,7 @@ export function UserForm() {
         setLoadingButton(false);
       }
     },
-    [navigation, selectedCompanyId, setUsers],
+    [navigation, selectedCompanyId, createUser],
   );
 
   return (
