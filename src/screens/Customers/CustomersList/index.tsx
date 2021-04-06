@@ -1,10 +1,9 @@
 import React, { useCallback, useState } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
-import Swipeable from 'react-native-gesture-handler/Swipeable';
 import { useNavigation } from '@react-navigation/native';
 import 'moment/locale/pt-br';
 
-import { DeleteItem, EditItem, EmptyList } from 'components';
+import { EmptyList, Swipeable } from 'components';
 
 import { useCustomers } from 'hooks';
 
@@ -20,32 +19,33 @@ export function CustomersList({
   emptyListText,
 }: CustomersListProps) {
   const [refreshing, setRefreshing] = useState(false);
-  const [row] = useState<Array<Swipeable | null>>([]);
-  const [prevOpenedRow, setPrevOpenedRow] = useState<any>();
 
   const navigation = useNavigation();
 
   const { customers, deleteCustomer } = useCustomers();
 
   const onDeleteItem = useCallback(
-    (customerId: string) => {
-      Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
-        {
-          text: 'Cancelar',
-          onPress: () => prevOpenedRow.close(),
-          style: 'cancel',
-        },
-        { text: 'Sim', onPress: () => deleteCustomer(customerId) },
-      ]);
+    async (customerId: string) => {
+      return new Promise(resolve => {
+        Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
+          {
+            text: 'Cancelar',
+            onPress: () => {
+              return resolve(200);
+            },
+            style: 'cancel',
+          },
+          {
+            text: 'Sim',
+            onPress: async () => {
+              await deleteCustomer(customerId);
+              return resolve(200);
+            },
+          },
+        ]);
+      });
     },
-    [prevOpenedRow, deleteCustomer],
-  );
-
-  const closeRow = useCallback(
-    index => {
-      setPrevOpenedRow(row[index]);
-    },
-    [row],
+    [deleteCustomer],
   );
 
   const handleRefresh = async () => {
@@ -71,31 +71,16 @@ export function CustomersList({
         renderItem={({ item: customer, index }) => (
           <Container style={{ paddingTop: index !== 0 ? 0 : 16 }}>
             <Swipeable
-              ref={ref => {
-                row[index] = ref;
+              editOption
+              editOnPress={() => {
+                navigation.navigate('CustomerChange', {
+                  customer_id: customer.id,
+                });
               }}
-              friction={1.5}
-              rightThreshold={30}
-              renderRightActions={() => (
-                <>
-                  <DeleteItem
-                    onPress={() => {
-                      onDeleteItem(customer.id);
-                    }}
-                  />
-                  <EditItem
-                    onPress={() => {
-                      prevOpenedRow?.close();
-                      navigation.navigate('CustomerChange', {
-                        customer_id: customer.id,
-                      });
-                    }}
-                  />
-                </>
-              )}
-              activeOffsetX={-1}
-              activeOffsetY={500}
-              onSwipeableOpen={() => closeRow(index)}
+              deleteOption
+              deleteOnPress={async () => {
+                await onDeleteItem(customer.id);
+              }}
             >
               <Content>
                 <Description style={{ marginTop: 0 }}>

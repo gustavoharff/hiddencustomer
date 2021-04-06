@@ -1,9 +1,8 @@
 import React, { useCallback, useState } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
-import Swipeable from 'react-native-gesture-handler/Swipeable';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import { EmptyList, DeleteItem } from 'components';
+import { EmptyList, Swipeable } from 'components';
 
 import { ReleaseGroup } from 'types';
 
@@ -18,36 +17,37 @@ type ReleaseGroupsListProps = {
   emptyListText: string;
 };
 
-const ReleaseGroupsList: React.FC<ReleaseGroupsListProps> = ({
+export function ReleaseGroupsList({
   groups,
   onRefresh,
   emptyListText,
-}) => {
+}: ReleaseGroupsListProps) {
   const [refreshing, setRefreshing] = useState(false);
-  const [row] = useState<Array<Swipeable | null>>([]);
-  const [prevOpenedRow, setPrevOpenedRow] = useState<any>();
 
   const { deleteGroup } = useGroups();
 
   const onDeleteItem = useCallback(
-    (groupId: string) => {
-      Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
-        {
-          text: 'Cancelar',
-          onPress: () => prevOpenedRow.close(),
-          style: 'cancel',
-        },
-        { text: 'Sim', onPress: () => deleteGroup(groupId) },
-      ]);
+    async (groupId: string) => {
+      return new Promise(resolve => {
+        Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
+          {
+            text: 'Cancelar',
+            onPress: () => {
+              return resolve(200);
+            },
+            style: 'cancel',
+          },
+          {
+            text: 'Sim',
+            onPress: async () => {
+              await deleteGroup(groupId);
+              return resolve(200);
+            },
+          },
+        ]);
+      });
     },
-    [prevOpenedRow, deleteGroup],
-  );
-
-  const closeRow = useCallback(
-    index => {
-      setPrevOpenedRow(row[index]);
-    },
-    [row],
+    [deleteGroup],
   );
 
   const handleRefresh = async () => {
@@ -73,21 +73,10 @@ const ReleaseGroupsList: React.FC<ReleaseGroupsListProps> = ({
         renderItem={({ item: group, index }) => (
           <Container style={{ paddingTop: index !== 0 ? 0 : 16 }}>
             <Swipeable
-              ref={ref => {
-                row[index] = ref;
+              deleteOption
+              deleteOnPress={async () => {
+                await onDeleteItem(group.id);
               }}
-              friction={1.5}
-              rightThreshold={30}
-              renderRightActions={() => (
-                <DeleteItem
-                  onPress={() => {
-                    onDeleteItem(group.id);
-                  }}
-                />
-              )}
-              activeOffsetX={-1}
-              activeOffsetY={500}
-              onSwipeableOpen={() => closeRow(index)}
             >
               <Content>
                 <Description>{group.name}</Description>
@@ -116,6 +105,4 @@ const ReleaseGroupsList: React.FC<ReleaseGroupsListProps> = ({
       />
     </View>
   );
-};
-
-export { ReleaseGroupsList };
+}

@@ -13,3 +13,4 @@ export * from './ListHeader';
 export * from './Logo';
 export * from './TextArea';
 export * from './ScreenIndicator';
+export * from './Swipeable';

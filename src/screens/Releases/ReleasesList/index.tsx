@@ -2,10 +2,9 @@ import React, { useCallback, useState } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
 import { RectButton } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
-import Swipeable from 'react-native-gesture-handler/Swipeable';
 import Icon from 'react-native-vector-icons/FontAwesome';
 
-import { EmptyList, DeleteItem, EditItem } from 'components';
+import { EmptyList, Swipeable } from 'components';
 
 import moment from 'moment';
 import { useReleases } from 'hooks';
@@ -27,37 +26,33 @@ type ReleasesListProps = {
   emptyListText: string;
 };
 
-const ReleasesList: React.FC<ReleasesListProps> = ({
-  onRefresh,
-  emptyListText,
-}) => {
+export function ReleasesList({ onRefresh, emptyListText }: ReleasesListProps) {
   const [refreshing, setRefreshing] = useState(false);
-  const [row] = useState<Array<Swipeable | null>>([]);
-  const [prevOpenedRow, setPrevOpenedRow] = useState<any>();
 
   const { releases, deleteRelease } = useReleases();
 
   const navigation = useNavigation();
 
   const onDeleteItem = useCallback(
-    (releaseId: string) => {
-      Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
-        {
-          text: 'Cancelar',
-          onPress: () => prevOpenedRow.close(),
-          style: 'cancel',
-        },
-        { text: 'Sim', onPress: () => deleteRelease(releaseId) },
-      ]);
+    async (releaseId: string) => {
+      return new Promise(resolve => {
+        Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
+          {
+            text: 'Cancelar',
+            onPress: () => resolve(200),
+            style: 'cancel',
+          },
+          {
+            text: 'Sim',
+            onPress: async () => {
+              await deleteRelease(releaseId);
+              return resolve(200);
+            },
+          },
+        ]);
+      });
     },
-    [prevOpenedRow, deleteRelease],
-  );
-
-  const closeRow = useCallback(
-    index => {
-      setPrevOpenedRow(row[index]);
-    },
-    [row],
+    [deleteRelease],
   );
 
   const handleRefresh = async () => {
@@ -84,31 +79,16 @@ const ReleasesList: React.FC<ReleasesListProps> = ({
           <Container style={{ paddingTop: index !== 0 ? 0 : 16 }}>
             <Top>
               <Swipeable
-                ref={ref => {
-                  row[index] = ref;
+                editOption
+                editOnPress={() =>
+                  navigation.navigate('ReleaseChange', {
+                    release_id: release.id,
+                  })
+                }
+                deleteOption
+                deleteOnPress={async () => {
+                  await onDeleteItem(release.id);
                 }}
-                friction={1.5}
-                rightThreshold={30}
-                renderRightActions={() => (
-                  <>
-                    <DeleteItem
-                      onPress={() => {
-                        onDeleteItem(release.id);
-                      }}
-                    />
-                    <EditItem
-                      onPress={() => {
-                        prevOpenedRow?.close();
-                        navigation.navigate('ReleaseChange', {
-                          release_id: release.id,
-                        });
-                      }}
-                    />
-                  </>
-                )}
-                activeOffsetX={-1}
-                activeOffsetY={500}
-                onSwipeableOpen={() => closeRow(index)}
               >
                 <RectButton
                   onPress={() => {
@@ -190,6 +170,4 @@ const ReleasesList: React.FC<ReleasesListProps> = ({
       />
     </View>
   );
-};
-
-export { ReleasesList };
+}

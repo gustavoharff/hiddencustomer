@@ -1,11 +1,10 @@
 import React, { useCallback, useState } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
-import Swipeable from 'react-native-gesture-handler/Swipeable';
 import moment from 'moment';
 import produce from 'immer';
 import 'moment/locale/pt-br';
 
-import { EmptyList, DeleteItem } from 'components';
+import { EmptyList, Swipeable } from 'components';
 
 import { api, getRealm } from 'services';
 
@@ -20,15 +19,13 @@ type ReleaseDatesListProps = {
   emptyListText: string;
 };
 
-const ReleaseDatesList: React.FC<ReleaseDatesListProps> = ({
+export function ReleaseDatesList({
   dates,
   setDates,
   onRefresh,
   emptyListText,
-}) => {
+}: ReleaseDatesListProps) {
   const [refreshing, setRefreshing] = useState(false);
-  const [row] = useState<Array<Swipeable | null>>([]);
-  const [prevOpenedRow, setPrevOpenedRow] = useState<any>();
 
   const handleDelete = useCallback(
     async (dateId: string) => {
@@ -45,32 +42,35 @@ const ReleaseDatesList: React.FC<ReleaseDatesListProps> = ({
         });
       } catch (err) {
         Alert.alert('Erro!', 'Ocorreu um erro, reporte aos desenvolvedores!');
-        prevOpenedRow.close();
+
         await onRefresh();
       }
     },
-    [setDates, prevOpenedRow, onRefresh],
+    [setDates, onRefresh],
   );
 
   const onDeleteItem = useCallback(
     async (dateId: string) => {
-      Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
-        {
-          text: 'Cancelar',
-          onPress: () => prevOpenedRow.close(),
-          style: 'cancel',
-        },
-        { text: 'Sim', onPress: () => handleDelete(dateId) },
-      ]);
+      return new Promise(resolve => {
+        Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
+          {
+            text: 'Cancelar',
+            onPress: () => {
+              return resolve(200);
+            },
+            style: 'cancel',
+          },
+          {
+            text: 'Sim',
+            onPress: async () => {
+              await handleDelete(dateId);
+              return resolve(200);
+            },
+          },
+        ]);
+      });
     },
-    [prevOpenedRow, handleDelete],
-  );
-
-  const closeRow = useCallback(
-    index => {
-      setPrevOpenedRow(row[index]);
-    },
-    [row],
+    [handleDelete],
   );
 
   const handleRefresh = async () => {
@@ -96,21 +96,10 @@ const ReleaseDatesList: React.FC<ReleaseDatesListProps> = ({
         renderItem={({ item: date, index }) => (
           <Container style={{ paddingTop: index !== 0 ? 0 : 16 }}>
             <Swipeable
-              ref={ref => {
-                row[index] = ref;
+              deleteOption
+              deleteOnPress={async () => {
+                await onDeleteItem(date.id);
               }}
-              friction={1.5}
-              rightThreshold={30}
-              renderRightActions={() => (
-                <DeleteItem
-                  onPress={() => {
-                    onDeleteItem(date.id);
-                  }}
-                />
-              )}
-              activeOffsetX={-1}
-              activeOffsetY={500}
-              onSwipeableOpen={() => closeRow(index)}
             >
               <Content past={moment(date.date).isSameOrBefore()}>
                 <Date>{moment(date.date).locale('pt-br').format('LLL')}</Date>
@@ -121,6 +110,4 @@ const ReleaseDatesList: React.FC<ReleaseDatesListProps> = ({
       />
     </View>
   );
-};
-
-export { ReleaseDatesList };
+}
