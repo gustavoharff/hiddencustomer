@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { Alert, View } from 'react-native';
-import { Calendar as RNCalendar, LocaleConfig } from 'react-native-calendars';
+import { Calendar as RNCalendar } from 'react-native-calendars';
+
+import './helper';
 
 import { api } from 'services';
 
@@ -62,46 +64,3 @@ export function Calendar() {
     </>
   );
 }
-
-LocaleConfig.locales.br = {
-  monthNames: [
-    'Janeiro',
-    'Fevereiro',
-    'Março',
-    'Abril',
-    'Maio',
-    'Junho',
-    'Julho',
-    'Agosto',
-    'Setembro',
-    'Outubro',
-    'Novembro',
-    'Dezembro',
-  ],
-  monthNamesShort: [
-    'Jan.',
-    'Fev.',
-    'Mar.',
-    'Abr.',
-    'Mai.',
-    'Jun.',
-    'Jul.',
-    'Ago.',
-    'Set.',
-    'Out.',
-    'Nov.',
-    'Dez.',
-  ],
-  dayNames: [
-    'Domingo',
-    'Segunda-feira',
-    'Terça-feira',
-    'Quarta-feira',
-    'Quinta-feira',
-    'Sexta-feira',
-    'Sábado',
-  ],
-  dayNamesShort: ['Dom.', 'Seg.', 'Ter.', 'Qua.', 'Qui.', 'Sex.', 'Sab.'],
-  today: "Aujourd'hui",
-};
-LocaleConfig.defaultLocale = 'br';
