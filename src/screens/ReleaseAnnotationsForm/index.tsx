@@ -70,7 +70,13 @@ export function ReleaseAnnotationsForm({
             onSubmit={handleSubmit}
             initialData={route.params}
           >
-            <TextArea name="annotations" multiline numberOfLines={50} />
+            <TextArea
+              name="annotations"
+              label="Anotações"
+              multiline
+              numberOfLines={50}
+              style={{ height: '100%' }}
+            />
           </Unform>
         </Container>
       </ScrollView>
