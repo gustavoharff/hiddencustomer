@@ -6,6 +6,7 @@ import { Profile } from 'screens';
 import { LoggoutHeaderIcon } from 'components';
 
 import { useAuth } from 'hooks';
+import { Alert } from 'react-native';
 
 const { Navigator, Screen } = createStackNavigator();
 
@@ -36,7 +37,24 @@ export function ProfileRoutes() {
         component={Profile}
         options={{
           headerTitle: 'Meu perfil',
-          headerRight: () => <LoggoutHeaderIcon onPress={signOut} />,
+          headerRight: () => (
+            <LoggoutHeaderIcon
+              onPress={() => {
+                Alert.alert('Atenção', 'Deseja mesmo sair do aplicativo?', [
+                  {
+                    text: 'Cancelar',
+                    style: 'cancel',
+                  },
+                  {
+                    text: 'Sim',
+                    onPress: () => {
+                      signOut();
+                    },
+                  },
+                ]);
+              }}
+            />
+          ),
         }}
       />
     </Navigator>
