@@ -124,9 +124,7 @@ const SignIn: React.FC = () => {
                 setLoadingButton(true);
               }}
               loading={loadingButton}
-            >
-              Entrar
-            </Button>
+            />
           </Unform>
         </Container>
       </ScrollView>
