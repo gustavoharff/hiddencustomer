@@ -1,21 +1,25 @@
 import React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
+import {
+  CardStyleInterpolators,
+  createStackNavigator,
+} from '@react-navigation/stack';
 
-import { Profile } from 'screens';
+import {
+  Profile,
+  Configuration,
+  ChangeUserInfo,
+  ChangeUserPassword,
+} from 'screens';
 
-import { LoggoutHeaderIcon } from 'components';
-
-import { useAuth } from 'hooks';
-import { Alert } from 'react-native';
+import { BackHeaderIcon, ConfigHeaderIcon } from 'components';
 
 const { Navigator, Screen } = createStackNavigator();
 
 export function ProfileRoutes() {
-  const { signOut } = useAuth();
-
   return (
     <Navigator
       screenOptions={{
+        cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         cardStyle: {
           backgroundColor: '#ffff',
         },
@@ -35,27 +39,49 @@ export function ProfileRoutes() {
       <Screen
         name="Profile"
         component={Profile}
-        options={{
+        options={({ navigation }) => ({
           headerTitle: 'Meu perfil',
           headerRight: () => (
-            <LoggoutHeaderIcon
+            <ConfigHeaderIcon
               onPress={() => {
-                Alert.alert('Atenção', 'Deseja mesmo sair do aplicativo?', [
-                  {
-                    text: 'Cancelar',
-                    style: 'cancel',
-                  },
-                  {
-                    text: 'Sim',
-                    onPress: () => {
-                      signOut();
-                    },
-                  },
-                ]);
+                navigation.navigate('Configuration');
               }}
             />
           ),
-        }}
+        })}
+      />
+
+      <Screen
+        name="Configuration"
+        component={Configuration}
+        options={({ navigation }) => ({
+          headerTitle: 'Configurações',
+          headerLeft: () => (
+            <BackHeaderIcon onPress={() => navigation.goBack()} />
+          ),
+        })}
+      />
+
+      <Screen
+        name="ChangeUserInfo"
+        component={ChangeUserInfo}
+        options={({ navigation }) => ({
+          headerTitle: 'Alterar dados do perfil',
+          headerLeft: () => (
+            <BackHeaderIcon onPress={() => navigation.goBack()} />
+          ),
+        })}
+      />
+
+      <Screen
+        name="ChangeUserPassword"
+        component={ChangeUserPassword}
+        options={({ navigation }) => ({
+          headerTitle: 'Alterar senha',
+          headerLeft: () => (
+            <BackHeaderIcon onPress={() => navigation.goBack()} />
+          ),
+        })}
       />
     </Navigator>
   );

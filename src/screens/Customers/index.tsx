@@ -12,7 +12,7 @@ import { CustomersList } from './CustomersList';
 
 import { Container, Center } from './styles';
 
-export function Customers() {
+export function Customers(): JSX.Element {
   const [loading, setLoading] = useState(true);
 
   const { loadApiCustomers, loadLocalCustomers } = useCustomers();

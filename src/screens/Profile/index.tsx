@@ -1,83 +1,53 @@
-import React, { useCallback, useState } from 'react';
-import {
-  Dimensions,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  View,
-} from 'react-native';
-import { TabBar, TabView } from 'react-native-tab-view';
+import React, { useEffect, useState } from 'react';
+import { View } from 'react-native';
 
 import { Avatar } from 'components';
 
 import { SPACING } from 'styles';
 
-import { ChangeUserPassword } from './ChangeUserPassword';
-import { ChangeUserInfo } from './ChangeUserInfo';
+import { useAuth } from 'hooks';
 
-import { Container } from './styles';
+import { api } from 'services';
+
+import { Company } from 'types';
+
+import { Container, FieldDescription, Text, Title } from './styles';
 
 export function Profile() {
-  const [tabIndex, setTabIndex] = useState(0);
+  const { user } = useAuth();
+  const [company, setCompany] = useState<Company>({} as Company);
 
-  const tabRoutes = [
-    { key: 'data', title: 'Dados' },
-    { key: 'change-password', title: 'Trocar senha' },
-  ];
-
-  const renderScene = useCallback(({ route: tabRoute }) => {
-    switch (tabRoute.key) {
-      case 'data':
-        return <ChangeUserInfo />;
-      case 'change-password':
-        return <ChangeUserPassword />;
-      default:
-        return null;
-    }
+  useEffect(() => {
+    api.get(`/companies/me`).then(response => setCompany(response.data));
   }, []);
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={65}
-      enabled
-    >
-      <ScrollView keyboardShouldPersistTaps="never">
-        <Container>
-          <View style={{ flex: 1, width: '100%' }}>
-            <View
-              style={{
-                width: '100%',
-                alignItems: 'center',
-                paddingVertical: SPACING.L,
-                backgroundColor: '#29292E',
-              }}
-            >
-              <Avatar
-                url="https://iupac.org/wp-content/uploads/2018/05/default-avatar.png"
-                size={SPACING.XL * 6}
-              />
-            </View>
+    <Container>
+      <View style={{ flex: 1, width: '100%' }}>
+        <View
+          style={{
+            width: '100%',
+            alignItems: 'center',
+            paddingVertical: SPACING.L,
+            backgroundColor: '#29292E',
+          }}
+        >
+          <Avatar
+            url="https://iupac.org/wp-content/uploads/2018/05/default-avatar.png"
+            size={SPACING.XL * 6}
+          />
+        </View>
 
-            <TabView
-              navigationState={{ routes: tabRoutes, index: tabIndex }}
-              renderScene={renderScene}
-              onIndexChange={setTabIndex}
-              initialLayout={{ width: Dimensions.get('window').width }}
-              renderTabBar={props => (
-                <TabBar
-                  {...props}
-                  indicatorStyle={{ backgroundColor: '#DC1637' }}
-                  activeColor="#fff"
-                  inactiveColor="#f3f3f3"
-                  style={{ backgroundColor: '#AEAEB3' }}
-                />
-              )}
-            />
-          </View>
-        </Container>
-      </ScrollView>
-    </KeyboardAvoidingView>
+        <Title>Suas informações</Title>
+        <FieldDescription>Nome completo</FieldDescription>
+        <Text>{user.name}</Text>
+
+        <FieldDescription>Email</FieldDescription>
+        <Text>{user.email}</Text>
+
+        <FieldDescription>Empresa</FieldDescription>
+        <Text>{company.name}</Text>
+      </View>
+    </Container>
   );
 }

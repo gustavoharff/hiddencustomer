@@ -25,7 +25,7 @@ import { COLORS, SPACING } from 'styles';
 
 import { Release } from 'types';
 
-import { Container, Unform, FieldDescription } from './styles';
+import { Container, Unform, Label } from './styles';
 
 type Params = {
   ReleaseChange: {
@@ -33,9 +33,9 @@ type Params = {
   };
 };
 
-type Props = StackScreenProps<Params, 'ReleaseChange'>;
+type ReleaseChangeProps = StackScreenProps<Params, 'ReleaseChange'>;
 
-const ReleaseChange: React.FC<Props> = ({ route }) => {
+export function ReleaseChange({ route }: ReleaseChangeProps): JSX.Element {
   const { releases, updateRelease } = useReleases();
   const navigation = useNavigation();
   const { customers, loadApiCustomers, loadLocalCustomers } = useCustomers();
@@ -117,29 +117,26 @@ const ReleaseChange: React.FC<Props> = ({ route }) => {
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={
-        getBottomSpace() + getStatusBarHeight(false) + SPACING.L * 2
+        getBottomSpace() + getStatusBarHeight(false) + SPACING.L * 5
       }
       enabled
     >
-      <ScrollView
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{ flex: 1 }}
-      >
+      <ScrollView keyboardShouldPersistTaps="handled">
         <Container>
           <View style={{ width: '100%' }}>
             <Unform ref={formRef} onSubmit={handleSubmit} initialData={release}>
-              <FieldDescription>Informe o nome do lançamento:</FieldDescription>
               <Input
                 name="name"
+                label="Informe o nome do lançamento:"
                 placeholder="Nome"
                 placeholderTextColor={COLORS.FONT_LIGHT}
                 returnKeyType="default"
               />
             </Unform>
-            <FieldDescription>Relacione o cliente:</FieldDescription>
+            <Label>Relacione o cliente:</Label>
             {Platform.OS === 'ios' ? (
               <>
-                <FieldDescription
+                <Label
                   style={{ color: '#333' }}
                   onPress={() => setCustomersModalOpen(true)}
                 >
@@ -147,7 +144,7 @@ const ReleaseChange: React.FC<Props> = ({ route }) => {
                     customers.find(customer => customer.id === selectedCustomer)
                       ?.name
                   }
-                </FieldDescription>
+                </Label>
 
                 <Modal
                   isVisible={customersModalOpen}
@@ -222,15 +219,15 @@ const ReleaseChange: React.FC<Props> = ({ route }) => {
               </Picker>
             )}
 
-            <FieldDescription>Status do pagamento:</FieldDescription>
+            <Label>Status do pagamento:</Label>
             {Platform.OS === 'ios' ? (
               <>
-                <FieldDescription
+                <Label
                   style={{ color: '#333' }}
                   onPress={() => setPaymentModalOpen(true)}
                 >
                   {selectedPayment ? 'Realizado' : 'Não realizado'}
-                </FieldDescription>
+                </Label>
 
                 <Modal
                   isVisible={paymentModalOpen}
@@ -299,21 +296,19 @@ const ReleaseChange: React.FC<Props> = ({ route }) => {
               </>
             )}
           </View>
-          <View style={{ width: '100%', alignItems: 'center' }}>
-            <Button
-              title="Salvar"
-              loading={loadingButton}
-              onPress={() => {
-                formRef.current?.submitForm();
-                setLoadingButton(true);
-              }}
-              style={{ marginBottom: SPACING.M }}
-            />
-          </View>
         </Container>
       </ScrollView>
+      <View style={{ width: '100%', alignItems: 'center' }}>
+        <Button
+          title="Salvar"
+          loading={loadingButton}
+          onPress={() => {
+            formRef.current?.submitForm();
+            setLoadingButton(true);
+          }}
+          style={{ marginBottom: SPACING.M }}
+        />
+      </View>
     </KeyboardAvoidingView>
   );
-};
-
-export { ReleaseChange };
+}

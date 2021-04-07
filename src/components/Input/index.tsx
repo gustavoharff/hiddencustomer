@@ -6,13 +6,14 @@ import React, {
   useState,
   useCallback,
 } from 'react';
-import { TextInput, TextInputProps, View } from 'react-native';
+import { TextInput, TextInputProps, View, Text } from 'react-native';
 import { useField } from '@unform/core';
 
 import { styles } from './styles';
 
 interface InputProps extends TextInputProps {
   name: string;
+  label?: string;
   containerStyle?: object;
 }
 
@@ -25,7 +26,7 @@ type InputRef = {
 };
 
 const ForwardInput: React.ForwardRefRenderFunction<InputRef, InputProps> = (
-  { name, containerStyle, ...rest },
+  { name, containerStyle, label, ...rest },
   ref,
 ) => {
   const inputElementRef = useRef<any>(null);
@@ -66,27 +67,30 @@ const ForwardInput: React.ForwardRefRenderFunction<InputRef, InputProps> = (
   }, [fieldName, registerField]);
 
   return (
-    <View style={[styles.container, containerStyle]}>
-      <TextInput
-        ref={inputElementRef}
-        keyboardAppearance="dark"
-        defaultValue={defaultValue}
-        onFocus={handleInputFocus}
-        onBlur={handleInputBlur}
-        onChangeText={value => {
-          inputValueRef.current.value = value;
-        }}
-        style={[
-          styles.input,
-          isFocused ? { borderWidth: 1 } : { borderWidth: 0 },
-        ]}
-        placeholderTextColor="#AEAEB3"
-        {...rest}
-      />
-    </View>
+    <>
+      {label && (
+        <Text style={[styles.label, { textAlign: 'left' }]}>{label}</Text>
+      )}
+      <View style={[styles.container, containerStyle]}>
+        <TextInput
+          ref={inputElementRef}
+          keyboardAppearance="dark"
+          defaultValue={defaultValue}
+          onFocus={handleInputFocus}
+          onBlur={handleInputBlur}
+          onChangeText={value => {
+            inputValueRef.current.value = value;
+          }}
+          style={[
+            styles.input,
+            isFocused ? { borderWidth: 1 } : { borderWidth: 0 },
+          ]}
+          placeholderTextColor="#AEAEB3"
+          {...rest}
+        />
+      </View>
+    </>
   );
 };
 
-const Input = forwardRef(ForwardInput);
-
-export { Input };
+export const Input = forwardRef(ForwardInput);

@@ -8,7 +8,7 @@ export const Container = styled.View`
   justify-content: space-between;
 `;
 
-export const FieldDescription = styled.Text`
+export const Label = styled.Text`
   width: 100%;
   color: #7a7a80;
   font-size: 16px;

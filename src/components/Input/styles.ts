@@ -23,4 +23,14 @@ export const styles = StyleSheet.create({
     color: '#3d3d4d',
     fontFamily: 'Arial',
   },
+  label: {
+    width: '100%',
+    color: '#7a7a80',
+    fontSize: 16,
+    fontWeight: '600',
+    paddingTop: SPACING.L,
+    paddingRight: SPACING.L,
+    paddingBottom: 0,
+    paddingLeft: SPACING.L,
+  },
 });

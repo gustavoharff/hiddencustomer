@@ -26,7 +26,7 @@ import { Company } from 'types';
 
 import { useUsers } from 'hooks';
 
-import { Container, FieldDescription, Unform } from './styles';
+import { Container, Label, Unform } from './styles';
 
 export function UserForm() {
   const [loadingButton, setLoadingButton] = useState(false);
@@ -96,38 +96,35 @@ export function UserForm() {
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={
-        getBottomSpace() + getStatusBarHeight(false) + SPACING.L * 2
+        getBottomSpace() + getStatusBarHeight(false) + SPACING.L * 5
       }
       enabled
     >
-      <ScrollView
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{ flex: 1 }}
-      >
+      <ScrollView keyboardShouldPersistTaps="handled">
         <Container>
           <View>
             <Unform ref={formRef} onSubmit={handleSubmit}>
-              <FieldDescription>Informe o nome do usuário:</FieldDescription>
               <Input
                 name="name"
+                label="Informe o nome do usuário:"
                 placeholder="Nome do usuário"
                 placeholderTextColor={COLORS.FONT_LIGHT}
                 returnKeyType="send"
                 onSubmitEditing={() => formRef.current?.submitForm()}
               />
 
-              <FieldDescription>Informe o e-mail:</FieldDescription>
               <Input
                 name="email"
+                label="Informe o e-mail:"
                 placeholder="E-mail do usuário"
                 placeholderTextColor={COLORS.FONT_LIGHT}
                 returnKeyType="send"
                 onSubmitEditing={() => formRef.current?.submitForm()}
               />
 
-              <FieldDescription>Senha de acesso:</FieldDescription>
               <Input
                 name="password"
+                label="Senha de acesso:"
                 placeholder="Senha"
                 secureTextEntry
                 placeholderTextColor={COLORS.FONT_LIGHT}
@@ -136,16 +133,16 @@ export function UserForm() {
               />
             </Unform>
 
-            <FieldDescription>Relacione a empresa:</FieldDescription>
+            <Label>Relacione a empresa:</Label>
             {Platform.OS === 'ios' ? (
               <>
-                <FieldDescription
+                <Label
                   style={{ color: '#333' }}
                   onPress={() => setCompaniesModalOpen(true)}
                 >
                   {companies.find(company => company.id === selectedCompanyId)
                     ?.name || 'Selecionar'}
-                </FieldDescription>
+                </Label>
                 <Modal
                   isVisible={companiesModalOpen}
                   backdropColor="#333"
@@ -220,24 +217,24 @@ export function UserForm() {
               </Picker>
             )}
           </View>
-          <View
-            style={{
-              width: '100%',
-              alignItems: 'center',
-            }}
-          >
-            <Button
-              title="Cadastrar"
-              loading={loadingButton}
-              onPress={() => {
-                formRef.current?.submitForm();
-                setLoadingButton(true);
-              }}
-              style={{ marginBottom: SPACING.M }}
-            />
-          </View>
         </Container>
       </ScrollView>
+      <View
+        style={{
+          width: '100%',
+          alignItems: 'center',
+        }}
+      >
+        <Button
+          title="Cadastrar"
+          loading={loadingButton}
+          onPress={() => {
+            formRef.current?.submitForm();
+            setLoadingButton(true);
+          }}
+          style={{ marginBottom: SPACING.M }}
+        />
+      </View>
     </KeyboardAvoidingView>
   );
 }
