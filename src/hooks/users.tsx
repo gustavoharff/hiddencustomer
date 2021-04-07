@@ -13,29 +13,29 @@ import { User } from 'types';
 
 import { useAuth } from 'hooks';
 
-type UsersContextData = {
+interface UsersContextData {
   users: User[];
   loadApiUsers: (userId: string) => Promise<void>;
   loadLocalUsers: () => Promise<void>;
   createUser: (data: UserFormData) => Promise<void>;
   activateUser: (userId: string) => Promise<void>;
   disableUser: (userId: string) => Promise<void>;
-};
+}
 
-type UsersProviderProps = {
+interface UsersProviderProps {
   children: ReactNode;
-};
+}
 
-type UserFormData = {
+interface UserFormData {
   name: string;
   email: string;
   password: string;
   company_id: string;
-};
+}
 
 const UsersContext = createContext<UsersContextData>({} as UsersContextData);
 
-export function UsersProvider({ children }: UsersProviderProps) {
+export function UsersProvider({ children }: UsersProviderProps): JSX.Element {
   const [users, setUsers] = useState<User[]>([]);
 
   const { signOut } = useAuth();

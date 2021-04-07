@@ -17,7 +17,7 @@ import { useNavigation } from '@react-navigation/native';
 
 import { Input, Button } from 'components';
 
-import { COLORS, SPACING } from 'styles';
+import { SPACING } from 'styles';
 
 import { api } from 'services';
 
@@ -27,7 +27,7 @@ import { useAuth } from 'hooks';
 
 import { Container, Unform } from './styles';
 
-export function ChangeUserInfo() {
+export function ChangeUserInfo(): JSX.Element {
   const { updateUser, user, signOut } = useAuth();
 
   const navigation = useNavigation();
@@ -93,7 +93,6 @@ export function ChangeUserInfo() {
               name="name"
               placeholder="Nome"
               textContentType="newPassword"
-              placeholderTextColor={COLORS.FONT_LIGHTEST}
               returnKeyType="next"
               onSubmitEditing={() => {
                 emailInputRef.current?.focus();
@@ -106,7 +105,6 @@ export function ChangeUserInfo() {
               name="email"
               placeholder="E-mail"
               textContentType="emailAddress"
-              placeholderTextColor={COLORS.FONT_LIGHTEST}
               returnKeyType="send"
               onSubmitEditing={() => formRef.current?.submitForm()}
             />

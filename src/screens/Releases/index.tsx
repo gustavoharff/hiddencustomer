@@ -11,7 +11,7 @@ import { ReleasesList } from './ReleasesList';
 
 import { Container, Center } from './styles';
 
-export function Releases() {
+export function Releases(): JSX.Element {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 

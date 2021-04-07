@@ -13,7 +13,7 @@ import { Company } from 'types';
 
 import { Container, FieldDescription, Text, Title } from './styles';
 
-export function Profile() {
+export function Profile(): JSX.Element {
   const { user } = useAuth();
   const [company, setCompany] = useState<Company>({} as Company);
 

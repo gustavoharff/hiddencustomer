@@ -12,7 +12,11 @@ interface ButtonProps {
   onPress: () => void;
 }
 
-export function BottomButton({ name, onPress, ...rest }: ButtonProps) {
+export function BottomButton({
+  name,
+  onPress,
+  ...rest
+}: ButtonProps): JSX.Element {
   return (
     <View style={styles.container}>
       <TouchableOpacity style={styles.button} onPress={onPress} {...rest}>

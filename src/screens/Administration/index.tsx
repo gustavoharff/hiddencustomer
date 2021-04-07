@@ -7,11 +7,12 @@ import { COLORS } from 'styles';
 import { useAuth, useUsers } from 'hooks';
 
 import { BottomButton } from 'components';
+
 import { UsersList } from './UsersList';
 
 import { Container, Center } from './styles';
 
-const Administration: React.FC = () => {
+export function Administration(): JSX.Element {
   const [loading, setLoading] = useState(true);
 
   const { loadApiUsers, loadLocalUsers } = useUsers();
@@ -63,6 +64,4 @@ const Administration: React.FC = () => {
       )}
     </>
   );
-};
-
-export { Administration };
+}

@@ -9,5 +9,4 @@ export const Container = styled.View`
 export const Unform = styled(Form)`
   width: 100%;
   align-items: center;
-  justify-content: space-around;
 `;

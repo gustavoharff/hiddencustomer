@@ -20,7 +20,7 @@ import { Input, Button } from 'components';
 
 import { api } from 'services';
 
-import { COLORS, SPACING } from 'styles';
+import { SPACING } from 'styles';
 
 import { Company } from 'types';
 
@@ -28,7 +28,7 @@ import { useUsers } from 'hooks';
 
 import { Container, Label, Unform } from './styles';
 
-export function UserForm() {
+export function UserForm(): JSX.Element {
   const [loadingButton, setLoadingButton] = useState(false);
   const formRef = useRef<FormHandles>(null);
 
@@ -108,7 +108,6 @@ export function UserForm() {
                 name="name"
                 label="Informe o nome do usuário:"
                 placeholder="Nome do usuário"
-                placeholderTextColor={COLORS.FONT_LIGHT}
                 returnKeyType="send"
                 onSubmitEditing={() => formRef.current?.submitForm()}
               />
@@ -117,7 +116,6 @@ export function UserForm() {
                 name="email"
                 label="Informe o e-mail:"
                 placeholder="E-mail do usuário"
-                placeholderTextColor={COLORS.FONT_LIGHT}
                 returnKeyType="send"
                 onSubmitEditing={() => formRef.current?.submitForm()}
               />
@@ -127,7 +125,6 @@ export function UserForm() {
                 label="Senha de acesso:"
                 placeholder="Senha"
                 secureTextEntry
-                placeholderTextColor={COLORS.FONT_LIGHT}
                 returnKeyType="send"
                 onSubmitEditing={() => formRef.current?.submitForm()}
               />

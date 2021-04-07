@@ -5,11 +5,14 @@ import {
 } from '@react-navigation/stack';
 
 import { Administration, UserForm } from 'screens';
-import { BackHeaderIcon } from 'components';
+
+import { HeaderIcon } from 'components';
+
+import { SPACING } from 'styles';
 
 const { Navigator, Screen } = createStackNavigator();
 
-export function AdministrationRoutes() {
+export function AdministrationRoutes(): JSX.Element {
   return (
     <Navigator
       mode="modal"
@@ -45,7 +48,11 @@ export function AdministrationRoutes() {
         options={({ navigation }) => ({
           headerTitle: 'Cadastrar usuário',
           headerLeft: () => (
-            <BackHeaderIcon onPress={() => navigation.goBack()} />
+            <HeaderIcon
+              name="arrow-left"
+              onPress={() => navigation.goBack()}
+              style={{ marginLeft: SPACING.S }}
+            />
           ),
         })}
       />

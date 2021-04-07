@@ -13,23 +13,23 @@ import { Release } from 'types';
 
 import { useAuth } from 'hooks';
 
-type CreateReleaseData = {
+interface CreateReleaseData {
   name: string;
   customer_id: string;
-};
+}
 
-type UpdateReleaseData = {
+interface UpdateReleaseData {
   release_id: string;
   name: string;
   paid: boolean;
   customer_id: string;
-};
-type UpdateReleaseAnnotationsData = {
+}
+interface UpdateReleaseAnnotationsData {
   release_id: string;
   annotations: string;
-};
+}
 
-type ReleasesContextData = {
+interface ReleasesContextData {
   releases: Release[];
   loadApiReleases: () => Promise<void>;
   loadLocalReleases: () => Promise<void>;
@@ -39,17 +39,19 @@ type ReleasesContextData = {
   updateReleaseAnnotations: (
     data: UpdateReleaseAnnotationsData,
   ) => Promise<void>;
-};
+}
 
-type ReleasesProviderProps = {
+interface ReleasesProviderProps {
   children: ReactNode;
-};
+}
 
 const ReleasesContext = createContext<ReleasesContextData>(
   {} as ReleasesContextData,
 );
 
-export function ReleasesProvider({ children }: ReleasesProviderProps) {
+export function ReleasesProvider({
+  children,
+}: ReleasesProviderProps): JSX.Element {
   const [releases, setReleases] = useState<Release[]>([]);
 
   const { signOut } = useAuth();

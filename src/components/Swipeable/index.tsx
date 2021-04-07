@@ -1,9 +1,7 @@
-import { ActivateItem } from 'components/ActivateItem';
-import { DeleteItem } from 'components/DeleteItem';
-import { DisableItem } from 'components/DisableItem';
-import { EditItem } from 'components/EditItem';
 import { ReactNode, useCallback, useState } from 'react';
 import RNSwipeable from 'react-native-gesture-handler/Swipeable';
+
+import { ActivateItem, DeleteItem, DisableItem, EditItem } from 'components';
 
 interface SwipeableProps {
   children: ReactNode;
@@ -27,7 +25,7 @@ export function Swipeable({
   disableOnPress,
   activeOption = false,
   activeOnPress,
-}: SwipeableProps) {
+}: SwipeableProps): JSX.Element {
   const [swipeableRow, setSwipeableRow] = useState<RNSwipeable | null>(null);
 
   const close = useCallback(() => {

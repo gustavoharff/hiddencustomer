@@ -78,6 +78,7 @@ const ForwardInput: React.ForwardRefRenderFunction<InputRef, InputProps> = (
         onChangeText={value => {
           inputValueRef.current.value = value;
         }}
+        placeholderTextColor="#817E7B"
         {...rest}
       />
     </View>

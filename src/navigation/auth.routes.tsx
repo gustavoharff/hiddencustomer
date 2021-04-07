@@ -10,7 +10,7 @@ import { COLORS } from 'styles';
 
 const { Navigator, Screen } = createStackNavigator();
 
-export function AuthRoutes() {
+export function AuthRoutes(): JSX.Element {
   return (
     <Navigator
       mode="modal"

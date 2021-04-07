@@ -24,7 +24,7 @@ export function ReleaseDatesList({
   setDates,
   onRefresh,
   emptyListText,
-}: ReleaseDatesListProps) {
+}: ReleaseDatesListProps): JSX.Element {
   const [refreshing, setRefreshing] = useState(false);
 
   const handleDelete = useCallback(

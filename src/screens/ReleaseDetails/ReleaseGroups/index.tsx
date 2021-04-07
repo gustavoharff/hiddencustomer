@@ -16,7 +16,7 @@ type ReleaseGroupsProps = {
   release_id: string;
 };
 
-export function ReleaseGroups({ release_id }: ReleaseGroupsProps) {
+export function ReleaseGroups({ release_id }: ReleaseGroupsProps): JSX.Element {
   const [loading, setLoading] = useState(true);
 
   const { groups, loadApiGroups, loadLocalGroups } = useGroups();

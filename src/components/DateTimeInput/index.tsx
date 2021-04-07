@@ -7,12 +7,15 @@ import 'moment/locale/pt-br';
 
 import { DateText, Container, TimeText, Content } from './styles';
 
-type DateTimeInputProps = {
+interface DateTimeInputProps {
   date: Date;
   setDate: React.Dispatch<React.SetStateAction<Date>>;
-};
+}
 
-const DateTimeInput: React.FC<DateTimeInputProps> = ({ date, setDate }) => {
+export function DateTimeInput({
+  date,
+  setDate,
+}: DateTimeInputProps): JSX.Element {
   const [openedDate, setOpenedDate] = useState(false);
   const [openedTime, setOpenedTime] = useState(false);
 
@@ -71,6 +74,4 @@ const DateTimeInput: React.FC<DateTimeInputProps> = ({ date, setDate }) => {
       />
     </Container>
   );
-};
-
-export { DateTimeInput };
+}

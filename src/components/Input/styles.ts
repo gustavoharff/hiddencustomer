@@ -17,7 +17,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     fontSize: 15,
     borderWidth: 0,
-    borderColor: COLORS.ALERT,
+    borderColor: COLORS.BACKGROUND_DARK,
     paddingVertical: 5,
     paddingHorizontal: 15,
     color: '#3d3d4d',

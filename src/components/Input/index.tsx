@@ -31,7 +31,7 @@ const ForwardInput: React.ForwardRefRenderFunction<InputRef, InputProps> = (
 ) => {
   const inputElementRef = useRef<any>(null);
 
-  const { registerField, defaultValue = '', fieldName, error } = useField(name); //eslint-disable-line
+  const { registerField, defaultValue = '', fieldName } = useField(name);
   const inputValueRef = useRef<InputValueRef>({ value: defaultValue });
 
   const [isFocused, setIsFocused] = useState(false);
@@ -85,7 +85,7 @@ const ForwardInput: React.ForwardRefRenderFunction<InputRef, InputProps> = (
             styles.input,
             isFocused ? { borderWidth: 1 } : { borderWidth: 0 },
           ]}
-          placeholderTextColor="#AEAEB3"
+          placeholderTextColor="#817E7B"
           {...rest}
         />
       </View>

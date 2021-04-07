@@ -11,20 +11,20 @@ interface ButtonProps extends BaseButtonProperties {
   loading?: boolean;
 }
 
-const Button: React.FC<ButtonProps> = ({
+export function Button({
   title,
   backgroundColor,
   textColor,
   loading,
   ...rest
-}) => (
-  <Container backgroundColor={backgroundColor} {...rest}>
-    {loading ? (
-      <ActivityIndicator color="#fff" />
-    ) : (
-      <ButtonText textColor={textColor}>{title}</ButtonText>
-    )}
-  </Container>
-);
-
-export { Button };
+}: ButtonProps): JSX.Element {
+  return (
+    <Container backgroundColor={backgroundColor} {...rest}>
+      {loading ? (
+        <ActivityIndicator color="#fff" />
+      ) : (
+        <ButtonText textColor={textColor}>{title}</ButtonText>
+      )}
+    </Container>
+  );
+}

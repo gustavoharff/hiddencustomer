@@ -26,7 +26,7 @@ import { SPACING } from 'styles';
 
 import { Container, Unform } from './styles';
 
-export function ChangeUserPassword() {
+export function ChangeUserPassword(): JSX.Element {
   const { updateUser, signOut } = useAuth();
 
   const formRef = useRef<FormHandles>(null);

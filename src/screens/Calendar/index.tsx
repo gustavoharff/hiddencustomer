@@ -14,7 +14,7 @@ import { useAuth } from 'hooks';
 
 import { formatMarkedCalendar } from 'utils';
 
-export function Calendar() {
+export function Calendar(): JSX.Element {
   const [dates, setDates] = useState<ReleaseDate[]>([]);
   const [loading, setLoading] = useState(false);
 

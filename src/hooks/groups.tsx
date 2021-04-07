@@ -13,27 +13,27 @@ import { ReleaseGroup } from 'types';
 
 import { useAuth } from './auth';
 
-type CreateGroupProps = {
+interface CreateGroupProps {
   name: string;
   type: string;
   release_id: string;
-};
+}
 
-type GroupsContextData = {
+interface GroupsContextData {
   groups: ReleaseGroup[];
   loadApiGroups: (releaseId: string) => Promise<void>;
   loadLocalGroups: (releaseId: string) => Promise<void>;
   createGroup: (data: CreateGroupProps) => Promise<void>;
   deleteGroup: (groupId: string) => Promise<void>;
-};
+}
 
-type GroupProviderProps = {
+interface GroupProviderProps {
   children: ReactNode;
-};
+}
 
 const GroupsContext = createContext<GroupsContextData>({} as GroupsContextData);
 
-export function GroupProvider({ children }: GroupProviderProps) {
+export function GroupProvider({ children }: GroupProviderProps): JSX.Element {
   const [groups, setGroups] = useState<ReleaseGroup[]>([]);
 
   const { signOut } = useAuth();

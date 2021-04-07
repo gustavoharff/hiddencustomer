@@ -2,14 +2,14 @@ import React from 'react';
 
 import { Container, Text } from './styles';
 
-type DeleteItemProps = {
+interface DeleteItemProps {
   onPress?: () => void;
-};
+}
 
-const DeleteItem: React.FC<DeleteItemProps> = ({ onPress }) => (
-  <Container onPress={onPress}>
-    <Text>Deletar</Text>
-  </Container>
-);
-
-export { DeleteItem };
+export function DeleteItem({ onPress }: DeleteItemProps): JSX.Element {
+  return (
+    <Container onPress={onPress}>
+      <Text>Deletar</Text>
+    </Container>
+  );
+}

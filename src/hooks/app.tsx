@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 
 import {
   AuthProvider,
@@ -8,16 +8,20 @@ import {
   UsersProvider,
 } from 'hooks';
 
-const AppProvider: React.FC = ({ children }) => (
-  <AuthProvider>
-    <UsersProvider>
-      <CustomerProvider>
-        <ReleasesProvider>
-          <GroupProvider>{children}</GroupProvider>
-        </ReleasesProvider>
-      </CustomerProvider>
-    </UsersProvider>
-  </AuthProvider>
-);
+interface AppProviderProps {
+  children: ReactNode;
+}
 
-export { AppProvider };
+export function AppProvider({ children }: AppProviderProps): JSX.Element {
+  return (
+    <AuthProvider>
+      <UsersProvider>
+        <CustomerProvider>
+          <ReleasesProvider>
+            <GroupProvider>{children}</GroupProvider>
+          </ReleasesProvider>
+        </CustomerProvider>
+      </UsersProvider>
+    </AuthProvider>
+  );
+}

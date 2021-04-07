@@ -1,4 +1,4 @@
-class ReleaseSchema {
+export class ReleaseSchema {
   static schema = {
     name: 'Release',
     primaryKey: 'id',
@@ -17,5 +17,3 @@ class ReleaseSchema {
     },
   };
 }
-
-export { ReleaseSchema };

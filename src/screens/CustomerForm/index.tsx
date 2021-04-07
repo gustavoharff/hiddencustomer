@@ -18,7 +18,7 @@ import { Input, Button } from 'components';
 
 import { useCustomers } from 'hooks';
 
-import { COLORS, SPACING } from 'styles';
+import { SPACING } from 'styles';
 
 import { Container, Unform } from './styles';
 
@@ -72,7 +72,6 @@ export function CustomerForm(): JSX.Element {
               name="name"
               label="Informe o nome do cliente:"
               placeholder="Nome do cliente"
-              placeholderTextColor={COLORS.FONT_LIGHT}
               returnKeyType="send"
               onSubmitEditing={() => formRef.current?.submitForm()}
             />

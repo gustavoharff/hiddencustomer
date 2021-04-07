@@ -21,7 +21,7 @@ export function ReleaseGroupsList({
   groups,
   onRefresh,
   emptyListText,
-}: ReleaseGroupsListProps) {
+}: ReleaseGroupsListProps): JSX.Element {
   const [refreshing, setRefreshing] = useState(false);
 
   const { deleteGroup } = useGroups();

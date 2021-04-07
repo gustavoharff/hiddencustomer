@@ -11,11 +11,13 @@ import {
   ChangeUserPassword,
 } from 'screens';
 
-import { BackHeaderIcon, ConfigHeaderIcon } from 'components';
+import { HeaderIcon } from 'components';
+
+import { SPACING } from 'styles';
 
 const { Navigator, Screen } = createStackNavigator();
 
-export function ProfileRoutes() {
+export function ProfileRoutes(): JSX.Element {
   return (
     <Navigator
       screenOptions={{
@@ -42,10 +44,12 @@ export function ProfileRoutes() {
         options={({ navigation }) => ({
           headerTitle: 'Meu perfil',
           headerRight: () => (
-            <ConfigHeaderIcon
+            <HeaderIcon
+              name="cog-outline"
               onPress={() => {
                 navigation.navigate('Configuration');
               }}
+              style={{ marginRight: SPACING.L }}
             />
           ),
         })}
@@ -57,7 +61,11 @@ export function ProfileRoutes() {
         options={({ navigation }) => ({
           headerTitle: 'Configurações',
           headerLeft: () => (
-            <BackHeaderIcon onPress={() => navigation.goBack()} />
+            <HeaderIcon
+              name="arrow-left"
+              onPress={() => navigation.goBack()}
+              style={{ marginLeft: SPACING.S }}
+            />
           ),
         })}
       />
@@ -68,7 +76,11 @@ export function ProfileRoutes() {
         options={({ navigation }) => ({
           headerTitle: 'Alterar dados do perfil',
           headerLeft: () => (
-            <BackHeaderIcon onPress={() => navigation.goBack()} />
+            <HeaderIcon
+              name="arrow-left"
+              onPress={() => navigation.goBack()}
+              style={{ marginLeft: SPACING.S }}
+            />
           ),
         })}
       />
@@ -79,7 +91,11 @@ export function ProfileRoutes() {
         options={({ navigation }) => ({
           headerTitle: 'Alterar senha',
           headerLeft: () => (
-            <BackHeaderIcon onPress={() => navigation.goBack()} />
+            <HeaderIcon
+              name="arrow-left"
+              onPress={() => navigation.goBack()}
+              style={{ marginLeft: SPACING.S }}
+            />
           ),
         })}
       />

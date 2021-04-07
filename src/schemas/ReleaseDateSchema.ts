@@ -1,4 +1,4 @@
-class ReleaseDateSchema {
+export class ReleaseDateSchema {
   static schema = {
     name: 'ReleaseDate',
     primaryKey: 'id',
@@ -11,5 +11,3 @@ class ReleaseDateSchema {
     },
   };
 }
-
-export { ReleaseDateSchema };

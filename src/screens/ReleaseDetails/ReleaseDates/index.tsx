@@ -17,7 +17,7 @@ type ReleaseDatedProps = {
   release_id: string;
 };
 
-export function ReleaseDates({ release_id }: ReleaseDatedProps) {
+export function ReleaseDates({ release_id }: ReleaseDatedProps): JSX.Element {
   const [loading, setLoading] = useState(true);
   const [date, setDate] = useState(new Date());
   const [isAddingDate, setIsAddingDate] = useState(false);

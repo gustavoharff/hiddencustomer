@@ -2,14 +2,14 @@ import React from 'react';
 
 import { Container, Text } from './styles';
 
-type EmptyListProps = {
+interface EmptyListProps {
   text: string;
-};
+}
 
-const EmptyList: React.FC<EmptyListProps> = ({ text }) => (
-  <Container>
-    <Text>{text}</Text>
-  </Container>
-);
-
-export { EmptyList };
+export function EmptyList({ text }: EmptyListProps): JSX.Element {
+  return (
+    <Container>
+      <Text>{text}</Text>
+    </Container>
+  );
+}

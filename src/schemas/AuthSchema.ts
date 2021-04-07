@@ -1,4 +1,4 @@
-class AuthSchema {
+export class AuthSchema {
   static schema = {
     name: 'Auth',
     primaryKey: 'id',
@@ -15,5 +15,3 @@ class AuthSchema {
     },
   };
 }
-
-export { AuthSchema };

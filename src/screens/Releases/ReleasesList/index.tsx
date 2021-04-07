@@ -26,7 +26,10 @@ type ReleasesListProps = {
   emptyListText: string;
 };
 
-export function ReleasesList({ onRefresh, emptyListText }: ReleasesListProps) {
+export function ReleasesList({
+  onRefresh,
+  emptyListText,
+}: ReleasesListProps): JSX.Element {
   const [refreshing, setRefreshing] = useState(false);
 
   const { releases, deleteRelease } = useReleases();

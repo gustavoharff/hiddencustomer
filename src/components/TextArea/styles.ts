@@ -5,7 +5,7 @@ import { COLORS, SPACING } from 'styles';
 export const styles = StyleSheet.create({
   container: {
     width: '90%',
-    height: '80%',
+    height: 'auto',
     borderWidth: 1,
     borderColor: COLORS.FONT_LIGHT,
     borderStyle: 'solid',

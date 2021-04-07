@@ -21,7 +21,7 @@ import { Button, Input } from 'components';
 
 import { useCustomers, useReleases } from 'hooks';
 
-import { COLORS, SPACING } from 'styles';
+import { SPACING } from 'styles';
 
 import { Release } from 'types';
 
@@ -129,7 +129,6 @@ export function ReleaseChange({ route }: ReleaseChangeProps): JSX.Element {
                 name="name"
                 label="Informe o nome do lançamento:"
                 placeholder="Nome"
-                placeholderTextColor={COLORS.FONT_LIGHT}
                 returnKeyType="default"
               />
             </Unform>

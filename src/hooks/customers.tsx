@@ -6,34 +6,38 @@ import React, {
   ReactNode,
 } from 'react';
 import { Alert } from 'react-native';
+
 import { api, getRealm } from 'services';
 
 import { Customer } from 'types';
+
 import { useAuth } from './auth';
 
-type UpdateCustomerData = {
+interface UpdateCustomerData {
   customer_id: string;
   name: string;
-};
+}
 
-type CustomersContextData = {
+interface CustomersContextData {
   customers: Customer[];
   loadLocalCustomers: () => Promise<void>;
   loadApiCustomers: () => Promise<void>;
   createCustomer: (name: string) => Promise<void>;
   deleteCustomer: (customerId: string) => Promise<void>;
   updateCustomer: (data: UpdateCustomerData) => Promise<void>;
-};
+}
 
-type CustomerProviderProps = {
+interface CustomerProviderProps {
   children: ReactNode;
-};
+}
 
 const CustomersContext = createContext<CustomersContextData>(
   {} as CustomersContextData,
 );
 
-export function CustomerProvider({ children }: CustomerProviderProps) {
+export function CustomerProvider({
+  children,
+}: CustomerProviderProps): JSX.Element {
   const [customers, setCustomers] = useState<Customer[]>([]);
 
   const { signOut } = useAuth();

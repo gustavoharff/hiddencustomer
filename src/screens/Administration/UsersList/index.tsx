@@ -15,7 +15,10 @@ type UsersListProps = {
   emptyListText: string;
 };
 
-export function UsersList({ onRefresh, emptyListText }: UsersListProps) {
+export function UsersList({
+  onRefresh,
+  emptyListText,
+}: UsersListProps): JSX.Element {
   const { users, activateUser, disableUser } = useUsers();
 
   const [refreshing, setRefreshing] = useState(false);

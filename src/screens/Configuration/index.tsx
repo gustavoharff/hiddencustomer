@@ -6,7 +6,7 @@ import { useAuth } from 'hooks';
 
 import { Container, Content } from './styles';
 
-export function Configuration() {
+export function Configuration(): JSX.Element {
   const { signOut } = useAuth();
 
   const navigation = useNavigation();

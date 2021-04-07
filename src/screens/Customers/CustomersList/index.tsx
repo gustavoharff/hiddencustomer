@@ -17,7 +17,7 @@ type CustomersListProps = {
 export function CustomersList({
   onRefresh,
   emptyListText,
-}: CustomersListProps) {
+}: CustomersListProps): JSX.Element {
   const [refreshing, setRefreshing] = useState(false);
 
   const navigation = useNavigation();

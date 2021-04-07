@@ -3,13 +3,13 @@ import { RectButton } from 'react-native-gesture-handler';
 
 import { SPACING } from 'styles';
 
-type ContainerProps = {
+interface ContainerProps {
   backgroundColor?: string;
-};
+}
 
-type ButtonTextProps = {
+interface ButtonTextProps {
   textColor?: string;
-};
+}
 
 export const Container = styled(RectButton)<ContainerProps>`
   width: 90%;

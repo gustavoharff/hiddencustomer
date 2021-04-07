@@ -11,7 +11,7 @@ export const Title = styled.Text`
   width: 100%;
   background: #333;
   font-size: 18px;
-  font-weight: 600;
+  font-weight: bold;
   color: #f4f4f4;
   padding: ${SPACING.L}px ${SPACING.L}px ${SPACING.L}px ${SPACING.L}px;
   text-align: left;
@@ -29,7 +29,7 @@ export const FieldDescription = styled.Text`
 export const Text = styled.Text`
   width: 100%;
   font-size: 15px;
-  font-weight: 600;
+  font-weight: bold;
   color: #3d3d4d;
   padding: ${SPACING.S}px ${SPACING.L}px 0 ${SPACING.L}px;
   text-align: left;

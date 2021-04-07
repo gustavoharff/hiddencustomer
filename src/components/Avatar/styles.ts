@@ -2,9 +2,9 @@ import styled from 'styled-components/native';
 
 import { COLORS } from 'styles';
 
-type ImageProps = {
+interface ImageProps {
   size: number;
-};
+}
 
 export const Image = styled.Image<ImageProps>`
   height: ${({ size }) => size}px;

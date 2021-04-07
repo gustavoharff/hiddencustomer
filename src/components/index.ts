@@ -11,6 +11,6 @@ export * from './HeaderIcons';
 export * from './Input';
 export * from './ListHeader';
 export * from './Logo';
-export * from './TextArea';
 export * from './ScreenIndicator';
 export * from './Swipeable';
+export * from './TextArea';
