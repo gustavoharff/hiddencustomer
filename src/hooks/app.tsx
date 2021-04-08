@@ -6,6 +6,7 @@ import {
   ReleasesProvider,
   GroupProvider,
   UsersProvider,
+  CompaniesProvider,
 } from 'hooks';
 
 interface AppProviderProps {
@@ -15,13 +16,15 @@ interface AppProviderProps {
 export function AppProvider({ children }: AppProviderProps): JSX.Element {
   return (
     <AuthProvider>
-      <UsersProvider>
-        <CustomerProvider>
-          <ReleasesProvider>
-            <GroupProvider>{children}</GroupProvider>
-          </ReleasesProvider>
-        </CustomerProvider>
-      </UsersProvider>
+      <CompaniesProvider>
+        <UsersProvider>
+          <CustomerProvider>
+            <ReleasesProvider>
+              <GroupProvider>{children}</GroupProvider>
+            </ReleasesProvider>
+          </CustomerProvider>
+        </UsersProvider>
+      </CompaniesProvider>
     </AuthProvider>
   );
 }

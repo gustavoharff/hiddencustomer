@@ -16,7 +16,7 @@ import { useAuth } from 'hooks';
 interface UsersContextData {
   users: User[];
   loadApiUsers: (userId: string) => Promise<void>;
-  loadLocalUsers: () => Promise<void>;
+  loadLocalUsers: (userId: string) => Promise<void>;
   createUser: (data: UserFormData) => Promise<void>;
   activateUser: (userId: string) => Promise<void>;
   disableUser: (userId: string) => Promise<void>;
@@ -43,7 +43,7 @@ export function UsersProvider({ children }: UsersProviderProps): JSX.Element {
   const loadApiUsers = useCallback(
     async (userId: string) => {
       try {
-        const response = await api.get('/users');
+        const response = await api.get<User[]>('/users');
 
         setUsers(response.data.filter((u: User) => u.id !== userId));
 
@@ -53,7 +53,7 @@ export function UsersProvider({ children }: UsersProviderProps): JSX.Element {
           const data = realm.objects('User');
           realm.delete(data);
 
-          response.data.map((user: User) => realm.create('User', user));
+          response.data.forEach(user => realm.create('User', user));
         });
       } catch (err) {
         if (err.response.status === 440) {
@@ -65,22 +65,23 @@ export function UsersProvider({ children }: UsersProviderProps): JSX.Element {
     [signOut],
   );
 
-  const loadLocalUsers = useCallback(async () => {
+  const loadLocalUsers = useCallback(async (userId: string) => {
     const realm = await getRealm();
 
     const data = realm.objects<User>('User').sorted('name', true);
 
-    const formattedUsers = data.map(user => ({
+    const formatedUsers = data.map(user => ({
       id: user.id,
       name: user.name,
       email: user.email,
       active: user.active,
+      company_id: user.company_id,
       permission: user.permission,
       created_at: user.created_at,
       updated_at: user.updated_at,
     }));
 
-    setUsers(formattedUsers);
+    setUsers(formatedUsers.filter(user => user.id !== userId));
   }, []);
 
   const createUser = useCallback(

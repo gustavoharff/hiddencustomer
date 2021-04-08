@@ -2,6 +2,7 @@ import Realm from 'realm';
 
 import {
   AuthSchema,
+  CompanySchema,
   CustomerSchema,
   ReleaseSchema,
   ReleaseDateSchema,
@@ -13,12 +14,13 @@ export async function getRealm(): Promise<Realm> {
   return Realm.open({
     schema: [
       AuthSchema,
+      CompanySchema,
       CustomerSchema,
       ReleaseSchema,
       ReleaseDateSchema,
       ReleaseGroupSchema,
       UserSchema,
     ],
-    schemaVersion: 11,
+    schemaVersion: 13,
   });
 }

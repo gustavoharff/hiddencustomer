@@ -24,7 +24,7 @@ import { SPACING } from 'styles';
 
 import { Company } from 'types';
 
-import { useUsers } from 'hooks';
+import { useCompanies, useUsers } from 'hooks';
 
 import { Container, Label, Unform } from './styles';
 
@@ -38,15 +38,13 @@ export function UserForm(): JSX.Element {
 
   const [selectedCompanyId, setSelectedCompanyId] = useState('');
 
-  const [companies, setCompanies] = useState<Company[]>([]);
-
-  useEffect(() => {
-    api.get('/companies').then(response => {
-      setCompanies(response.data);
-    });
-  }, []);
+  const { companies, loadApiCompanies, loadLocalCompanies } = useCompanies();
 
   const navigation = useNavigation();
+
+  useEffect(() => {
+    loadApiCompanies().catch(() => loadLocalCompanies());
+  }, [loadApiCompanies, loadLocalCompanies]);
 
   const onCompanyChange = useCallback(value => {
     setSelectedCompanyId(value);

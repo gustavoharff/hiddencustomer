@@ -48,9 +48,21 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
         const [user] = realm.objects<Auth>('Auth');
 
         if (user && user.token) {
+          const formatedUser = {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            permission: user.permission,
+            active: user.active,
+            token: user.token,
+            company_id: user.company_id,
+            created_at: user.created_at,
+            updated_at: user.updated_at,
+          };
+
           api.defaults.headers.authorization = `Bearer ${user.token}`;
 
-          setData({ token: user.token, user });
+          setData({ token: formatedUser.token, user: formatedUser });
         }
       });
 
@@ -98,7 +110,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
       const realm = await getRealm();
 
       realm.write(() => {
-        const authData = realm.objects('Auth');
+        const [authData] = realm.objects('Auth');
 
         realm.delete(authData);
       });

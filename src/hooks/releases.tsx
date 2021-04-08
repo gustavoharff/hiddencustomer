@@ -91,6 +91,9 @@ export function ReleasesProvider({
       company_id: release.company_id,
       paid: release.paid,
       annotations: release.annotations,
+      interval: release.interval,
+      dates_counter: release.dates_counter,
+      groups_counter: release.groups_counter,
       created_at: release.created_at,
       updated_at: release.updated_at,
     }));

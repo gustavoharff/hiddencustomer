@@ -1,25 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { View } from 'react-native';
 
 import { Avatar } from 'components';
 
 import { SPACING } from 'styles';
 
-import { useAuth } from 'hooks';
-
-import { api } from 'services';
-
-import { Company } from 'types';
+import { useAuth, useCompanies } from 'hooks';
 
 import { Container, FieldDescription, Text, Title } from './styles';
 
 export function Profile(): JSX.Element {
   const { user } = useAuth();
-  const [company, setCompany] = useState<Company>({} as Company);
+
+  const { companies, loadApiCompanies, loadLocalCompanies } = useCompanies();
 
   useEffect(() => {
-    api.get(`/companies/me`).then(response => setCompany(response.data));
-  }, []);
+    loadApiCompanies().catch(() => loadLocalCompanies());
+  }, [loadApiCompanies, loadLocalCompanies]);
 
   return (
     <Container>
@@ -46,7 +43,9 @@ export function Profile(): JSX.Element {
         <Text>{user.email}</Text>
 
         <FieldDescription>Empresa</FieldDescription>
-        <Text>{company.name}</Text>
+        <Text>
+          {companies.find(company => company.id === user.company_id)?.name}
+        </Text>
       </View>
     </Container>
   );

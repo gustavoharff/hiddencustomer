@@ -67,6 +67,8 @@ const SignIn: React.FC = () => {
           return;
         }
 
+        console.log(err);
+
         if (err.response.status === 402) {
           Alert.alert('Erro', 'Usuário sem permissão de acesso ao sistema.');
         } else {

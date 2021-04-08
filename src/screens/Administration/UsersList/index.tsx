@@ -6,7 +6,7 @@ import { Avatar, EmptyList, Swipeable } from 'components';
 
 import { COLORS, SPACING } from 'styles';
 
-import { useUsers } from 'hooks';
+import { useCompanies, useUsers } from 'hooks';
 
 import { Container, Name, Email, UserInfo, Content } from './styles';
 
@@ -20,6 +20,7 @@ export function UsersList({
   emptyListText,
 }: UsersListProps): JSX.Element {
   const { users, activateUser, disableUser } = useUsers();
+  const { companies } = useCompanies();
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -114,7 +115,12 @@ export function UsersList({
                 <UserInfo>
                   <Name>{user.name}</Name>
                   <Email>{user.email}</Email>
-                  <Email>{user.company?.name}</Email>
+                  <Email>
+                    {
+                      companies.find(company => company.id === user.company_id)
+                        ?.name
+                    }
+                  </Email>
                 </UserInfo>
                 <Icon
                   name={user.active ? 'check' : 'close'}
