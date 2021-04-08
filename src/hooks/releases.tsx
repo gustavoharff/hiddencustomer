@@ -123,21 +123,28 @@ export function ReleasesProvider({
   }, [signOut]);
 
   const loadApiReleasesDates = useCallback(async () => {
-    const response = await api.get('/release/dates/company');
+    try {
+      const response = await api.get('/release/dates/company');
 
-    setReleasesDates(response.data);
+      setReleasesDates(response.data);
 
-    const realm = await getRealm();
+      const realm = await getRealm();
 
-    realm.write(() => {
-      const data = realm.objects('ReleaseDate');
-      realm.delete(data);
+      realm.write(() => {
+        const data = realm.objects('ReleaseDate');
+        realm.delete(data);
 
-      response.data.map((releaseDate: ReleaseDate) =>
-        realm.create('ReleaseDate', releaseDate),
-      );
-    });
-  }, []);
+        response.data.map((releaseDate: ReleaseDate) =>
+          realm.create('ReleaseDate', releaseDate),
+        );
+      });
+    } catch (err) {
+      if (err.response.status === 440) {
+        Alert.alert('Sessão expirada', 'Realize o login novamente!');
+        signOut();
+      }
+    }
+  }, [signOut]);
 
   const loadLocalReleases = useCallback(async () => {
     const realm = await getRealm();
@@ -333,14 +340,6 @@ export function ReleasesProvider({
     } catch (err) {
       Alert.alert('Erro!', 'Ocorreu um erro, reporte aos desenvolvedores!');
     }
-  }, []);
-
-  useEffect(() => {
-    loadApiReleases().catch(() => loadLocalReleases());
-
-    loadApiReleasesGroups().catch(() => loadLocalReleasesGroups());
-
-    loadApiReleasesDates().catch(() => loadLocalReleasesDates());
   }, []);
 
   return (

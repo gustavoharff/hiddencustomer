@@ -19,6 +19,9 @@ export function Releases(): JSX.Element {
     loadApiReleases,
     loadLocalReleases,
     loadApiReleasesGroups,
+    loadApiReleasesDates,
+    loadLocalReleasesDates,
+    loadLocalReleasesGroups,
   } = useReleases();
 
   const navigation = useNavigation();
@@ -31,27 +34,21 @@ export function Releases(): JSX.Element {
 
   useEffect(() => {
     loadApiReleases()
-      .catch(() => {
-        loadLocalReleases();
-      })
-      .finally(() => setLoading(false));
-  }, [loadApiReleases, loadLocalReleases]);
-
-  useEffect(() => {
-    loadApiReleases()
-      .catch(() => {
-        loadLocalReleases();
-      })
+      .catch(() => loadLocalReleases())
       .finally(() => setLoading(false));
 
-    loadApiReleasesGroups();
-  }, [loadApiReleases, loadLocalReleases, loadApiReleasesGroups]);
+    loadApiReleasesGroups().catch(() => loadLocalReleasesGroups());
+
+    loadApiReleasesDates().catch(() => loadLocalReleasesDates());
+  }, []);
 
   const onRefresh = useCallback(async () => {
-    loadApiReleases().catch(() => {
-      loadLocalReleases();
-    });
-  }, [loadApiReleases, loadLocalReleases]);
+    loadApiReleases().catch(() => loadLocalReleases());
+
+    loadApiReleasesGroups().catch(() => loadLocalReleasesGroups());
+
+    loadApiReleasesDates().catch(() => loadLocalReleasesDates());
+  }, []);
 
   if (loading) {
     return (
