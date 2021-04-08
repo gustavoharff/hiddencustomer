@@ -1,128 +1,67 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Platform, View } from 'react-native';
+import React, { useCallback, useState } from 'react';
+import { View } from 'react-native';
 
-import { COLORS, SPACING } from 'styles';
+import { SPACING } from 'styles';
 
 import { DateTimeInput, Button } from 'components';
 
-import { api, getRealm } from 'services';
-
-import { ReleaseDate } from 'types';
-
+import { useReleases } from 'hooks';
 import { ReleaseDatesList } from './ReleaseDatesList';
 
-import { Container, Center } from './styles';
+import { Container } from './styles';
 
-type ReleaseDatedProps = {
+interface ReleaseDatedProps {
   release_id: string;
-};
+}
 
 export function ReleaseDates({ release_id }: ReleaseDatedProps): JSX.Element {
-  const [loading, setLoading] = useState(true);
   const [date, setDate] = useState(new Date());
   const [isAddingDate, setIsAddingDate] = useState(false);
-  const [dates, setDates] = useState<ReleaseDate[]>([]);
 
   const [loadingButton, setLoadingButton] = useState(false);
 
-  const loadApiReleaseDates = useCallback(async () => {
-    if (!release_id) {
-      return;
-    }
+  const { createReleaseDate } = useReleases();
 
-    const response = await api.get(`/release/dates/${release_id}`);
-    setDates(response.data);
+  // const loadLocalReleaseDates = useCallback(async () => {
+  //   if (!release_id) {
+  //     return;
+  //   }
 
-    const realm = await getRealm();
+  //   const realm = await getRealm();
 
-    realm.write(() => {
-      const data = realm
-        .objects('ReleaseDate')
-        .filtered(`release_id == '${release_id}'`)
-        .sorted('date', true);
+  //   realm.write(() => {
+  //     const data = realm
+  //       .objects<ReleaseDate>('ReleaseDate')
+  //       .filtered(`release_id == '${release_id}'`)
+  //       .sorted('date', true);
 
-      realm.delete(data);
-      response.data.map((releaseDate: ReleaseDate) =>
-        realm.create('ReleaseDate', releaseDate),
-      );
-    });
-  }, [release_id]);
+  //     const formattedDates = data.map(releaseDate => ({
+  //       id: releaseDate.id,
+  //       date: releaseDate.date,
+  //       release_id: releaseDate.release_id,
+  //       created_at: releaseDate.created_at,
+  //       updated_at: releaseDate.updated_at,
+  //     }));
 
-  const loadLocalReleaseDates = useCallback(async () => {
-    if (!release_id) {
-      return;
-    }
-
-    const realm = await getRealm();
-
-    realm.write(() => {
-      const data = realm
-        .objects<ReleaseDate>('ReleaseDate')
-        .filtered(`release_id == '${release_id}'`)
-        .sorted('date', true);
-
-      const formattedDates = data.map(releaseDate => ({
-        id: releaseDate.id,
-        date: releaseDate.date,
-        release_id: releaseDate.release_id,
-        created_at: releaseDate.created_at,
-        updated_at: releaseDate.updated_at,
-      }));
-
-      setDates(formattedDates);
-    });
-  }, [release_id]);
-
-  useEffect(() => {
-    loadApiReleaseDates()
-      .catch(() => {
-        loadLocalReleaseDates();
-      })
-      .finally(() => setLoading(false));
-  }, [loadApiReleaseDates, loadLocalReleaseDates, release_id]);
-
-  const onRefresh = useCallback(async () => {
-    await loadApiReleaseDates().catch(() => {
-      loadLocalReleaseDates();
-    });
-  }, [loadApiReleaseDates, loadLocalReleaseDates]);
+  //     setDates(formattedDates);
+  //   });
+  // }, [release_id]);
 
   const handleAddDate = useCallback(async () => {
-    const response = await api.post('/release/dates', {
+    await createReleaseDate({
+      date,
       release_id,
-      date: date.toISOString(),
-    });
-
-    setDates(state => [...state, response.data]);
-
-    const realm = await getRealm();
-
-    realm.write(() => {
-      realm.create('ReleaseDate', response.data);
     });
 
     setLoadingButton(false);
     setIsAddingDate(false);
-  }, [date, release_id]);
-
-  if (loading) {
-    return (
-      <Center>
-        <ActivityIndicator
-          color={Platform.OS === 'ios' ? COLORS.BACKGROUND_LIGHT : COLORS.ALERT}
-          size={30}
-        />
-      </Center>
-    );
-  }
+  }, [createReleaseDate, date, release_id]);
 
   return (
     <Container>
       <ReleaseDatesList
-        dates={dates}
-        setDates={setDates}
-        onRefresh={onRefresh}
         emptyListText="Não há datas cadastradas!"
+        release_id={release_id}
       />
 
       {isAddingDate && (

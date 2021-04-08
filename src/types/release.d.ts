@@ -7,9 +7,6 @@ type Release = {
   customer?: Customer;
   company_id: string;
   paid: boolean;
-  interval?: string[];
-  dates_counter?: number;
-  groups_counter?: number;
   annotations: string;
   created_at: string;
   updated_at: string;

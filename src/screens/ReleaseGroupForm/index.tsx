@@ -20,7 +20,7 @@ import { Input, Button } from 'components';
 
 import { SPACING } from 'styles';
 
-import { useGroups } from 'hooks';
+import { useReleases } from 'hooks';
 
 import { Container, Unform, Label } from './styles';
 
@@ -41,7 +41,7 @@ export function ReleaseGroupForm({
 
   const [loadingButton, setLoadingButton] = useState(false);
 
-  const { createGroup } = useGroups();
+  const { createReleaseGroup } = useReleases();
 
   const onPickerChange = useCallback(value => {
     setSelectedValue(value);
@@ -64,7 +64,7 @@ export function ReleaseGroupForm({
           return;
         }
 
-        await createGroup({
+        await createReleaseGroup({
           name: data.name,
           type: selectedValue,
           release_id: route.params.release_id,
@@ -80,7 +80,7 @@ export function ReleaseGroupForm({
         setLoadingButton(false);
       }
     },
-    [navigation, selectedValue, createGroup, route.params.release_id],
+    [navigation, selectedValue, createReleaseGroup, route.params.release_id],
   );
 
   return (

@@ -1,53 +1,29 @@
 import React, { useCallback, useState } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
 import moment from 'moment';
-import produce from 'immer';
 import 'moment/locale/pt-br';
 
 import { EmptyList, Swipeable } from 'components';
 
-import { api, getRealm } from 'services';
-
-import { ReleaseDate } from 'types';
-
+import { useReleases } from 'hooks';
 import { Container, Content, Date } from './styles';
 
 type ReleaseDatesListProps = {
-  dates: ReleaseDate[];
-  setDates: React.Dispatch<React.SetStateAction<ReleaseDate[]>>;
-  onRefresh: () => Promise<void>;
   emptyListText: string;
+  release_id: string;
 };
 
 export function ReleaseDatesList({
-  dates,
-  setDates,
-  onRefresh,
   emptyListText,
+  release_id,
 }: ReleaseDatesListProps): JSX.Element {
   const [refreshing, setRefreshing] = useState(false);
 
-  const handleDelete = useCallback(
-    async (dateId: string) => {
-      try {
-        await api.delete(`/release/dates/${dateId}`);
-        setDates(state =>
-          produce(state, drafts => drafts.filter(draft => draft.id !== dateId)),
-        );
-
-        const realm = await getRealm();
-
-        realm.write(() => {
-          realm.delete(realm.objectForPrimaryKey('ReleaseDate', dateId));
-        });
-      } catch (err) {
-        Alert.alert('Erro!', 'Ocorreu um erro, reporte aos desenvolvedores!');
-
-        await onRefresh();
-      }
-    },
-    [setDates, onRefresh],
-  );
+  const {
+    releasesDates,
+    deleteReleaseDate,
+    loadApiReleasesDates,
+  } = useReleases();
 
   const onDeleteItem = useCallback(
     async (dateId: string) => {
@@ -63,19 +39,19 @@ export function ReleaseDatesList({
           {
             text: 'Sim',
             onPress: async () => {
-              await handleDelete(dateId);
+              await deleteReleaseDate(dateId);
               return resolve(200);
             },
           },
         ]);
       });
     },
-    [handleDelete],
+    [deleteReleaseDate],
   );
 
-  const handleRefresh = async () => {
+  const onRefresh = async () => {
     setRefreshing(true);
-    await onRefresh();
+    await loadApiReleasesDates();
     setRefreshing(false);
   };
 
@@ -87,12 +63,14 @@ export function ReleaseDatesList({
           <RefreshControl
             tintColor="rgba(0, 0, 0, 0.5)"
             refreshing={refreshing}
-            onRefresh={handleRefresh}
+            onRefresh={onRefresh}
             colors={['#DC1637']}
           />
         }
         keyExtractor={(item, index) => `${item.id} - ${index}`}
-        data={dates}
+        data={releasesDates.filter(
+          releaseDate => releaseDate.release_id === release_id,
+        )}
         renderItem={({ item: date, index }) => (
           <Container style={{ paddingTop: index !== 0 ? 0 : 16 }}>
             <Swipeable

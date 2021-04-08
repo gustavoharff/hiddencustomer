@@ -4,7 +4,6 @@ import {
   AuthProvider,
   CustomerProvider,
   ReleasesProvider,
-  GroupProvider,
   UsersProvider,
   CompaniesProvider,
 } from 'hooks';
@@ -19,9 +18,7 @@ export function AppProvider({ children }: AppProviderProps): JSX.Element {
       <CompaniesProvider>
         <UsersProvider>
           <CustomerProvider>
-            <ReleasesProvider>
-              <GroupProvider>{children}</GroupProvider>
-            </ReleasesProvider>
+            <ReleasesProvider>{children}</ReleasesProvider>
           </CustomerProvider>
         </UsersProvider>
       </CompaniesProvider>

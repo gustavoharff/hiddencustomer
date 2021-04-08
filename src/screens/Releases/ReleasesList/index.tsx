@@ -21,10 +21,10 @@ import {
   TimeText,
 } from './styles';
 
-type ReleasesListProps = {
+interface ReleasesListProps {
   onRefresh: () => Promise<void>;
   emptyListText: string;
-};
+}
 
 export function ReleasesList({
   onRefresh,
@@ -32,7 +32,12 @@ export function ReleasesList({
 }: ReleasesListProps): JSX.Element {
   const [refreshing, setRefreshing] = useState(false);
 
-  const { releases, deleteRelease } = useReleases();
+  const {
+    releases,
+    releasesDates,
+    deleteRelease,
+    releasesGroups,
+  } = useReleases();
 
   const navigation = useNavigation();
 
@@ -126,28 +131,66 @@ export function ReleasesList({
                       </Item>
                       <Item>
                         <Title>Datas</Title>
-                        <Description>{release.dates_counter}</Description>
+                        <Description>
+                          {
+                            releasesDates.filter(
+                              date => date.release_id === release.id,
+                            ).length
+                          }
+                        </Description>
                       </Item>
                       <Item>
                         <Title>Grupos</Title>
-                        <Description>{release.groups_counter}</Description>
+                        <Description>
+                          {
+                            releasesGroups.filter(
+                              group => group.release_id === release.id,
+                            ).length
+                          }
+                        </Description>
                       </Item>
                     </View>
                   </Content>
                 </RectButton>
               </Swipeable>
             </Top>
-            {release.interval && release.interval.length > 0 && (
+            {releasesDates.filter(
+              releaseDate => releaseDate.release_id === release.id,
+            ).length >= 1 && (
               <Bottom>
                 <BottomContent
                   between={moment(new Date()).isBetween(
-                    moment(release.interval[0]),
-                    moment(release.interval[1]),
+                    moment(
+                      releasesDates.filter(
+                        releaseDate => releaseDate.release_id === release.id,
+                      )[
+                        releasesDates.filter(
+                          releaseDate => releaseDate.release_id === release.id,
+                        ).length - 1
+                      ].date,
+                    ),
+                    moment(
+                      releasesDates.filter(
+                        releaseDate => releaseDate.release_id === release.id,
+                      )[0].date,
+                    ),
                   )}
                 >
                   {moment(new Date()).isBetween(
-                    moment(release.interval[0]),
-                    moment(release.interval[1]),
+                    moment(
+                      releasesDates.filter(
+                        releaseDate => releaseDate.release_id === release.id,
+                      )[
+                        releasesDates.filter(
+                          releaseDate => releaseDate.release_id === release.id,
+                        ).length - 1
+                      ].date,
+                    ),
+                    moment(
+                      releasesDates.filter(
+                        releaseDate => releaseDate.release_id === release.id,
+                      )[0].date,
+                    ),
                   ) ? (
                     <Title>Período ativo</Title>
                   ) : (
@@ -155,14 +198,27 @@ export function ReleasesList({
                   )}
                   <TimeContent>
                     <TimeText>
-                      {moment(release.interval[0]).format('L')}
+                      {moment(
+                        releasesDates.filter(
+                          releaseDate => releaseDate.release_id === release.id,
+                        )[
+                          releasesDates.filter(
+                            releaseDate =>
+                              releaseDate.release_id === release.id,
+                          ).length - 1
+                        ].date,
+                      ).format('L')}
                     </TimeText>
                     <Icon
                       name="long-arrow-right"
                       style={{ marginHorizontal: 10, color: '#AEAEB3' }}
                     />
                     <TimeText>
-                      {moment(release.interval[1]).format('L')}
+                      {moment(
+                        releasesDates.filter(
+                          releaseDate => releaseDate.release_id === release.id,
+                        )[0]?.date,
+                      ).format('L')}
                     </TimeText>
                   </TimeContent>
                 </BottomContent>

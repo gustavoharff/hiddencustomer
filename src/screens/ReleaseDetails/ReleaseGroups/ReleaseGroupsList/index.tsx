@@ -4,27 +4,33 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { EmptyList, Swipeable } from 'components';
 
-import { ReleaseGroup } from 'types';
-
 import { SPACING } from 'styles';
 
-import { useGroups } from 'hooks';
+import { useReleases } from 'hooks';
+
 import { Container, Content, Description } from './styles';
 
-type ReleaseGroupsListProps = {
-  groups: ReleaseGroup[];
-  onRefresh: () => Promise<void>;
+interface ReleaseGroupsListProps {
   emptyListText: string;
-};
+  release_id: string;
+}
 
 export function ReleaseGroupsList({
-  groups,
-  onRefresh,
   emptyListText,
+  release_id,
 }: ReleaseGroupsListProps): JSX.Element {
   const [refreshing, setRefreshing] = useState(false);
 
-  const { deleteGroup } = useGroups();
+  const {
+    releasesGroups,
+    loadApiReleasesGroups,
+    loadLocalReleasesGroups,
+    deleteReleaseGroup,
+  } = useReleases();
+
+  const onRefresh = useCallback(async () => {
+    loadApiReleasesGroups().catch(() => loadLocalReleasesGroups());
+  }, [loadApiReleasesGroups, loadLocalReleasesGroups]);
 
   const onDeleteItem = useCallback(
     async (groupId: string) => {
@@ -40,14 +46,14 @@ export function ReleaseGroupsList({
           {
             text: 'Sim',
             onPress: async () => {
-              await deleteGroup(groupId);
+              await deleteReleaseGroup(groupId);
               return resolve(200);
             },
           },
         ]);
       });
     },
-    [deleteGroup],
+    [deleteReleaseGroup],
   );
 
   const handleRefresh = async () => {
@@ -69,7 +75,7 @@ export function ReleaseGroupsList({
           />
         }
         keyExtractor={(item, index) => `${item.id} - ${index}`}
-        data={groups}
+        data={releasesGroups.filter(group => group.release_id === release_id)}
         renderItem={({ item: group, index }) => (
           <Container style={{ paddingTop: index !== 0 ? 0 : 16 }}>
             <Swipeable

@@ -1,53 +1,40 @@
-import { useCallback, useEffect, useState } from 'react';
-import { Alert, View } from 'react-native';
+import { useCallback, useState } from 'react';
+import { View } from 'react-native';
 import { Calendar as RNCalendar } from 'react-native-calendars';
 
 import './helper';
 
-import { api } from 'services';
-
-import { ReleaseDate } from 'types';
-
 import { Button } from 'components';
 
-import { useAuth } from 'hooks';
+import { useReleases } from 'hooks';
 
 import { formatMarkedCalendar } from 'utils';
 
 export function Calendar(): JSX.Element {
-  const [dates, setDates] = useState<ReleaseDate[]>([]);
   const [loading, setLoading] = useState(false);
 
-  const { signOut } = useAuth();
-
-  useEffect(() => {
-    api
-      .get('/release/dates/company')
-      .then(response => {
-        setDates(response.data);
-      })
-      .catch(err => {
-        if (err.response.status === 440) {
-          Alert.alert('Sessão expirada', 'Realize o login novamente!');
-          signOut();
-        }
-      });
-  }, [signOut]);
+  const {
+    releasesDates,
+    loadApiReleasesDates,
+    loadLocalReleasesDates,
+  } = useReleases();
 
   const onRefresh = useCallback(async () => {
     setLoading(true);
 
-    const response = await api.get('/release/dates/company');
-    setDates(response.data);
-
+    try {
+      await loadApiReleasesDates();
+    } catch {
+      await loadLocalReleasesDates();
+    }
     setLoading(false);
-  }, []);
+  }, [loadApiReleasesDates, loadLocalReleasesDates]);
 
   return (
     <>
       <RNCalendar
         current={new Date()}
-        markedDates={formatMarkedCalendar(dates)}
+        markedDates={formatMarkedCalendar(releasesDates)}
         theme={{
           arrowColor: '#DC1637',
           dotStyle: {

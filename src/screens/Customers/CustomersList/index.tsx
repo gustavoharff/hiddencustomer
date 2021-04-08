@@ -5,14 +5,14 @@ import 'moment/locale/pt-br';
 
 import { EmptyList, Swipeable } from 'components';
 
-import { useCustomers } from 'hooks';
+import { useCustomers, useReleases } from 'hooks';
 
 import { Container, Description, Content, Title, Item } from './styles';
 
-type CustomersListProps = {
+interface CustomersListProps {
   onRefresh: () => Promise<void>;
   emptyListText: string;
-};
+}
 
 export function CustomersList({
   onRefresh,
@@ -23,6 +23,7 @@ export function CustomersList({
   const navigation = useNavigation();
 
   const { customers, deleteCustomer } = useCustomers();
+  const { releases } = useReleases();
 
   const onDeleteItem = useCallback(
     async (customerId: string) => {
@@ -88,7 +89,13 @@ export function CustomersList({
                 </Description>
                 <Item>
                   <Title>Lançamentos</Title>
-                  <Description>{customer.releases_counter}</Description>
+                  <Description>
+                    {
+                      releases.filter(
+                        release => release.customer_id === customer.id,
+                      ).length
+                    }
+                  </Description>
                 </Item>
               </Content>
             </Swipeable>

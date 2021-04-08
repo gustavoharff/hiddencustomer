@@ -72,7 +72,6 @@ export function CustomerProvider({
     const formattedCustomers = data.map(customer => ({
       id: customer.id,
       name: customer.name,
-      releases_counter: customer.releases_counter,
       created_at: customer.created_at,
       updated_at: customer.updated_at,
     }));
@@ -134,7 +133,7 @@ export function CustomerProvider({
   const deleteCustomer = useCallback(
     async (customerId: string) => {
       try {
-        await api.delete(`/customers/${customerId}`);
+        await api.delete(`/customer/${customerId}`);
         setCustomers(state =>
           state.filter(customer => customer.id !== customerId),
         );

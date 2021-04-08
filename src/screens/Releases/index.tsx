@@ -15,7 +15,11 @@ export function Releases(): JSX.Element {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
-  const { loadApiReleases, loadLocalReleases } = useReleases();
+  const {
+    loadApiReleases,
+    loadLocalReleases,
+    loadApiReleasesGroups,
+  } = useReleases();
 
   const navigation = useNavigation();
 
@@ -32,6 +36,16 @@ export function Releases(): JSX.Element {
       })
       .finally(() => setLoading(false));
   }, [loadApiReleases, loadLocalReleases]);
+
+  useEffect(() => {
+    loadApiReleases()
+      .catch(() => {
+        loadLocalReleases();
+      })
+      .finally(() => setLoading(false));
+
+    loadApiReleasesGroups();
+  }, [loadApiReleases, loadLocalReleases, loadApiReleasesGroups]);
 
   const onRefresh = useCallback(async () => {
     loadApiReleases().catch(() => {

@@ -35,13 +35,13 @@ export function ReleaseAnnotationsForm({
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
 
-  const { updateReleaseAnnotations } = useReleases();
+  const { updateRelease } = useReleases();
 
   const handleSubmit = useCallback(
     async data => {
       try {
         setLoading(true);
-        await updateReleaseAnnotations({
+        await updateRelease({
           release_id: route.params.release_id,
           annotations: data.annotations,
         });
@@ -51,7 +51,7 @@ export function ReleaseAnnotationsForm({
         setLoading(false);
       }
     },
-    [route.params.release_id, updateReleaseAnnotations, navigation],
+    [route.params.release_id, updateRelease, navigation],
   );
 
   return (
