@@ -8,8 +8,10 @@ import {
   View,
 } from 'react-native';
 import { hide } from 'react-native-bootsplash';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
+import { useNavigation } from '@react-navigation/native';
 
 import { Button, Input, Logo } from 'components';
 
@@ -17,7 +19,13 @@ import { useAuth } from 'hooks';
 
 import { getValidationErrors } from 'utils';
 
-import { Container, HeaderTitle, HeaderContent, Unform } from './styles';
+import {
+  Container,
+  HeaderTitle,
+  HeaderContent,
+  Unform,
+  ForgotPassword,
+} from './styles';
 
 type SignInFormData = {
   email: string;
@@ -35,6 +43,8 @@ const SignIn: React.FC = () => {
 
   const formRef = useRef<FormHandles>(null);
   const passwordInputRef = useRef<TextInput>(null);
+
+  const navigation = useNavigation();
 
   const handleSubmit = useCallback(
     async (data: SignInFormData) => {
@@ -66,8 +76,6 @@ const SignIn: React.FC = () => {
 
           return;
         }
-
-        console.log(err);
 
         if (err.response.status === 402) {
           Alert.alert('Erro', 'Usuário sem permissão de acesso ao sistema.');
@@ -128,6 +136,11 @@ const SignIn: React.FC = () => {
               loading={loadingButton}
             />
           </Unform>
+          <TouchableOpacity
+            onPress={() => navigation.navigate('ForgotPassword')}
+          >
+            <ForgotPassword>Esqueci minha senha</ForgotPassword>
+          </TouchableOpacity>
         </Container>
       </ScrollView>
     </KeyboardAvoidingView>

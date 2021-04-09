@@ -32,3 +32,8 @@ export const Unform = styled(Form)`
   width: 100%;
   align-items: center;
 `;
+
+export const ForgotPassword = styled.Text`
+  color: #fff;
+  margin-top: 15px;
+`;

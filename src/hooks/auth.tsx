@@ -62,8 +62,6 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
 
           api.defaults.headers.authorization = `Bearer ${user.token}`;
 
-          console.log('setou o token');
-
           setData({ token: formatedUser.token, user: formatedUser });
         }
       });
