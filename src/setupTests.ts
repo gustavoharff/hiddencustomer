@@ -6,4 +6,12 @@ jest.mock('react-native-bootsplash', () => {
   };
 });
 
+jest.mock('@react-navigation/native', () => {
+  return {
+    useNavigation: () => ({
+      navigate: jest.fn(),
+    }),
+  };
+});
+
 export {};
