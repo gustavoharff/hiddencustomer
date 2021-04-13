@@ -18,11 +18,7 @@ import Modal from 'react-native-modal';
 
 import { Input, Button } from 'components';
 
-import { api } from 'services';
-
 import { SPACING } from 'styles';
-
-import { Company } from 'types';
 
 import { useCompanies, useUsers } from 'hooks';
 
@@ -44,7 +40,7 @@ export function UserForm(): JSX.Element {
 
   useEffect(() => {
     loadApiCompanies().catch(() => loadLocalCompanies());
-  }, [loadApiCompanies, loadLocalCompanies]);
+  }, []);
 
   const onCompanyChange = useCallback(value => {
     setSelectedCompanyId(value);

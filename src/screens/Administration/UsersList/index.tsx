@@ -114,8 +114,8 @@ export function UsersList({
                 />
                 <UserInfo>
                   <Name>{user.name}</Name>
-                  <Email>{user.email}</Email>
-                  <Email>
+                  <Email numberOfLines={1}>{user.email}</Email>
+                  <Email numberOfLines={1}>
                     {
                       companies.find(company => company.id === user.company_id)
                         ?.name

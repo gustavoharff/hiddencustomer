@@ -4,7 +4,6 @@ import React, {
   useContext,
   useCallback,
   ReactNode,
-  useEffect,
 } from 'react';
 import { Alert } from 'react-native';
 
@@ -174,7 +173,7 @@ export function ReleasesProvider({
 
     const formatedReleasesGroups = data.map(releaseGroup => ({
       id: releaseGroup.id,
-      name: releaseGroup.id,
+      name: releaseGroup.name,
       type: releaseGroup.type,
       release_id: releaseGroup.release_id,
       company_id: releaseGroup.company_id,

@@ -84,7 +84,7 @@ export function CustomersList({
               }}
             >
               <Content>
-                <Description style={{ marginTop: 0 }}>
+                <Description style={{ marginTop: 0 }} numberOfLines={2}>
                   {customer.name}
                 </Description>
                 <Item>

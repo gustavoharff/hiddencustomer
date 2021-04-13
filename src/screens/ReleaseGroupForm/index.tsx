@@ -104,6 +104,7 @@ export function ReleaseGroupForm({
                 onSubmitEditing={() => formRef.current?.submitForm()}
               />
             </Unform>
+
             <Label>Informe o tipo do grupo:</Label>
             <Picker
               mode="dialog"

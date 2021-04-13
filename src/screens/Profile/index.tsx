@@ -16,7 +16,7 @@ export function Profile(): JSX.Element {
 
   useEffect(() => {
     loadApiCompanies().catch(() => loadLocalCompanies());
-  }, [loadApiCompanies, loadLocalCompanies]);
+  }, []);
 
   return (
     <Container>

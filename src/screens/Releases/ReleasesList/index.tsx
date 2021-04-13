@@ -7,7 +7,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import { EmptyList, Swipeable } from 'components';
 
 import moment from 'moment';
-import { useReleases } from 'hooks';
+import { useCustomers, useReleases } from 'hooks';
 import {
   Container,
   Content,
@@ -38,6 +38,8 @@ export function ReleasesList({
     deleteRelease,
     releasesGroups,
   } = useReleases();
+
+  const { customers } = useCustomers();
 
   const navigation = useNavigation();
 
@@ -108,9 +110,14 @@ export function ReleasesList({
                 >
                   <Content>
                     <View>
-                      {release.customer?.name && (
-                        <Title>{release.customer.name}</Title>
-                      )}
+                      <Title numberOfLines={1}>
+                        {
+                          customers.find(
+                            customer => customer.id === release.customer_id,
+                          )?.name
+                        }
+                      </Title>
+
                       <Description>{release.name}</Description>
                     </View>
                     <View
