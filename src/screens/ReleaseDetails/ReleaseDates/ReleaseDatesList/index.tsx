@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
 import moment from 'moment';
 import 'moment/locale/pt-br';
@@ -6,6 +6,8 @@ import 'moment/locale/pt-br';
 import { EmptyList, Swipeable } from 'components';
 
 import { useReleases } from 'hooks';
+
+import { ReleaseDate } from 'types';
 import { Container, Content, Date } from './styles';
 
 type ReleaseDatesListProps = {
@@ -19,11 +21,22 @@ export function ReleaseDatesList({
 }: ReleaseDatesListProps): JSX.Element {
   const [refreshing, setRefreshing] = useState(false);
 
-  const {
-    releasesDates,
-    deleteReleaseDate,
-    loadApiReleasesDates,
-  } = useReleases();
+  const { deleteReleaseDate, releases } = useReleases();
+
+  const dates = useMemo(() => {
+    const releaseDates = [] as ReleaseDate[];
+    const releaseFiltered = releases.filter(
+      release => release_id === release.id,
+    );
+
+    releaseFiltered.map(release => {
+      return release.dates.forEach(date => {
+        releaseDates.push(date);
+      });
+    });
+
+    return releaseDates;
+  }, [release_id, releases]);
 
   const onDeleteItem = useCallback(
     async (dateId: string) => {
@@ -51,7 +64,7 @@ export function ReleaseDatesList({
 
   const onRefresh = async () => {
     setRefreshing(true);
-    await loadApiReleasesDates();
+    // await loadApiReleasesDates();
     setRefreshing(false);
   };
 
@@ -68,9 +81,7 @@ export function ReleaseDatesList({
           />
         }
         keyExtractor={(item, index) => `${item.id} - ${index}`}
-        data={releasesDates.filter(
-          releaseDate => releaseDate.release_id === release_id,
-        )}
+        data={dates}
         renderItem={({ item: date, index }) => (
           <Container style={{ paddingTop: index !== 0 ? 0 : 16 }}>
             <Swipeable

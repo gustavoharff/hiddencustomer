@@ -6,15 +6,18 @@ import { SPACING } from 'styles';
 import { DateTimeInput, Button } from 'components';
 
 import { useReleases } from 'hooks';
+
+import { Release } from 'types';
+
 import { ReleaseDatesList } from './ReleaseDatesList';
 
 import { Container } from './styles';
 
 interface ReleaseDatedProps {
-  release_id: string;
+  release: Release;
 }
 
-export function ReleaseDates({ release_id }: ReleaseDatedProps): JSX.Element {
+export function ReleaseDates({ release }: ReleaseDatedProps): JSX.Element {
   const [date, setDate] = useState(new Date());
   const [isAddingDate, setIsAddingDate] = useState(false);
 
@@ -25,18 +28,18 @@ export function ReleaseDates({ release_id }: ReleaseDatedProps): JSX.Element {
   const handleAddDate = useCallback(async () => {
     await createReleaseDate({
       date,
-      release_id,
+      release_id: release.id,
     });
 
     setLoadingButton(false);
     setIsAddingDate(false);
-  }, [createReleaseDate, date, release_id]);
+  }, [createReleaseDate, date, release]);
 
   return (
     <Container>
       <ReleaseDatesList
         emptyListText="Não há datas cadastradas!"
-        release_id={release_id}
+        release_id={release.id}
       />
 
       {isAddingDate && (

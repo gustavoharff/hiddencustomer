@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { View } from 'react-native';
 import { Calendar as RNCalendar } from 'react-native-calendars';
 
@@ -18,6 +18,12 @@ export function Calendar(): JSX.Element {
     loadApiReleasesDates,
     loadLocalReleasesDates,
   } = useReleases();
+
+  useEffect(() => {
+    loadApiReleasesDates().catch(() => {
+      loadLocalReleasesDates();
+    });
+  }, []);
 
   const onRefresh = useCallback(async () => {
     setLoading(true);

@@ -1,4 +1,6 @@
 import { Customer } from './customer';
+import { ReleaseDate } from './releaseDate';
+import { ReleaseGroup } from './releaseGroup';
 
 type Release = {
   id: string;
@@ -7,6 +9,8 @@ type Release = {
   customer?: Customer;
   company_id: string;
   paid: boolean;
+  dates: ReleaseDate[];
+  groups: ReleaseGroup[];
   annotations: string;
   created_at: string;
   updated_at: string;

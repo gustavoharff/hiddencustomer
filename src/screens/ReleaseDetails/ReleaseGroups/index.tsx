@@ -6,21 +6,23 @@ import { Button } from 'components';
 
 import { SPACING } from 'styles';
 
+import { Release } from 'types';
+
 import { ReleaseGroupsList } from './ReleaseGroupsList';
 
 import { Container } from './styles';
 
 interface ReleaseGroupsProps {
-  release_id: string;
+  release: Release;
 }
 
-export function ReleaseGroups({ release_id }: ReleaseGroupsProps): JSX.Element {
+export function ReleaseGroups({ release }: ReleaseGroupsProps): JSX.Element {
   const navigation = useNavigation();
 
   return (
     <Container>
       <ReleaseGroupsList
-        release_id={release_id}
+        release_id={release.id}
         emptyListText="Não há grupos cadastrados!"
       />
 
@@ -28,7 +30,7 @@ export function ReleaseGroups({ release_id }: ReleaseGroupsProps): JSX.Element {
         <Button
           title="Adicionar grupo"
           onPress={() =>
-            navigation.navigate('ReleaseGroupForm', { release_id })
+            navigation.navigate('ReleaseGroupForm', { release_id: release.id })
           }
           style={{ marginBottom: SPACING.XL }}
         />

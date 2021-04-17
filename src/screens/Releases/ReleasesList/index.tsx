@@ -3,11 +3,11 @@ import { View, FlatList, RefreshControl, Alert } from 'react-native';
 import { RectButton } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/FontAwesome';
+import moment from 'moment';
 
 import { EmptyList, Swipeable } from 'components';
 
-import moment from 'moment';
-import { useCustomers, useReleases } from 'hooks';
+import { useReleases } from 'hooks';
 import {
   Container,
   Content,
@@ -32,14 +32,7 @@ export function ReleasesList({
 }: ReleasesListProps): JSX.Element {
   const [refreshing, setRefreshing] = useState(false);
 
-  const {
-    releases,
-    releasesDates,
-    deleteRelease,
-    releasesGroups,
-  } = useReleases();
-
-  const { customers } = useCustomers();
+  const { releases, deleteRelease } = useReleases();
 
   const navigation = useNavigation();
 
@@ -103,20 +96,13 @@ export function ReleasesList({
                 <RectButton
                   onPress={() => {
                     navigation.navigate('ReleaseDetails', {
-                      release_id: release.id,
-                      customer_id: release.customer_id,
+                      release,
                     });
                   }}
                 >
                   <Content>
                     <View>
-                      <Title numberOfLines={1}>
-                        {
-                          customers.find(
-                            customer => customer.id === release.customer_id,
-                          )?.name
-                        }
-                      </Title>
+                      <Title numberOfLines={1}>{release.customer?.name}</Title>
 
                       <Description>{release.name}</Description>
                     </View>
@@ -138,66 +124,28 @@ export function ReleasesList({
                       </Item>
                       <Item>
                         <Title>Datas</Title>
-                        <Description>
-                          {
-                            releasesDates.filter(
-                              date => date.release_id === release.id,
-                            ).length
-                          }
-                        </Description>
+                        <Description>{release.dates.length}</Description>
                       </Item>
                       <Item>
                         <Title>Grupos</Title>
-                        <Description>
-                          {
-                            releasesGroups.filter(
-                              group => group.release_id === release.id,
-                            ).length
-                          }
-                        </Description>
+                        <Description>{release.groups.length}</Description>
                       </Item>
                     </View>
                   </Content>
                 </RectButton>
               </Swipeable>
             </Top>
-            {releasesDates.filter(
-              releaseDate => releaseDate.release_id === release.id,
-            ).length >= 1 && (
+            {release.dates.length >= 1 && (
               <Bottom>
                 <BottomContent
                   between={moment(new Date()).isBetween(
-                    moment(
-                      releasesDates.filter(
-                        releaseDate => releaseDate.release_id === release.id,
-                      )[
-                        releasesDates.filter(
-                          releaseDate => releaseDate.release_id === release.id,
-                        ).length - 1
-                      ].date,
-                    ),
-                    moment(
-                      releasesDates.filter(
-                        releaseDate => releaseDate.release_id === release.id,
-                      )[0].date,
-                    ),
+                    moment(release.dates[release.dates.length - 1].date),
+                    moment(release.dates[0].date),
                   )}
                 >
                   {moment(new Date()).isBetween(
-                    moment(
-                      releasesDates.filter(
-                        releaseDate => releaseDate.release_id === release.id,
-                      )[
-                        releasesDates.filter(
-                          releaseDate => releaseDate.release_id === release.id,
-                        ).length - 1
-                      ].date,
-                    ),
-                    moment(
-                      releasesDates.filter(
-                        releaseDate => releaseDate.release_id === release.id,
-                      )[0].date,
-                    ),
+                    moment(release.dates[release.dates.length - 1].date),
+                    moment(release.dates[0].date),
                   ) ? (
                     <Title>Período ativo</Title>
                   ) : (
@@ -206,14 +154,7 @@ export function ReleasesList({
                   <TimeContent>
                     <TimeText>
                       {moment(
-                        releasesDates.filter(
-                          releaseDate => releaseDate.release_id === release.id,
-                        )[
-                          releasesDates.filter(
-                            releaseDate =>
-                              releaseDate.release_id === release.id,
-                          ).length - 1
-                        ].date,
+                        release.dates[release.dates.length - 1].date,
                       ).format('L')}
                     </TimeText>
                     <Icon
@@ -221,11 +162,7 @@ export function ReleasesList({
                       style={{ marginHorizontal: 10, color: '#AEAEB3' }}
                     />
                     <TimeText>
-                      {moment(
-                        releasesDates.filter(
-                          releaseDate => releaseDate.release_id === release.id,
-                        )[0]?.date,
-                      ).format('L')}
+                      {moment(release.dates[0].date).format('L')}
                     </TimeText>
                   </TimeContent>
                 </BottomContent>

@@ -11,7 +11,7 @@ import {
 } from 'schemas';
 
 export async function getRealm(): Promise<Realm> {
-  return Realm.open({
+  const realm = await Realm.open({
     schema: [
       AuthSchema,
       CompanySchema,
@@ -21,6 +21,9 @@ export async function getRealm(): Promise<Realm> {
       ReleaseGroupSchema,
       UserSchema,
     ],
-    schemaVersion: 17,
+    schemaVersion: 24,
   });
+
+  console.log(realm.path);
+  return realm;
 }

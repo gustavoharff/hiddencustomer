@@ -3,7 +3,7 @@ import { useNavigation } from '@react-navigation/native';
 import RNBootSplash from 'react-native-bootsplash';
 import { ActivityIndicator, Platform } from 'react-native';
 import { BottomButton } from 'components';
-import { useAuth, useCustomers, useReleases } from 'hooks';
+import { useAuth, useReleases } from 'hooks';
 
 import { COLORS } from 'styles';
 
@@ -15,15 +15,7 @@ export function Releases(): JSX.Element {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
-  const {
-    loadApiReleases,
-    loadLocalReleases,
-    loadApiReleasesGroups,
-    loadApiReleasesDates,
-    loadLocalReleasesDates,
-    loadLocalReleasesGroups,
-  } = useReleases();
-  const { loadApiCustomers, loadLocalCustomers } = useCustomers();
+  const { loadApiReleases, loadLocalReleases } = useReleases();
 
   const navigation = useNavigation();
 
@@ -37,22 +29,10 @@ export function Releases(): JSX.Element {
     loadApiReleases()
       .catch(() => loadLocalReleases())
       .finally(() => setLoading(false));
-
-    loadApiCustomers().catch(() => loadLocalCustomers());
-
-    loadApiReleasesGroups().catch(() => loadLocalReleasesGroups());
-
-    loadApiReleasesDates().catch(() => loadLocalReleasesDates());
   }, []);
 
   const onRefresh = useCallback(async () => {
     loadApiReleases().catch(() => loadLocalReleases());
-
-    loadApiCustomers().catch(() => loadLocalCustomers());
-
-    loadApiReleasesGroups().catch(() => loadLocalReleasesGroups());
-
-    loadApiReleasesDates().catch(() => loadLocalReleasesDates());
   }, []);
 
   if (loading) {

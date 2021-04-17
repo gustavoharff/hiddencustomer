@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -7,6 +7,8 @@ import { EmptyList, Swipeable } from 'components';
 import { SPACING } from 'styles';
 
 import { useReleases } from 'hooks';
+
+import { ReleaseGroup } from 'types';
 
 import { Container, Content, Description } from './styles';
 
@@ -21,16 +23,26 @@ export function ReleaseGroupsList({
 }: ReleaseGroupsListProps): JSX.Element {
   const [refreshing, setRefreshing] = useState(false);
 
-  const {
-    releasesGroups,
-    loadApiReleasesGroups,
-    loadLocalReleasesGroups,
-    deleteReleaseGroup,
-  } = useReleases();
+  const { releases, deleteReleaseGroup } = useReleases();
+
+  const groups = useMemo(() => {
+    const releaseGroups = [] as ReleaseGroup[];
+    const releaseFiltered = releases.filter(
+      release => release_id === release.id,
+    );
+
+    releaseFiltered.map(release => {
+      return release.groups.forEach(group => {
+        releaseGroups.push(group);
+      });
+    });
+
+    return releaseGroups;
+  }, [release_id, releases]);
 
   const onRefresh = useCallback(async () => {
-    loadApiReleasesGroups().catch(() => loadLocalReleasesGroups());
-  }, [loadApiReleasesGroups, loadLocalReleasesGroups]);
+    // loadApiReleasesGroups().catch(() => loadLocalReleasesGroups());
+  }, []);
 
   const onDeleteItem = useCallback(
     async (groupId: string) => {
@@ -75,7 +87,7 @@ export function ReleaseGroupsList({
           />
         }
         keyExtractor={(item, index) => `${item.id} - ${index}`}
-        data={releasesGroups.filter(group => group.release_id === release_id)}
+        data={groups}
         renderItem={({ item: group, index }) => (
           <Container style={{ paddingTop: index !== 0 ? 0 : 16 }}>
             <Swipeable

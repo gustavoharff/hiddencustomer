@@ -10,17 +10,16 @@ import { Picker } from '@react-native-picker/picker';
 import * as Yup from 'yup';
 import { FormHandles } from '@unform/core';
 import { useNavigation } from '@react-navigation/native';
+import {
+  getBottomSpace,
+  getStatusBarHeight,
+} from 'react-native-iphone-x-helper';
 
 import { Button, Input } from 'components';
 
 import { useCustomers, useReleases } from 'hooks';
 
 import { SPACING } from 'styles';
-
-import {
-  getBottomSpace,
-  getStatusBarHeight,
-} from 'react-native-iphone-x-helper';
 
 import { Container, Unform, Label } from './styles';
 

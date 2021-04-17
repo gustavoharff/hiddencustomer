@@ -6,10 +6,11 @@ import React, {
   ReactNode,
 } from 'react';
 import { Alert } from 'react-native';
+import produce from 'immer';
 
 import { api, getRealm } from 'services';
 
-import { Release, ReleaseDate, ReleaseGroup } from 'types';
+import { Release, ReleaseDate } from 'types';
 
 import { useAuth } from 'hooks';
 
@@ -39,13 +40,10 @@ interface UpdateReleaseData {
 
 interface ReleasesContextData {
   releases: Release[];
-  releasesGroups: ReleaseGroup[];
   releasesDates: ReleaseDate[];
   loadApiReleases: () => Promise<void>;
-  loadApiReleasesGroups: () => Promise<void>;
   loadApiReleasesDates: () => Promise<void>;
   loadLocalReleases: () => Promise<void>;
-  loadLocalReleasesGroups: () => Promise<void>;
   loadLocalReleasesDates: () => Promise<void>;
   createRelease: (data: CreateReleaseData) => Promise<void>;
   createReleaseGroup: (data: CreateReleaseGroupData) => Promise<void>;
@@ -68,7 +66,6 @@ export function ReleasesProvider({
   children,
 }: ReleasesProviderProps): JSX.Element {
   const [releases, setReleases] = useState<Release[]>([]);
-  const [releasesGroups, setReleasesGroups] = useState<ReleaseGroup[]>([]);
 
   const [releasesDates, setReleasesDates] = useState<ReleaseDate[]>([]);
 
@@ -82,12 +79,14 @@ export function ReleasesProvider({
       const realm = await getRealm();
 
       realm.write(() => {
-        const data = realm.objects('Release');
-        realm.delete(data);
-
-        response.data.map((release: Release) =>
-          realm.create('Release', release),
-        );
+        response.data.forEach((release: Release) => {
+          try {
+            realm.create('Release', release);
+          } catch {
+            /* @ts-ignore */
+            realm.create('Release', release, 'modified');
+          }
+        });
       });
     } catch (err) {
       if (err.response.status === 440) {
@@ -96,30 +95,6 @@ export function ReleasesProvider({
       }
     }
   }, [setReleases, signOut]);
-
-  const loadApiReleasesGroups = useCallback(async () => {
-    try {
-      const response = await api.get('/releases/groups');
-
-      setReleasesGroups(response.data);
-
-      const realm = await getRealm();
-
-      realm.write(() => {
-        const data = realm.objects('ReleaseGroup');
-        realm.delete(data);
-
-        response.data.map((releaseGroup: ReleaseGroup) =>
-          realm.create('ReleaseGroup', releaseGroup),
-        );
-      });
-    } catch (err) {
-      if (err.response.status === 440) {
-        Alert.alert('Sessão expirada', 'Realize o login novamente!');
-        signOut();
-      }
-    }
-  }, [signOut]);
 
   const loadApiReleasesDates = useCallback(async () => {
     try {
@@ -164,26 +139,6 @@ export function ReleasesProvider({
     setReleases(formatedReleases);
   }, [setReleases]);
 
-  const loadLocalReleasesGroups = useCallback(async () => {
-    const realm = await getRealm();
-
-    const data = realm
-      .objects<ReleaseGroup>('ReleaseGroup')
-      .sorted('name', true);
-
-    const formatedReleasesGroups = data.map(releaseGroup => ({
-      id: releaseGroup.id,
-      name: releaseGroup.name,
-      type: releaseGroup.type,
-      release_id: releaseGroup.release_id,
-      company_id: releaseGroup.company_id,
-      created_at: releaseGroup.created_at,
-      updated_at: releaseGroup.updated_at,
-    })) as ReleaseGroup[];
-
-    setReleasesGroups(formatedReleasesGroups);
-  }, []);
-
   const loadLocalReleasesDates = useCallback(async () => {
     const realm = await getRealm();
 
@@ -214,7 +169,12 @@ export function ReleasesProvider({
         const realm = await getRealm();
 
         realm.write(() => {
-          realm.create('Release', response.data);
+          try {
+            realm.create('Release', response.data);
+          } catch {
+            /* @ts-ignore */
+            realm.create('Release', response.data, 'modified');
+          }
         });
       } catch (err) {
         if (err.response.status === 440) {
@@ -235,7 +195,15 @@ export function ReleasesProvider({
           release_id,
         });
 
-        setReleasesGroups(state => [response.data, ...state]);
+        setReleases(
+          produce(releases, drafts => {
+            drafts.forEach(release => {
+              if (release.id === release_id) {
+                release.groups.push(response.data);
+              }
+            });
+          }),
+        );
 
         const realm = await getRealm();
 
@@ -249,7 +217,7 @@ export function ReleasesProvider({
         }
       }
     },
-    [signOut],
+    [signOut, releases],
   );
 
   const createReleaseDate = useCallback(
@@ -259,7 +227,17 @@ export function ReleasesProvider({
         date: date.toISOString(),
       });
 
-      setReleasesDates(state => [...state, response.data]);
+      setReleases(rls =>
+        rls.map(release => {
+          if (release.id === release_id) {
+            return {
+              ...release,
+              dates: [...release.dates, response.data],
+            };
+          }
+          return release;
+        }),
+      );
 
       const realm = await getRealm();
 
@@ -291,6 +269,13 @@ export function ReleasesProvider({
             release.id === release_id ? response.data : release,
           ),
         );
+
+        const realm = await getRealm();
+
+        realm.write(() => {
+          /* @ts-ignore */
+          realm.create('Release', response.data, 'modified');
+        });
       } catch (err) {
         if (err.response.status === 440) {
           Alert.alert('Sessão expirada', 'Realize o login novamente!');
@@ -303,6 +288,7 @@ export function ReleasesProvider({
 
   const deleteRelease = useCallback(async (releaseId: string) => {
     await api.delete(`/release/${releaseId}`);
+
     setReleases(state => state.filter(release => release.id !== releaseId));
 
     const realm = await getRealm();
@@ -312,46 +298,58 @@ export function ReleasesProvider({
     });
   }, []);
 
-  const deleteReleaseGroup = useCallback(async (groupId: string) => {
-    await api.delete(`/release/groups/${groupId}`);
-    setReleasesGroups(state => state.filter(group => group.id !== groupId));
+  const deleteReleaseGroup = useCallback(
+    async (groupId: string) => {
+      await api.delete(`/release/groups/${groupId}`);
 
-    const realm = await getRealm();
-
-    realm.write(() => {
-      realm.delete(realm.objectForPrimaryKey('ReleaseGroup', groupId));
-    });
-  }, []);
-
-  const deleteReleaseDate = useCallback(async (dateId: string) => {
-    try {
-      await api.delete(`/release/dates/${dateId}`);
-
-      setReleasesDates(state =>
-        state.filter(releaseDate => releaseDate.id !== dateId),
+      setReleases(
+        releases.map(rls => ({
+          ...rls,
+          groups: rls.groups.filter(group => group.id !== groupId),
+        })),
       );
 
       const realm = await getRealm();
 
       realm.write(() => {
-        realm.delete(realm.objectForPrimaryKey('ReleaseDate', dateId));
+        realm.delete(realm.objectForPrimaryKey('ReleaseGroup', groupId));
       });
-    } catch (err) {
-      Alert.alert('Erro!', 'Ocorreu um erro, reporte aos desenvolvedores!');
-    }
-  }, []);
+    },
+    [releases],
+  );
+
+  const deleteReleaseDate = useCallback(
+    async (dateId: string) => {
+      try {
+        await api.delete(`/release/dates/${dateId}`);
+
+        setReleases(
+          releases.map(rls => ({
+            ...rls,
+            dates: rls.dates.filter(date => date.id !== dateId),
+          })),
+        );
+
+        const realm = await getRealm();
+
+        realm.write(() => {
+          realm.delete(realm.objectForPrimaryKey('ReleaseDate', dateId));
+        });
+      } catch (err) {
+        Alert.alert('Erro!', 'Ocorreu um erro, reporte aos desenvolvedores!');
+      }
+    },
+    [releases],
+  );
 
   return (
     <ReleasesContext.Provider
       value={{
         releases,
-        releasesGroups,
         releasesDates,
         loadApiReleases,
-        loadApiReleasesGroups,
         loadApiReleasesDates,
         loadLocalReleases,
-        loadLocalReleasesGroups,
         loadLocalReleasesDates,
         createRelease,
         createReleaseGroup,
