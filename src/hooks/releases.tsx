@@ -42,6 +42,8 @@ interface ReleasesContextData {
   releases: Release[];
   releasesDates: ReleaseDate[];
   loadApiReleases: () => Promise<void>;
+  loadApiReleaseDates: (releaseId: string) => Promise<void>;
+  loadApiReleaseGroups: (releaseId: string) => Promise<void>;
   loadApiReleasesDates: () => Promise<void>;
   loadLocalReleases: () => Promise<void>;
   loadLocalReleasesDates: () => Promise<void>;
@@ -95,6 +97,40 @@ export function ReleasesProvider({
       }
     }
   }, [setReleases, signOut]);
+
+  const loadApiReleaseDates = useCallback(
+    async releaseId => {
+      const response = await api.get(`release/dates/${releaseId}`);
+
+      setReleases(
+        releases.map(release => {
+          if (release.id === releaseId) {
+            release.dates = response.data; // eslint-disable-line
+          }
+
+          return release;
+        }),
+      );
+    },
+    [releases],
+  );
+
+  const loadApiReleaseGroups = useCallback(
+    async releaseId => {
+      const response = await api.get(`release/groups/${releaseId}`);
+
+      setReleases(
+        releases.map(release => {
+          if (release.id === releaseId) {
+            release.groups = response.data; // eslint-disable-line
+          }
+
+          return release;
+        }),
+      );
+    },
+    [releases],
+  );
 
   const loadApiReleasesDates = useCallback(async () => {
     try {
@@ -351,7 +387,9 @@ export function ReleasesProvider({
         releases,
         releasesDates,
         loadApiReleases,
+        loadApiReleaseDates,
         loadApiReleasesDates,
+        loadApiReleaseGroups,
         loadLocalReleases,
         loadLocalReleasesDates,
         createRelease,

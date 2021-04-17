@@ -23,7 +23,7 @@ export function ReleaseGroupsList({
 }: ReleaseGroupsListProps): JSX.Element {
   const [refreshing, setRefreshing] = useState(false);
 
-  const { releases, deleteReleaseGroup } = useReleases();
+  const { releases, deleteReleaseGroup, loadApiReleaseGroups } = useReleases();
 
   const groups = useMemo(() => {
     const releaseGroups = [] as ReleaseGroup[];
@@ -41,8 +41,8 @@ export function ReleaseGroupsList({
   }, [release_id, releases]);
 
   const onRefresh = useCallback(async () => {
-    // loadApiReleasesGroups().catch(() => loadLocalReleasesGroups());
-  }, []);
+    loadApiReleaseGroups(release_id);
+  }, [loadApiReleaseGroups, release_id]);
 
   const onDeleteItem = useCallback(
     async (groupId: string) => {

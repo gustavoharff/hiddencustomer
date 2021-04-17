@@ -21,7 +21,7 @@ export function ReleaseDatesList({
 }: ReleaseDatesListProps): JSX.Element {
   const [refreshing, setRefreshing] = useState(false);
 
-  const { deleteReleaseDate, releases } = useReleases();
+  const { deleteReleaseDate, releases, loadApiReleaseDates } = useReleases();
 
   const dates = useMemo(() => {
     const releaseDates = [] as ReleaseDate[];
@@ -64,7 +64,7 @@ export function ReleaseDatesList({
 
   const onRefresh = async () => {
     setRefreshing(true);
-    // await loadApiReleasesDates();
+    await loadApiReleaseDates(release_id);
     setRefreshing(false);
   };
 
