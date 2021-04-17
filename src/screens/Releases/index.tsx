@@ -11,7 +11,7 @@ import { ReleasesList } from './ReleasesList';
 
 import { Container, Center } from './styles';
 
-export function Releases() {
+export function Releases(): JSX.Element {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
@@ -27,17 +27,13 @@ export function Releases() {
 
   useEffect(() => {
     loadApiReleases()
-      .catch(() => {
-        loadLocalReleases();
-      })
+      .catch(() => loadLocalReleases())
       .finally(() => setLoading(false));
-  }, [loadApiReleases, loadLocalReleases]);
+  }, []);
 
   const onRefresh = useCallback(async () => {
-    loadApiReleases().catch(() => {
-      loadLocalReleases();
-    });
-  }, [loadApiReleases, loadLocalReleases]);
+    loadApiReleases().catch(() => loadLocalReleases());
+  }, []);
 
   if (loading) {
     return (

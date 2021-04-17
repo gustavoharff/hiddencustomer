@@ -4,34 +4,39 @@ import React, {
   useState,
   useContext,
   useEffect,
+  ReactNode,
 } from 'react';
 
 import { User, Auth } from 'types';
 
 import { api, getRealm } from 'services';
 
-type AuthState = {
+interface AuthState {
   token: string;
   user: User;
-};
+}
 
-type SignInCredentials = {
+interface SignInCredentials {
   email: string;
   password: string;
-};
+}
 
-type AuthContextData = {
+interface AuthContextData {
   user: User;
   token: string;
   loading: boolean;
   signIn(credentials: SignInCredentials): Promise<void>;
   signOut(): void;
   updateUser(user: User): void;
-};
+}
+
+interface AuthProviderProps {
+  children: ReactNode;
+}
 
 const AuthContext = createContext<AuthContextData>({} as AuthContextData);
 
-const AuthProvider: React.FC = ({ children }) => {
+export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
   const [data, setData] = useState<AuthState>({} as AuthState);
   const [loading, setLoading] = useState(true);
 
@@ -43,9 +48,21 @@ const AuthProvider: React.FC = ({ children }) => {
         const [user] = realm.objects<Auth>('Auth');
 
         if (user && user.token) {
+          const formatedUser = {
+            id: user.id,
+            name: user.name,
+            email: user.email,
+            permission: user.permission,
+            active: user.active,
+            token: user.token,
+            company_id: user.company_id,
+            created_at: user.created_at,
+            updated_at: user.updated_at,
+          };
+
           api.defaults.headers.authorization = `Bearer ${user.token}`;
 
-          setData({ token: user.token, user });
+          setData({ token: formatedUser.token, user: formatedUser });
         }
       });
 
@@ -93,7 +110,7 @@ const AuthProvider: React.FC = ({ children }) => {
       const realm = await getRealm();
 
       realm.write(() => {
-        const authData = realm.objects('Auth');
+        const [authData] = realm.objects('Auth');
 
         realm.delete(authData);
       });
@@ -120,9 +137,9 @@ const AuthProvider: React.FC = ({ children }) => {
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
-function useAuth(): AuthContextData {
+export function useAuth(): AuthContextData {
   const context = useContext(AuthContext);
 
   if (!context) {
@@ -131,5 +148,3 @@ function useAuth(): AuthContextData {
 
   return context;
 }
-
-export { AuthProvider, useAuth };

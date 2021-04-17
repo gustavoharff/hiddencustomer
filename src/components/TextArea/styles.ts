@@ -5,7 +5,8 @@ import { COLORS, SPACING } from 'styles';
 export const styles = StyleSheet.create({
   container: {
     width: '90%',
-    height: '80%',
+    height: 'auto',
+    minHeight: 100,
     borderWidth: 1,
     borderColor: COLORS.FONT_LIGHT,
     borderStyle: 'solid',
@@ -21,5 +22,14 @@ export const styles = StyleSheet.create({
     padding: 10,
     color: '#3d3d4d',
     fontFamily: 'Arial',
+  },
+  label: {
+    width: '100%',
+    color: '#7a7a80',
+    fontSize: 16,
+    fontWeight: 'bold',
+    paddingHorizontal: SPACING.XL,
+    paddingTop: SPACING.L,
+    paddingBottom: 0,
   },
 });

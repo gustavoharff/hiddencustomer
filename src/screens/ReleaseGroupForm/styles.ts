@@ -1,5 +1,6 @@
 import styled from 'styled-components/native';
 import { Form } from '@unform/mobile';
+
 import { SPACING } from 'styles';
 
 export const Container = styled.View`
@@ -14,7 +15,7 @@ export const Unform = styled(Form)`
   align-items: center;
 `;
 
-export const FieldDescription = styled.Text`
+export const Label = styled.Text`
   width: 100%;
   color: #7a7a80;
   font-size: 16px;

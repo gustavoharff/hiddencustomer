@@ -6,4 +6,10 @@ const api = axios.create({
   baseURL: SERVICE_URL,
 });
 
+api.interceptors.response.use(response => {
+  console.log(response);
+
+  return response;
+});
+
 export { api };

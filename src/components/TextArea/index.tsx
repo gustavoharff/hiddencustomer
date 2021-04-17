@@ -6,7 +6,7 @@ import React, {
   useState,
   useCallback,
 } from 'react';
-import { TextInputProps, View, TextInput } from 'react-native';
+import { TextInputProps, View, TextInput, Text } from 'react-native';
 import { useField } from '@unform/core';
 
 import { styles } from './styles';
@@ -14,6 +14,7 @@ import { styles } from './styles';
 interface InputProps extends TextInputProps {
   name: string;
   containerStyle?: object;
+  label?: string;
 }
 
 type InputValueRef = {
@@ -25,7 +26,7 @@ type InputRef = {
 };
 
 const ForwardInput: React.ForwardRefRenderFunction<InputRef, InputProps> = (
-  { name, containerStyle, ...rest },
+  { name, containerStyle, style, label, ...rest },
   ref,
 ) => {
   const inputElementRef = useRef<any>(null);
@@ -33,7 +34,7 @@ const ForwardInput: React.ForwardRefRenderFunction<InputRef, InputProps> = (
   const { registerField, defaultValue = '', fieldName, error } = useField(name); //eslint-disable-line
   const inputValueRef = useRef<InputValueRef>({ value: defaultValue });
 
-  const [isFocused, setIsFocused] = useState(false);
+  const [, setIsFocused] = useState(false);
 
   const handleInputFocus = useCallback(() => {
     setIsFocused(true);
@@ -66,21 +67,27 @@ const ForwardInput: React.ForwardRefRenderFunction<InputRef, InputProps> = (
   }, [fieldName, registerField]);
 
   return (
-    <View style={[styles.container, containerStyle]}>
-      <TextInput
-        ref={inputElementRef}
-        style={styles.input}
-        keyboardAppearance="dark"
-        defaultValue={defaultValue}
-        onFocus={handleInputFocus}
-        onBlur={handleInputBlur}
-        textAlignVertical="top"
-        onChangeText={value => {
-          inputValueRef.current.value = value;
-        }}
-        {...rest}
-      />
-    </View>
+    <>
+      {label && (
+        <Text style={[styles.label, { textAlign: 'left' }]}>{label}</Text>
+      )}
+      <View style={[styles.container, containerStyle]}>
+        <TextInput
+          ref={inputElementRef}
+          style={[styles.input, style]}
+          keyboardAppearance="dark"
+          defaultValue={defaultValue}
+          onFocus={handleInputFocus}
+          onBlur={handleInputBlur}
+          textAlignVertical="top"
+          onChangeText={value => {
+            inputValueRef.current.value = value;
+          }}
+          placeholderTextColor="#817E7B"
+          {...rest}
+        />
+      </View>
+    </>
   );
 };
 

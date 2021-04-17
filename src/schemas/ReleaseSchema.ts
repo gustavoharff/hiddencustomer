@@ -1,4 +1,4 @@
-class ReleaseSchema {
+export class ReleaseSchema {
   static schema = {
     name: 'Release',
     primaryKey: 'id',
@@ -7,9 +7,9 @@ class ReleaseSchema {
       name: 'string',
       annotations: 'string?',
       paid: 'bool',
-      interval: 'string?[]',
-      dates_counter: 'int?',
-      groups_counter: 'int?',
+      dates: 'ReleaseDate[]',
+      groups: 'ReleaseGroup[]',
+      customer: 'Customer',
       customer_id: 'string',
       company_id: 'string',
       created_at: 'string',
@@ -17,5 +17,3 @@ class ReleaseSchema {
     },
   };
 }
-
-export { ReleaseSchema };

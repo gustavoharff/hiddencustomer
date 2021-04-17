@@ -6,7 +6,7 @@ import { useAuth } from 'hooks';
 import { AuthRoutes } from './auth.routes';
 import { TabRoutes } from './app.routes';
 
-export function Routes() {
+export function Routes(): JSX.Element {
   const { user, loading } = useAuth();
 
   if (loading) {

@@ -4,12 +4,10 @@ import logo from 'assets/logo.png';
 
 import { Image } from './styles';
 
-type LogoProps = {
+interface LogoProps {
   size: number;
-};
+}
 
-const Logo: React.FC<LogoProps> = ({ size }) => (
-  <Image source={logo} size={size} />
-);
-
-export { Logo };
+export function Logo({ size }: LogoProps): JSX.Element {
+  return <Image source={logo} size={size} />;
+}

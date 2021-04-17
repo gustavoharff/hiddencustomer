@@ -1,12 +1,18 @@
-import React, { useCallback, useRef } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
+import React, { useCallback, useRef, useState } from 'react';
+import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { FormHandles } from '@unform/core';
 import { useNavigation } from '@react-navigation/native';
+import {
+  getBottomSpace,
+  getStatusBarHeight,
+} from 'react-native-iphone-x-helper';
 
 import { TextArea, Button } from 'components';
 
 import { useReleases } from 'hooks';
+
+import { SPACING } from 'styles';
 
 import { Container, Unform } from './styles';
 
@@ -17,54 +23,76 @@ type Params = {
   };
 };
 
-type Props = StackScreenProps<Params, 'ReleaseAnnotationsForm'>;
+type ReleaseAnnotationsFormProps = StackScreenProps<
+  Params,
+  'ReleaseAnnotationsForm'
+>;
 
-const ReleaseAnnotationsForm: React.FC<Props> = ({ route }) => {
+export function ReleaseAnnotationsForm({
+  route,
+}: ReleaseAnnotationsFormProps): JSX.Element {
   const formRef = useRef<FormHandles>(null);
   const navigation = useNavigation();
+  const [loading, setLoading] = useState(false);
 
-  const { updateReleaseAnnotations } = useReleases();
+  const { updateRelease } = useReleases();
 
   const handleSubmit = useCallback(
     async data => {
-      await updateReleaseAnnotations({
-        release_id: route.params.release_id,
-        annotations: data.annotations,
-      });
+      try {
+        setLoading(true);
+        await updateRelease({
+          release_id: route.params.release_id,
+          annotations: data.annotations,
+        });
 
-      navigation.goBack();
+        navigation.goBack();
+      } catch {
+        setLoading(false);
+      }
     },
-    [route.params.release_id, updateReleaseAnnotations, navigation],
+    [route.params.release_id, updateRelease, navigation],
   );
 
   return (
-    <Container>
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={70}
-        enabled
-      >
-        <ScrollView
-          keyboardShouldPersistTaps="handled"
-          contentContainerStyle={{ flex: 1 }}
-        >
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={
+        getBottomSpace() + getStatusBarHeight(false) + SPACING.L * 5
+      }
+      enabled
+    >
+      <ScrollView keyboardShouldPersistTaps="handled">
+        <Container>
           <Unform
             ref={formRef}
             onSubmit={handleSubmit}
             initialData={route.params}
           >
-            <TextArea name="annotations" multiline numberOfLines={50} />
-
-            <Button
-              title="Salvar"
-              onPress={() => formRef.current?.submitForm()}
+            <TextArea
+              name="annotations"
+              label="Anotações"
+              multiline
+              numberOfLines={50}
+              style={{ height: '100%' }}
             />
           </Unform>
-        </ScrollView>
-      </KeyboardAvoidingView>
-    </Container>
+        </Container>
+      </ScrollView>
+      <View
+        style={{
+          width: '100%',
+          alignItems: 'center',
+        }}
+      >
+        <Button
+          loading={loading}
+          title="Salvar"
+          onPress={() => formRef.current?.submitForm()}
+          style={{ marginBottom: SPACING.M }}
+        />
+      </View>
+    </KeyboardAvoidingView>
   );
-};
-
-export { ReleaseAnnotationsForm };
+}

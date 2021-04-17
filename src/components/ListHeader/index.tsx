@@ -5,32 +5,32 @@ import { SPACING } from 'styles';
 
 import { Header, Content, Title, Description } from './styles';
 
-type ListHeaderProps = {
+interface ListHeaderProps {
   title: string;
   description?: string;
   loading?: boolean;
-};
+}
 
-const ListHeader: React.FC<ListHeaderProps> = ({
+export function ListHeader({
   title,
   description,
   loading,
-}) => (
-  <Header>
-    <Content>
-      {loading ? (
-        <ActivityIndicator
-          size={Platform.OS === 'ios' ? SPACING.XL * 3 : SPACING.L * 1.5}
-          color="rgba(255, 255, 255, 1)"
-        />
-      ) : (
-        <>
-          <Title>{title}</Title>
-          {description && <Description>{description}</Description>}
-        </>
-      )}
-    </Content>
-  </Header>
-);
-
-export { ListHeader };
+}: ListHeaderProps): JSX.Element {
+  return (
+    <Header>
+      <Content>
+        {loading ? (
+          <ActivityIndicator
+            size={Platform.OS === 'ios' ? SPACING.XL * 3 : SPACING.L * 1.5}
+            color="rgba(255, 255, 255, 1)"
+          />
+        ) : (
+          <>
+            <Title>{title}</Title>
+            {description && <Description>{description}</Description>}
+          </>
+        )}
+      </Content>
+    </Header>
+  );
+}

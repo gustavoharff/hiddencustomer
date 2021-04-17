@@ -19,21 +19,21 @@ import { Button, Input } from 'components';
 
 import { useCustomers } from 'hooks';
 
-import { COLORS, SPACING } from 'styles';
+import { SPACING } from 'styles';
 
 import { Customer } from 'types';
 
-import { Container, Unform, FieldDescription } from './styles';
+import { Container, Unform } from './styles';
 
-type Params = {
+type Props = {
   CustomerChange: {
     customer_id: string;
   };
 };
 
-type Props = StackScreenProps<Params, 'CustomerChange'>;
+type CustomerChangeProps = StackScreenProps<Props, 'CustomerChange'>;
 
-export function CustomerChange({ route }: Props) {
+export function CustomerChange({ route }: CustomerChangeProps): JSX.Element {
   const { customers, updateCustomer } = useCustomers();
   const navigation = useNavigation();
 
@@ -86,14 +86,11 @@ export function CustomerChange({ route }: Props) {
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={
-        getBottomSpace() + getStatusBarHeight(false) + SPACING.L * 2
+        getBottomSpace() + getStatusBarHeight(false) + SPACING.L * 5
       }
       enabled
     >
-      <ScrollView
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{ flex: 1 }}
-      >
+      <ScrollView keyboardShouldPersistTaps="handled">
         <Container>
           <View style={{ width: '100%' }}>
             <Unform
@@ -101,29 +98,27 @@ export function CustomerChange({ route }: Props) {
               onSubmit={handleSubmit}
               initialData={customer}
             >
-              <FieldDescription>Informe o nome do cliente:</FieldDescription>
               <Input
                 name="name"
+                label="Informe o nome do cliente:"
                 placeholder="Nome"
-                placeholderTextColor={COLORS.FONT_LIGHT}
                 returnKeyType="default"
               />
             </Unform>
           </View>
-
-          <View style={{ width: '100%', alignItems: 'center' }}>
-            <Button
-              title="Salvar"
-              loading={loadingButton}
-              onPress={() => {
-                formRef.current?.submitForm();
-                setLoadingButton(true);
-              }}
-              style={{ marginBottom: SPACING.M }}
-            />
-          </View>
         </Container>
       </ScrollView>
+      <View style={{ width: '100%', alignItems: 'center' }}>
+        <Button
+          title="Salvar"
+          loading={loadingButton}
+          onPress={() => {
+            formRef.current?.submitForm();
+            setLoadingButton(true);
+          }}
+          style={{ marginBottom: SPACING.M }}
+        />
+      </View>
     </KeyboardAvoidingView>
   );
 }

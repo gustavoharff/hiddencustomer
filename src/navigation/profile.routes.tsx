@@ -1,20 +1,27 @@
 import React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
+import {
+  CardStyleInterpolators,
+  createStackNavigator,
+} from '@react-navigation/stack';
 
-import { Profile } from 'screens';
+import {
+  Profile,
+  Configuration,
+  ChangeUserInfo,
+  ChangeUserPassword,
+} from 'screens';
 
-import { LoggoutHeaderIcon } from 'components';
+import { HeaderIcon } from 'components';
 
-import { useAuth } from 'hooks';
+import { SPACING } from 'styles';
 
 const { Navigator, Screen } = createStackNavigator();
 
-export function ProfileRoutes() {
-  const { signOut } = useAuth();
-
+export function ProfileRoutes(): JSX.Element {
   return (
     <Navigator
       screenOptions={{
+        cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         cardStyle: {
           backgroundColor: '#ffff',
         },
@@ -34,10 +41,63 @@ export function ProfileRoutes() {
       <Screen
         name="Profile"
         component={Profile}
-        options={{
+        options={({ navigation }) => ({
           headerTitle: 'Meu perfil',
-          headerRight: () => <LoggoutHeaderIcon onPress={signOut} />,
-        }}
+          headerRight: () => (
+            <HeaderIcon
+              name="cog-outline"
+              onPress={() => {
+                navigation.navigate('Configuration');
+              }}
+              style={{ marginRight: SPACING.L }}
+            />
+          ),
+        })}
+      />
+
+      <Screen
+        name="Configuration"
+        component={Configuration}
+        options={({ navigation }) => ({
+          headerTitle: 'Configurações',
+          headerLeft: () => (
+            <HeaderIcon
+              name="arrow-left"
+              onPress={() => navigation.goBack()}
+              style={{ marginLeft: SPACING.S }}
+            />
+          ),
+        })}
+      />
+
+      <Screen
+        name="ChangeUserInfo"
+        component={ChangeUserInfo}
+        options={({ navigation }) => ({
+          headerTitle: 'Alterar dados do perfil',
+          headerLeft: () => (
+            <HeaderIcon
+              name="arrow-left"
+              onPress={() => navigation.goBack()}
+              style={{ marginLeft: SPACING.S }}
+            />
+          ),
+        })}
+      />
+
+      <Screen
+        name="ChangeUserPassword"
+        component={ChangeUserPassword}
+        options={({ navigation }) => ({
+          headerTitle: 'Alterar senha',
+          headerLeft: () => (
+            <HeaderIcon
+              name="arrow-left"
+              onPress={() => navigation.goBack()}
+              style={{ marginLeft: SPACING.S }}
+            />
+          ),
+        })}
       />
     </Navigator>
   );

@@ -1,4 +1,4 @@
-class AuthSchema {
+export class AuthSchema {
   static schema = {
     name: 'Auth',
     primaryKey: 'id',
@@ -9,11 +9,10 @@ class AuthSchema {
       permission: 'string',
       active: 'bool',
       token: 'string',
+      company_id: 'string',
       avatar_url: 'string?',
       created_at: 'string',
       updated_at: 'string',
     },
   };
 }
-
-export { AuthSchema };

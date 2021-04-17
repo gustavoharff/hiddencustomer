@@ -2,12 +2,11 @@ import React, { useCallback, useState } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
 import { RectButton } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
-import Swipeable from 'react-native-gesture-handler/Swipeable';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
-import { EmptyList, DeleteItem, EditItem } from 'components';
-
 import moment from 'moment';
+
+import { EmptyList, Swipeable } from 'components';
+
 import { useReleases } from 'hooks';
 import {
   Container,
@@ -22,42 +21,41 @@ import {
   TimeText,
 } from './styles';
 
-type ReleasesListProps = {
+interface ReleasesListProps {
   onRefresh: () => Promise<void>;
   emptyListText: string;
-};
+}
 
-const ReleasesList: React.FC<ReleasesListProps> = ({
+export function ReleasesList({
   onRefresh,
   emptyListText,
-}) => {
+}: ReleasesListProps): JSX.Element {
   const [refreshing, setRefreshing] = useState(false);
-  const [row] = useState<Array<Swipeable | null>>([]);
-  const [prevOpenedRow, setPrevOpenedRow] = useState<any>();
 
   const { releases, deleteRelease } = useReleases();
 
   const navigation = useNavigation();
 
   const onDeleteItem = useCallback(
-    (releaseId: string) => {
-      Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
-        {
-          text: 'Cancelar',
-          onPress: () => prevOpenedRow.close(),
-          style: 'cancel',
-        },
-        { text: 'Sim', onPress: () => deleteRelease(releaseId) },
-      ]);
+    async (releaseId: string) => {
+      return new Promise(resolve => {
+        Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
+          {
+            text: 'Cancelar',
+            onPress: () => resolve(200),
+            style: 'cancel',
+          },
+          {
+            text: 'Sim',
+            onPress: async () => {
+              await deleteRelease(releaseId);
+              return resolve(200);
+            },
+          },
+        ]);
+      });
     },
-    [prevOpenedRow, deleteRelease],
-  );
-
-  const closeRow = useCallback(
-    index => {
-      setPrevOpenedRow(row[index]);
-    },
-    [row],
+    [deleteRelease],
   );
 
   const handleRefresh = async () => {
@@ -84,45 +82,28 @@ const ReleasesList: React.FC<ReleasesListProps> = ({
           <Container style={{ paddingTop: index !== 0 ? 0 : 16 }}>
             <Top>
               <Swipeable
-                ref={ref => {
-                  row[index] = ref;
+                editOption
+                editOnPress={() =>
+                  navigation.navigate('ReleaseChange', {
+                    release_id: release.id,
+                  })
+                }
+                deleteOption
+                deleteOnPress={async () => {
+                  await onDeleteItem(release.id);
                 }}
-                friction={1.5}
-                rightThreshold={30}
-                renderRightActions={() => (
-                  <>
-                    <DeleteItem
-                      onPress={() => {
-                        onDeleteItem(release.id);
-                      }}
-                    />
-                    <EditItem
-                      onPress={() => {
-                        prevOpenedRow?.close();
-                        navigation.navigate('ReleaseChange', {
-                          release_id: release.id,
-                        });
-                      }}
-                    />
-                  </>
-                )}
-                activeOffsetX={-1}
-                activeOffsetY={500}
-                onSwipeableOpen={() => closeRow(index)}
               >
                 <RectButton
                   onPress={() => {
                     navigation.navigate('ReleaseDetails', {
-                      release_id: release.id,
-                      customer_id: release.customer_id,
+                      release,
                     });
                   }}
                 >
                   <Content>
                     <View>
-                      {release.customer?.name && (
-                        <Title>{release.customer.name}</Title>
-                      )}
+                      <Title numberOfLines={1}>{release.customer?.name}</Title>
+
                       <Description>{release.name}</Description>
                     </View>
                     <View
@@ -143,28 +124,28 @@ const ReleasesList: React.FC<ReleasesListProps> = ({
                       </Item>
                       <Item>
                         <Title>Datas</Title>
-                        <Description>{release.dates_counter}</Description>
+                        <Description>{release.dates.length}</Description>
                       </Item>
                       <Item>
                         <Title>Grupos</Title>
-                        <Description>{release.groups_counter}</Description>
+                        <Description>{release.groups.length}</Description>
                       </Item>
                     </View>
                   </Content>
                 </RectButton>
               </Swipeable>
             </Top>
-            {release.interval && release.interval.length > 0 && (
+            {release.dates.length >= 1 && (
               <Bottom>
                 <BottomContent
                   between={moment(new Date()).isBetween(
-                    moment(release.interval[0]),
-                    moment(release.interval[1]),
+                    moment(release.dates[release.dates.length - 1].date),
+                    moment(release.dates[0].date),
                   )}
                 >
                   {moment(new Date()).isBetween(
-                    moment(release.interval[0]),
-                    moment(release.interval[1]),
+                    moment(release.dates[release.dates.length - 1].date),
+                    moment(release.dates[0].date),
                   ) ? (
                     <Title>Período ativo</Title>
                   ) : (
@@ -172,14 +153,16 @@ const ReleasesList: React.FC<ReleasesListProps> = ({
                   )}
                   <TimeContent>
                     <TimeText>
-                      {moment(release.interval[0]).format('L')}
+                      {moment(
+                        release.dates[release.dates.length - 1].date,
+                      ).format('L')}
                     </TimeText>
                     <Icon
                       name="long-arrow-right"
                       style={{ marginHorizontal: 10, color: '#AEAEB3' }}
                     />
                     <TimeText>
-                      {moment(release.interval[1]).format('L')}
+                      {moment(release.dates[0].date).format('L')}
                     </TimeText>
                   </TimeContent>
                 </BottomContent>
@@ -190,6 +173,4 @@ const ReleasesList: React.FC<ReleasesListProps> = ({
       />
     </View>
   );
-};
-
-export { ReleasesList };
+}

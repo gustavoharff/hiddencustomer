@@ -1,51 +1,46 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Alert, View } from 'react-native';
-import { Calendar as RNCalendar, LocaleConfig } from 'react-native-calendars';
+import { View } from 'react-native';
+import { Calendar as RNCalendar } from 'react-native-calendars';
 
-import { api } from 'services';
-
-import { ReleaseDate } from 'types';
+import './helper';
 
 import { Button } from 'components';
 
-import { useAuth } from 'hooks';
+import { useReleases } from 'hooks';
 
 import { formatMarkedCalendar } from 'utils';
 
-export function Calendar() {
-  const [dates, setDates] = useState<ReleaseDate[]>([]);
+export function Calendar(): JSX.Element {
   const [loading, setLoading] = useState(false);
 
-  const { signOut } = useAuth();
+  const {
+    releasesDates,
+    loadApiReleasesDates,
+    loadLocalReleasesDates,
+  } = useReleases();
 
   useEffect(() => {
-    api
-      .get('/release/dates/company')
-      .then(response => {
-        setDates(response.data);
-      })
-      .catch(err => {
-        if (err.response.status === 440) {
-          Alert.alert('Sessão expirada', 'Realize o login novamente!');
-          signOut();
-        }
-      });
-  }, [signOut]);
+    loadApiReleasesDates().catch(() => {
+      loadLocalReleasesDates();
+    });
+  }, []);
 
   const onRefresh = useCallback(async () => {
     setLoading(true);
 
-    const response = await api.get('/release/dates/company');
-    setDates(response.data);
-
+    try {
+      await loadApiReleasesDates();
+    } catch {
+      await loadLocalReleasesDates();
+    }
     setLoading(false);
-  }, []);
+  }, [loadApiReleasesDates, loadLocalReleasesDates]);
 
   return (
     <>
       <RNCalendar
         current={new Date()}
-        markedDates={formatMarkedCalendar(dates)}
+        markedDates={formatMarkedCalendar(releasesDates)}
         theme={{
           arrowColor: '#DC1637',
           dotStyle: {
@@ -62,46 +57,3 @@ export function Calendar() {
     </>
   );
 }
-
-LocaleConfig.locales.br = {
-  monthNames: [
-    'Janeiro',
-    'Fevereiro',
-    'Março',
-    'Abril',
-    'Maio',
-    'Junho',
-    'Julho',
-    'Agosto',
-    'Setembro',
-    'Outubro',
-    'Novembro',
-    'Dezembro',
-  ],
-  monthNamesShort: [
-    'Jan.',
-    'Fev.',
-    'Mar.',
-    'Abr.',
-    'Mai.',
-    'Jun.',
-    'Jul.',
-    'Ago.',
-    'Set.',
-    'Out.',
-    'Nov.',
-    'Dez.',
-  ],
-  dayNames: [
-    'Domingo',
-    'Segunda-feira',
-    'Terça-feira',
-    'Quarta-feira',
-    'Quinta-feira',
-    'Sexta-feira',
-    'Sábado',
-  ],
-  dayNamesShort: ['Dom.', 'Seg.', 'Ter.', 'Qua.', 'Qui.', 'Sex.', 'Sab.'],
-  today: "Aujourd'hui",
-};
-LocaleConfig.defaultLocale = 'br';

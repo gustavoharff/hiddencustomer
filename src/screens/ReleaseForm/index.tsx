@@ -10,21 +10,20 @@ import { Picker } from '@react-native-picker/picker';
 import * as Yup from 'yup';
 import { FormHandles } from '@unform/core';
 import { useNavigation } from '@react-navigation/native';
-
-import { Button, Input } from 'components';
-
-import { useCustomers, useReleases } from 'hooks';
-
-import { COLORS, SPACING } from 'styles';
-
 import {
   getBottomSpace,
   getStatusBarHeight,
 } from 'react-native-iphone-x-helper';
 
-import { Container, Unform, FieldDescription } from './styles';
+import { Button, Input } from 'components';
 
-const ReleaseForm: React.FC = () => {
+import { useCustomers, useReleases } from 'hooks';
+
+import { SPACING } from 'styles';
+
+import { Container, Unform, Label } from './styles';
+
+export function ReleaseForm(): JSX.Element {
   const formRef = useRef<FormHandles>(null);
   const [selectedValue, setSelectedValue] = useState('');
   const [loadingButton, setLoadingButton] = useState(false);
@@ -81,27 +80,23 @@ const ReleaseForm: React.FC = () => {
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={
-        getBottomSpace() + getStatusBarHeight(false) + SPACING.L * 2
+        getBottomSpace() + getStatusBarHeight(false) + SPACING.L * 5
       }
       enabled
     >
-      <ScrollView
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{ flex: 1 }}
-      >
+      <ScrollView keyboardShouldPersistTaps="handled">
         <Container>
           <View style={{ width: '100%' }}>
             <Unform ref={formRef} onSubmit={handleSubmit}>
-              <FieldDescription>Informe o nome do lançamento:</FieldDescription>
               <Input
                 name="name"
+                label="Informe o nome do lançamento:"
                 placeholder="Nome"
-                placeholderTextColor={COLORS.FONT_LIGHT}
                 returnKeyType="default"
               />
             </Unform>
 
-            <FieldDescription>Relacione o cliente:</FieldDescription>
+            <Label>Relacione o cliente:</Label>
             <Picker
               mode="dialog"
               selectedValue={selectedValue}
@@ -127,21 +122,19 @@ const ReleaseForm: React.FC = () => {
               ))}
             </Picker>
           </View>
-          <View style={{ width: '100%', alignItems: 'center' }}>
-            <Button
-              title="Cadastrar"
-              loading={loadingButton}
-              onPress={() => {
-                formRef.current?.submitForm();
-                setLoadingButton(true);
-              }}
-              style={{ marginBottom: SPACING.M }}
-            />
-          </View>
         </Container>
       </ScrollView>
+      <View style={{ width: '100%', alignItems: 'center' }}>
+        <Button
+          title="Cadastrar"
+          loading={loadingButton}
+          onPress={() => {
+            formRef.current?.submitForm();
+            setLoadingButton(true);
+          }}
+          style={{ marginBottom: SPACING.M }}
+        />
+      </View>
     </KeyboardAvoidingView>
   );
-};
-
-export { ReleaseForm };
+}

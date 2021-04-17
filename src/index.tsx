@@ -8,13 +8,13 @@ import { Routes } from './navigation';
 
 import { AppProvider } from './hooks';
 
-export default function App() {
+export default function App(): JSX.Element {
   return (
-    <NavigationContainer>
-      <StatusBar barStyle="light-content" backgroundColor="#1B1B1F" />
-      <AppProvider>
+    <AppProvider>
+      <NavigationContainer>
+        <StatusBar barStyle="light-content" backgroundColor="#1B1B1F" />
         <Routes />
-      </AppProvider>
-    </NavigationContainer>
+      </NavigationContainer>
+    </AppProvider>
   );
 }

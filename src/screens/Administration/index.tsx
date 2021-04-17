@@ -4,17 +4,26 @@ import { useNavigation } from '@react-navigation/native';
 
 import { COLORS } from 'styles';
 
-import { useAuth, useUsers } from 'hooks';
+import { useAuth, useCompanies, useUsers } from 'hooks';
 
 import { BottomButton } from 'components';
+
 import { UsersList } from './UsersList';
 
 import { Container, Center } from './styles';
 
-const Administration: React.FC = () => {
-  const [loading, setLoading] = useState(true);
+export function Administration(): JSX.Element {
+  const [loadingUsers, setLoadingUsers] = useState(true);
+  const [loadingCompanies, setLoadingCompanies] = useState(true);
 
   const { loadApiUsers, loadLocalUsers } = useUsers();
+  const { loadApiCompanies, loadLocalCompanies } = useCompanies();
+
+  useEffect(() => {
+    loadApiCompanies()
+      .catch(() => loadLocalCompanies())
+      .finally(() => setLoadingCompanies(false));
+  }, []); // Performance warning
 
   const navigation = useNavigation();
 
@@ -22,19 +31,19 @@ const Administration: React.FC = () => {
 
   useEffect(() => {
     loadApiUsers(user.id)
-      .catch(() => loadLocalUsers())
-      .finally(() => setLoading(false));
-  }, [loadApiUsers, user.id, loadLocalUsers]);
+      .catch(() => loadLocalUsers(user.id))
+      .finally(() => setLoadingUsers(false));
+  }, [user.id]); // Performance warning
 
   const onRefresh = useCallback(async () => {
     try {
       await loadApiUsers(user.id);
     } catch {
-      await loadLocalUsers();
+      await loadLocalUsers(user.id);
     }
   }, [user.id, loadApiUsers, loadLocalUsers]);
 
-  if (loading) {
+  if (loadingUsers || loadingCompanies) {
     return (
       <Center>
         <ActivityIndicator
@@ -63,6 +72,4 @@ const Administration: React.FC = () => {
       )}
     </>
   );
-};
-
-export { Administration };
+}

@@ -3,13 +3,13 @@ import { View } from 'react-native';
 
 import { styles } from './styles';
 
-type ScreenIndicatorProps = {
+interface ScreenIndicatorProps {
   backgroundColor: string;
-};
+}
 
 export function ScreenIndicator({
   backgroundColor,
   ...rest
-}: ScreenIndicatorProps) {
+}: ScreenIndicatorProps): JSX.Element {
   return <View style={[styles.container, { backgroundColor }]} {...rest} />;
 }

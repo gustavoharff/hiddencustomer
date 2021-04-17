@@ -8,7 +8,7 @@ import { Calendar } from 'screens';
 
 const { Navigator, Screen } = createStackNavigator();
 
-export function CalendarRoutes() {
+export function CalendarRoutes(): JSX.Element {
   return (
     <Navigator
       mode="modal"

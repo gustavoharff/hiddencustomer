@@ -3,20 +3,20 @@ import { View } from 'react-native';
 
 import { Image } from './styles';
 
-type AvatarProps = {
+interface AvatarProps {
   url: string;
   size: number;
-};
+}
 
-const Avatar: React.FC<AvatarProps> = ({ url, size }) => (
-  <View>
-    <Image
-      size={size}
-      source={{
-        uri: url,
-      }}
-    />
-  </View>
-);
-
-export { Avatar };
+export function Avatar({ url, size }: AvatarProps): JSX.Element {
+  return (
+    <View>
+      <Image
+        size={size}
+        source={{
+          uri: url,
+        }}
+      />
+    </View>
+  );
+}

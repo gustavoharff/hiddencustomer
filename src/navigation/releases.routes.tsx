@@ -5,7 +5,7 @@ import {
   createStackNavigator,
 } from '@react-navigation/stack';
 
-import { BackHeaderIcon, CloseHeaderIcon } from 'components';
+import { HeaderIcon } from 'components';
 
 import {
   Releases,
@@ -18,9 +18,11 @@ import {
 
 import { useReleases } from 'hooks';
 
+import { SPACING } from 'styles';
+
 const { Navigator, Screen } = createStackNavigator();
 
-export function ReleasesRoutes() {
+export function ReleasesRoutes(): JSX.Element {
   const { releases } = useReleases();
 
   return (
@@ -64,7 +66,11 @@ export function ReleasesRoutes() {
         options={({ navigation }) => ({
           headerTitle: 'Registrar lançamento',
           headerLeft: () => (
-            <BackHeaderIcon onPress={() => navigation.navigate('Releases')} />
+            <HeaderIcon
+              name="arrow-left"
+              onPress={() => navigation.navigate('Releases')}
+              style={{ marginLeft: SPACING.S }}
+            />
           ),
         })}
       />
@@ -75,7 +81,11 @@ export function ReleasesRoutes() {
         options={({ navigation }) => ({
           headerTitle: 'Detalhes',
           headerLeft: () => (
-            <BackHeaderIcon onPress={() => navigation.goBack()} />
+            <HeaderIcon
+              name="arrow-left"
+              onPress={() => navigation.goBack()}
+              style={{ marginLeft: SPACING.S }}
+            />
           ),
         })}
       />
@@ -87,8 +97,10 @@ export function ReleasesRoutes() {
           cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
           headerTitle: 'Cadastrar grupo',
           headerLeft: () => (
-            <CloseHeaderIcon
+            <HeaderIcon
+              name="close"
               onPress={() => navigation.navigate('ReleaseDetails')}
+              style={{ marginLeft: SPACING.S }}
             />
           ),
         })}
@@ -101,7 +113,11 @@ export function ReleasesRoutes() {
           cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
           headerTitle: 'Editar anotação',
           headerLeft: () => (
-            <CloseHeaderIcon onPress={() => navigation.goBack()} />
+            <HeaderIcon
+              name="close"
+              onPress={() => navigation.goBack()}
+              style={{ marginLeft: SPACING.S }}
+            />
           ),
         })}
       />
@@ -112,7 +128,11 @@ export function ReleasesRoutes() {
         options={({ navigation }) => ({
           headerTitle: 'Editar lançamento',
           headerLeft: () => (
-            <BackHeaderIcon onPress={() => navigation.goBack()} />
+            <HeaderIcon
+              name="arrow-left"
+              onPress={() => navigation.goBack()}
+              style={{ marginLeft: SPACING.S }}
+            />
           ),
         })}
       />

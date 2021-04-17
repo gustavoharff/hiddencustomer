@@ -18,11 +18,11 @@ import { Input, Button } from 'components';
 
 import { useCustomers } from 'hooks';
 
-import { COLORS, SPACING } from 'styles';
+import { SPACING } from 'styles';
 
-import { Container, FieldDescription, Unform } from './styles';
+import { Container, Unform } from './styles';
 
-const CustomerForm: React.FC = () => {
+export function CustomerForm(): JSX.Element {
   const [loadingButton, setLoadingButton] = useState(false);
   const formRef = useRef<FormHandles>(null);
 
@@ -61,47 +61,39 @@ const CustomerForm: React.FC = () => {
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={
-        getBottomSpace() + getStatusBarHeight(false) + SPACING.L * 2
+        getBottomSpace() + getStatusBarHeight(false) + SPACING.L * 5
       }
       enabled
     >
-      <ScrollView
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{ flex: 1 }}
-      >
+      <ScrollView keyboardShouldPersistTaps="handled">
         <Container>
-          <View>
-            <Unform ref={formRef} onSubmit={handleSubmit}>
-              <FieldDescription>Informe o nome do cliente:</FieldDescription>
-              <Input
-                name="name"
-                placeholder="Nome do cliente"
-                placeholderTextColor={COLORS.FONT_LIGHT}
-                returnKeyType="send"
-                onSubmitEditing={() => formRef.current?.submitForm()}
-              />
-            </Unform>
-          </View>
-          <View
-            style={{
-              width: '100%',
-              alignItems: 'center',
-            }}
-          >
-            <Button
-              title="Enviar"
-              loading={loadingButton}
-              onPress={() => {
-                formRef.current?.submitForm();
-                setLoadingButton(true);
-              }}
-              style={{ marginBottom: SPACING.M }}
+          <Unform ref={formRef} onSubmit={handleSubmit}>
+            <Input
+              name="name"
+              label="Informe o nome do cliente:"
+              placeholder="Nome do cliente"
+              returnKeyType="send"
+              onSubmitEditing={() => formRef.current?.submitForm()}
             />
-          </View>
+          </Unform>
         </Container>
       </ScrollView>
+      <View
+        style={{
+          width: '100%',
+          alignItems: 'center',
+        }}
+      >
+        <Button
+          title="Enviar"
+          loading={loadingButton}
+          onPress={() => {
+            formRef.current?.submitForm();
+            setLoadingButton(true);
+          }}
+          style={{ marginBottom: SPACING.M }}
+        />
+      </View>
     </KeyboardAvoidingView>
   );
-};
-
-export { CustomerForm };
+}

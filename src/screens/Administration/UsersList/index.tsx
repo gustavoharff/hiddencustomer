@@ -1,13 +1,12 @@
 import React, { useCallback, useState } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
-import Swipeable from 'react-native-gesture-handler/Swipeable';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import { Avatar, EmptyList, ActivateItem, DisableItem } from 'components';
+import { Avatar, EmptyList, Swipeable } from 'components';
 
 import { COLORS, SPACING } from 'styles';
 
-import { useUsers } from 'hooks';
+import { useCompanies, useUsers } from 'hooks';
 
 import { Container, Name, Email, UserInfo, Content } from './styles';
 
@@ -16,58 +15,61 @@ type UsersListProps = {
   emptyListText: string;
 };
 
-export function UsersList({ onRefresh, emptyListText }: UsersListProps) {
+export function UsersList({
+  onRefresh,
+  emptyListText,
+}: UsersListProps): JSX.Element {
   const { users, activateUser, disableUser } = useUsers();
+  const { companies } = useCompanies();
 
   const [refreshing, setRefreshing] = useState(false);
-  const [row] = useState<Array<Swipeable | null>>([]);
-  const [prevOpenedRow, setPrevOpenedRow] = useState<any>();
 
   const onActivateItem = useCallback(
-    (userId: string) => {
-      Alert.alert('Atenção!', 'Deseja mesmo ativar este usuário?', [
-        {
-          text: 'Cancelar',
-          onPress: () => prevOpenedRow.close(),
-          style: 'cancel',
-        },
-        {
-          text: 'Sim',
-          onPress: () => {
-            prevOpenedRow.close();
-            activateUser(userId);
+    async (userId: string) => {
+      return new Promise(resolve => {
+        Alert.alert('Atenção!', 'Deseja mesmo ativar este usuário?', [
+          {
+            text: 'Cancelar',
+            onPress: () => {
+              return resolve(200);
+            },
+            style: 'cancel',
           },
-        },
-      ]);
+          {
+            text: 'Sim',
+            onPress: async () => {
+              await activateUser(userId);
+              return resolve(200);
+            },
+          },
+        ]);
+      });
     },
-    [prevOpenedRow, activateUser],
+    [activateUser],
   );
 
   const onDisableItem = useCallback(
-    (userId: string) => {
-      Alert.alert('Atenção!', 'Deseja mesmo desativar este usuário?', [
-        {
-          text: 'Cancelar',
-          onPress: () => prevOpenedRow.close(),
-          style: 'cancel',
-        },
-        {
-          text: 'Sim',
-          onPress: () => {
-            prevOpenedRow.close();
-            disableUser(userId);
+    async (userId: string) => {
+      return new Promise(resolve => {
+        Alert.alert('Atenção!', 'Deseja mesmo desativar este usuário?', [
+          {
+            text: 'Cancelar',
+            onPress: () => {
+              return resolve(200);
+            },
+            style: 'cancel',
           },
-        },
-      ]);
+          {
+            text: 'Sim',
+            onPress: async () => {
+              await disableUser(userId);
+              return resolve(200);
+            },
+          },
+        ]);
+      });
     },
-    [prevOpenedRow, disableUser],
-  );
-
-  const closeRow = useCallback(
-    index => {
-      setPrevOpenedRow(row[index]);
-    },
-    [row],
+    [disableUser],
   );
 
   const handleRefresh = async () => {
@@ -93,33 +95,14 @@ export function UsersList({ onRefresh, emptyListText }: UsersListProps) {
         renderItem={({ item: user, index }) => (
           <Container style={{ paddingTop: index !== 0 ? 0 : 16 }}>
             <Swipeable
-              ref={ref => {
-                row[index] = ref;
+              activeOption={!user.active}
+              activeOnPress={async () => {
+                await onActivateItem(user.id);
               }}
-              friction={1.5}
-              rightThreshold={30}
-              renderRightActions={() => {
-                if (!user.active) {
-                  return (
-                    <ActivateItem
-                      onPress={() => {
-                        onActivateItem(user.id);
-                      }}
-                    />
-                  );
-                }
-
-                return (
-                  <DisableItem
-                    onPress={() => {
-                      onDisableItem(user.id);
-                    }}
-                  />
-                );
+              disableOption={user.active}
+              disableOnPress={async () => {
+                await onDisableItem(user.id);
               }}
-              activeOffsetX={-1}
-              activeOffsetY={500}
-              onSwipeableOpen={() => closeRow(index)}
             >
               <Content>
                 <Avatar
@@ -131,8 +114,13 @@ export function UsersList({ onRefresh, emptyListText }: UsersListProps) {
                 />
                 <UserInfo>
                   <Name>{user.name}</Name>
-                  <Email>{user.email}</Email>
-                  <Email>{user.company?.name}</Email>
+                  <Email numberOfLines={1}>{user.email}</Email>
+                  <Email numberOfLines={1}>
+                    {
+                      companies.find(company => company.id === user.company_id)
+                        ?.name
+                    }
+                  </Email>
                 </UserInfo>
                 <Icon
                   name={user.active ? 'check' : 'close'}

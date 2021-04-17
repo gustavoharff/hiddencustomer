@@ -9,11 +9,13 @@ import { Customers, CustomerForm, CustomerChange } from 'screens';
 
 import { useCustomers } from 'hooks';
 
-import { BackHeaderIcon } from 'components';
+import { HeaderIcon } from 'components';
+
+import { SPACING } from 'styles';
 
 const { Navigator, Screen } = createStackNavigator();
 
-export function CustomersRoutes() {
+export function CustomersRoutes(): JSX.Element {
   const { customers } = useCustomers();
 
   return (
@@ -56,7 +58,11 @@ export function CustomersRoutes() {
         options={({ navigation }) => ({
           headerTitle: 'Registrar cliente',
           headerLeft: () => (
-            <BackHeaderIcon onPress={() => navigation.navigate('Customers')} />
+            <HeaderIcon
+              name="arrow-left"
+              onPress={() => navigation.navigate('Customers')}
+              style={{ marginLeft: SPACING.S }}
+            />
           ),
         })}
       />
@@ -67,7 +73,11 @@ export function CustomersRoutes() {
         options={({ navigation }) => ({
           headerTitle: 'Editar cliente',
           headerLeft: () => (
-            <BackHeaderIcon onPress={() => navigation.goBack()} />
+            <HeaderIcon
+              name="arrow-left"
+              onPress={() => navigation.goBack()}
+              style={{ marginLeft: SPACING.S }}
+            />
           ),
         })}
       />

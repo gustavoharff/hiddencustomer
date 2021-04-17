@@ -20,9 +20,9 @@ import { Input, Button } from 'components';
 
 import { SPACING } from 'styles';
 
-import { useGroups } from 'hooks';
+import { useReleases } from 'hooks';
 
-import { Container, Unform, FieldDescription } from './styles';
+import { Container, Unform, Label } from './styles';
 
 type Params = {
   ReleaseDetails: {
@@ -30,16 +30,18 @@ type Params = {
   };
 };
 
-type Props = StackScreenProps<Params, 'ReleaseDetails'>;
+type ReleaseGroupFormProps = StackScreenProps<Params, 'ReleaseDetails'>;
 
-const ReleaseGroupForm: React.FC<Props> = ({ route }) => {
+export function ReleaseGroupForm({
+  route,
+}: ReleaseGroupFormProps): JSX.Element {
   const formRef = useRef<FormHandles>(null);
   const [selectedValue, setSelectedValue] = useState('');
   const navigation = useNavigation();
 
   const [loadingButton, setLoadingButton] = useState(false);
 
-  const { createGroup } = useGroups();
+  const { createReleaseGroup } = useReleases();
 
   const onPickerChange = useCallback(value => {
     setSelectedValue(value);
@@ -62,7 +64,7 @@ const ReleaseGroupForm: React.FC<Props> = ({ route }) => {
           return;
         }
 
-        await createGroup({
+        await createReleaseGroup({
           name: data.name,
           type: selectedValue,
           release_id: route.params.release_id,
@@ -78,7 +80,7 @@ const ReleaseGroupForm: React.FC<Props> = ({ route }) => {
         setLoadingButton(false);
       }
     },
-    [navigation, selectedValue, createGroup, route.params.release_id],
+    [navigation, selectedValue, createReleaseGroup, route.params.release_id],
   );
 
   return (
@@ -86,26 +88,24 @@ const ReleaseGroupForm: React.FC<Props> = ({ route }) => {
       style={{ flex: 1 }}
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={
-        getBottomSpace() + getStatusBarHeight(true) + SPACING.L * 2
+        getBottomSpace() + getStatusBarHeight(true) + SPACING.L * 5
       }
       enabled
     >
-      <ScrollView
-        keyboardShouldPersistTaps="handled"
-        contentContainerStyle={{ flex: 1 }}
-      >
+      <ScrollView keyboardShouldPersistTaps="handled">
         <Container>
           <View style={{ width: '100%' }}>
             <Unform ref={formRef} onSubmit={handleSubmit}>
-              <FieldDescription>Informe o nome do grupo:</FieldDescription>
               <Input
                 name="name"
+                label="Informe o nome do grupo:"
                 placeholder="Nome"
                 returnKeyType="send"
                 onSubmitEditing={() => formRef.current?.submitForm()}
               />
             </Unform>
-            <FieldDescription>Informe o tipo do grupo:</FieldDescription>
+
+            <Label>Informe o tipo do grupo:</Label>
             <Picker
               mode="dialog"
               selectedValue={selectedValue}
@@ -142,21 +142,19 @@ const ReleaseGroupForm: React.FC<Props> = ({ route }) => {
               />
             </Picker>
           </View>
-          <View style={{ width: '100%', alignItems: 'center' }}>
-            <Button
-              title="Cadastrar"
-              loading={loadingButton}
-              onPress={() => {
-                formRef.current?.submitForm();
-                setLoadingButton(true);
-              }}
-              style={{ marginBottom: SPACING.M }}
-            />
-          </View>
         </Container>
       </ScrollView>
+      <View style={{ width: '100%', alignItems: 'center' }}>
+        <Button
+          title="Cadastrar"
+          loading={loadingButton}
+          onPress={() => {
+            formRef.current?.submitForm();
+            setLoadingButton(true);
+          }}
+          style={{ marginBottom: SPACING.M }}
+        />
+      </View>
     </KeyboardAvoidingView>
   );
-};
-
-export { ReleaseGroupForm };
+}

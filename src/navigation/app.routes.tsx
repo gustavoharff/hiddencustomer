@@ -14,7 +14,7 @@ import { CalendarRoutes } from './calendar.routes';
 
 const { Navigator, Screen } = createBottomTabNavigator();
 
-export function TabRoutes() {
+export function TabRoutes(): JSX.Element {
   const { user } = useAuth();
 
   return (
