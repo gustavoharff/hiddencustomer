@@ -6,7 +6,7 @@ import {
 
 import { SignIn, ForgotPassword, ResetPassword } from 'screens';
 
-import { COLORS, SPACING } from 'styles';
+import { colors, SPACING } from 'styles';
 
 import { HeaderIcon } from 'components';
 
@@ -19,7 +19,7 @@ export function AuthRoutes(): JSX.Element {
       screenOptions={{
         headerShown: false,
         cardStyle: {
-          backgroundColor: COLORS.BACKGROUND_DARK,
+          backgroundColor: colors.gray[900],
         },
       }}
     >
@@ -30,6 +30,7 @@ export function AuthRoutes(): JSX.Element {
           cardStyleInterpolator: CardStyleInterpolators.forNoAnimation,
         }}
       />
+
       <Screen
         name="ForgotPassword"
         component={ForgotPassword}
@@ -37,11 +38,12 @@ export function AuthRoutes(): JSX.Element {
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
           headerStyle: {
             height: 100,
-            backgroundColor: '#1B1B1F',
+            backgroundColor: colors.gray[900],
             shadowColor: 'transparent',
             elevation: 0,
           },
           headerShown: true,
+          headerTitle: '',
           headerLeft: () => (
             <HeaderIcon
               name="arrow-left"
@@ -59,10 +61,11 @@ export function AuthRoutes(): JSX.Element {
           cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
           headerStyle: {
             height: 100,
-            backgroundColor: '#1B1B1F',
+            backgroundColor: colors.gray[900],
             shadowColor: 'transparent',
             elevation: 0,
           },
+          headerTitle: '',
           headerShown: true,
           headerLeft: () => (
             <HeaderIcon

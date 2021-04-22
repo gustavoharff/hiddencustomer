@@ -1,7 +1,7 @@
 import React from 'react';
 import { ActivityIndicator, Platform } from 'react-native';
 
-import { SPACING } from 'styles';
+import { colors, SPACING } from 'styles';
 
 import { Header, Content, Title, Description } from './styles';
 
@@ -22,7 +22,7 @@ export function ListHeader({
         {loading ? (
           <ActivityIndicator
             size={Platform.OS === 'ios' ? SPACING.XL * 3 : SPACING.L * 1.5}
-            color="rgba(255, 255, 255, 1)"
+            color={colors.white}
           />
         ) : (
           <>

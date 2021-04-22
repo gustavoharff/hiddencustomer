@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Alert, FlatList, Text, View } from 'react-native';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
@@ -10,6 +11,18 @@ export function Configuration(): JSX.Element {
   const { signOut } = useAuth();
 
   const navigation = useNavigation();
+
+  useEffect(() => {
+    const parent = navigation.dangerouslyGetParent();
+
+    parent?.setOptions({
+      tabBarVisible: false,
+    });
+    return () =>
+      parent?.setOptions({
+        tabBarVisible: true,
+      });
+  }, [navigation]);
 
   const data = [
     {

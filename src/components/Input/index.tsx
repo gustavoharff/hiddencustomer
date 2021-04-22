@@ -6,10 +6,12 @@ import React, {
   useState,
   useCallback,
 } from 'react';
-import { TextInput, TextInputProps, View, Text } from 'react-native';
+import { TextInput, TextInputProps } from 'react-native';
 import { useField } from '@unform/core';
 
-import { styles } from './styles';
+import { colors } from 'styles';
+
+import { Container, Label, styles } from './styles';
 
 interface InputProps extends TextInputProps {
   name: string;
@@ -68,10 +70,8 @@ const ForwardInput: React.ForwardRefRenderFunction<InputRef, InputProps> = (
 
   return (
     <>
-      {label && (
-        <Text style={[styles.label, { textAlign: 'left' }]}>{label}</Text>
-      )}
-      <View style={[styles.container, containerStyle]}>
+      {label && <Label>{label}</Label>}
+      <Container style={containerStyle}>
         <TextInput
           ref={inputElementRef}
           keyboardAppearance="dark"
@@ -85,10 +85,10 @@ const ForwardInput: React.ForwardRefRenderFunction<InputRef, InputProps> = (
             styles.input,
             isFocused ? { borderWidth: 1 } : { borderWidth: 0 },
           ]}
-          placeholderTextColor="#817E7B"
+          placeholderTextColor={colors.gray[500]}
           {...rest}
         />
-      </View>
+      </Container>
     </>
   );
 };

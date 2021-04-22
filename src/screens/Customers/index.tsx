@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { ActivityIndicator, Platform } from 'react-native';
+import { ActivityIndicator, Platform, Text } from 'react-native';
 
-import { BottomButton } from 'components';
+import { CircularButton } from 'components';
 
 import { useCustomers, useAuth } from 'hooks';
 
-import { COLORS } from 'styles';
+import { colors } from 'styles';
 
 import { CustomersList } from './CustomersList';
 
@@ -15,9 +15,19 @@ import { Container, Center } from './styles';
 export function Customers(): JSX.Element {
   const [loading, setLoading] = useState(true);
 
-  const { loadApiCustomers, loadLocalCustomers } = useCustomers();
+  const { loadApiCustomers, loadLocalCustomers, customers } = useCustomers();
 
   const navigation = useNavigation();
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Text style={{ color: colors.gray[500], marginRight: 20 }}>
+          {customers.length} cliente(s)
+        </Text>
+      ),
+    });
+  }, [customers.length, navigation]);
 
   useEffect(() => {
     loadApiCustomers()
@@ -39,7 +49,7 @@ export function Customers(): JSX.Element {
     return (
       <Center>
         <ActivityIndicator
-          color={Platform.OS === 'ios' ? COLORS.BACKGROUND_LIGHT : COLORS.ALERT}
+          color={Platform.OS === 'ios' ? colors.gray[800] : colors.red[500]}
           size={30}
         />
       </Center>
@@ -55,7 +65,7 @@ export function Customers(): JSX.Element {
         />
       </Container>
       {user.permission !== 'user' && (
-        <BottomButton
+        <CircularButton
           name="plus"
           onPress={() => navigation.navigate('CustomerForm')}
         />

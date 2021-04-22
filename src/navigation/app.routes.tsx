@@ -1,12 +1,11 @@
 import React from 'react';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
-import { ScreenIndicator } from 'components';
+import { TabBarIcon } from 'components';
 
 import { useAuth } from 'hooks';
 
-import { ReleasesRoutes } from './releases.routes';
+import { ReleasesStack } from './releases.routes';
 import { CustomersRoutes } from './customers.routes';
 import { ProfileRoutes } from './profile.routes';
 import { AdministrationRoutes } from './administration.routes';
@@ -18,25 +17,17 @@ export function TabRoutes(): JSX.Element {
   const { user } = useAuth();
 
   return (
-    <Navigator>
+    <Navigator screenOptions={{ tabBarLabel: () => null }}>
       <Screen
         name="Releases"
-        component={ReleasesRoutes}
+        component={ReleasesStack}
         options={{
-          tabBarLabel: () => null,
           tabBarIcon: ({ size, focused }) => (
-            <>
-              <Icon
-                name="rocket-launch-outline"
-                size={size}
-                color={focused ? '#DC1637' : '#A8A8B3'}
-              />
-              {focused && (
-                <ScreenIndicator
-                  backgroundColor={focused ? '#DC1637' : '#A8A8B3'}
-                />
-              )}
-            </>
+            <TabBarIcon
+              name="rocket-launch-outline"
+              size={size}
+              focused={focused}
+            />
           ),
         }}
       />
@@ -45,20 +36,12 @@ export function TabRoutes(): JSX.Element {
         name="Customers"
         component={CustomersRoutes}
         options={{
-          tabBarLabel: () => null,
           tabBarIcon: ({ size, focused }) => (
-            <>
-              <Icon
-                name="account-group-outline"
-                size={size}
-                color={focused ? '#DC1637' : '#A8A8B3'}
-              />
-              {focused && (
-                <ScreenIndicator
-                  backgroundColor={focused ? '#DC1637' : '#A8A8B3'}
-                />
-              )}
-            </>
+            <TabBarIcon
+              name="account-group-outline"
+              size={size}
+              focused={focused}
+            />
           ),
         }}
       />
@@ -67,20 +50,12 @@ export function TabRoutes(): JSX.Element {
         name="Calendar"
         component={CalendarRoutes}
         options={{
-          tabBarLabel: () => null,
           tabBarIcon: ({ size, focused }) => (
-            <>
-              <Icon
-                name="calendar-multiselect"
-                size={size}
-                color={focused ? '#DC1637' : '#A8A8B3'}
-              />
-              {focused && (
-                <ScreenIndicator
-                  backgroundColor={focused ? '#DC1637' : '#A8A8B3'}
-                />
-              )}
-            </>
+            <TabBarIcon
+              name="calendar-multiselect"
+              size={size}
+              focused={focused}
+            />
           ),
         }}
       />
@@ -90,20 +65,12 @@ export function TabRoutes(): JSX.Element {
           name="Administration"
           component={AdministrationRoutes}
           options={{
-            tabBarLabel: () => null,
             tabBarIcon: ({ size, focused }) => (
-              <>
-                <Icon
-                  name="account-cog-outline"
-                  size={size}
-                  color={focused ? '#DC1637' : '#A8A8B3'}
-                />
-                {focused && (
-                  <ScreenIndicator
-                    backgroundColor={focused ? '#DC1637' : '#A8A8B3'}
-                  />
-                )}
-              </>
+              <TabBarIcon
+                name="account-cog-outline"
+                size={size}
+                focused={focused}
+              />
             ),
           }}
         />
@@ -113,20 +80,8 @@ export function TabRoutes(): JSX.Element {
         name="Profile"
         component={ProfileRoutes}
         options={{
-          tabBarLabel: () => null,
           tabBarIcon: ({ size, focused }) => (
-            <>
-              <Icon
-                name="account-outline"
-                size={size}
-                color={focused ? '#DC1637' : '#A8A8B3'}
-              />
-              {focused && (
-                <ScreenIndicator
-                  backgroundColor={focused ? '#DC1637' : '#A8A8B3'}
-                />
-              )}
-            </>
+            <TabBarIcon name="account-outline" size={size} focused={focused} />
           ),
         }}
       />

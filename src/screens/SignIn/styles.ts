@@ -6,8 +6,6 @@ export const Container = styled.View`
   flex: 1;
   justify-content: center;
   align-items: center;
-
-  background: ${COLORS.BACKGROUND_DARK};
 `;
 
 export const HeaderTitle = styled.Text`

@@ -1,11 +1,13 @@
 import styled from 'styled-components/native';
 
+import { colors } from 'styles';
+
 export const Header = styled.View`
   width: 100%;
   padding: 20px 10px;
   justify-content: center;
   align-items: center;
-  background: #29292e;
+  background: ${colors.gray[850]};
 `;
 
 export const Content = styled.View`
@@ -13,14 +15,14 @@ export const Content = styled.View`
 `;
 
 export const Title = styled.Text`
-  color: #fff;
+  color: ${colors.white};
   font-size: 20px;
   font-weight: bold;
 `;
 
 export const Description = styled.Text`
-  color: #aeaeb3;
+  color: ${colors.gray[400]};
   margin-top: 20px;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: bold;
 `;

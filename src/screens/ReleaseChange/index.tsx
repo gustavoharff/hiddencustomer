@@ -37,8 +37,21 @@ type ReleaseChangeProps = StackScreenProps<Params, 'ReleaseChange'>;
 
 export function ReleaseChange({ route }: ReleaseChangeProps): JSX.Element {
   const { releases, updateRelease } = useReleases();
-  const navigation = useNavigation();
   const { customers, loadApiCustomers, loadLocalCustomers } = useCustomers();
+
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const parent = navigation.dangerouslyGetParent();
+
+    parent?.setOptions({
+      tabBarVisible: false,
+    });
+    return () =>
+      parent?.setOptions({
+        tabBarVisible: true,
+      });
+  }, [navigation]);
 
   const [release] = useState<Release>(() => {
     const finddedRelease = releases.find(r => r.id === route.params.release_id);

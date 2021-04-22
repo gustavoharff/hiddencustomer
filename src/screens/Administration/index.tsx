@@ -6,7 +6,7 @@ import { COLORS } from 'styles';
 
 import { useAuth, useCompanies, useUsers } from 'hooks';
 
-import { BottomButton } from 'components';
+import { CircularButton } from 'components';
 
 import { UsersList } from './UsersList';
 
@@ -65,7 +65,7 @@ export function Administration(): JSX.Element {
         </Container>
       </Container>
       {user.permission === 'admin' && (
-        <BottomButton
+        <CircularButton
           name="plus"
           onPress={() => navigation.navigate('UserForm')}
         />

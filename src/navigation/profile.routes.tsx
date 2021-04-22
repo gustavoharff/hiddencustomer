@@ -13,7 +13,7 @@ import {
 
 import { HeaderIcon } from 'components';
 
-import { SPACING } from 'styles';
+import { SPACING, colors } from 'styles';
 
 const { Navigator, Screen } = createStackNavigator();
 
@@ -23,16 +23,16 @@ export function ProfileRoutes(): JSX.Element {
       screenOptions={{
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         cardStyle: {
-          backgroundColor: '#ffff',
+          backgroundColor: colors.white,
         },
         headerTitleAlign: 'left',
-        headerTintColor: '#ffff',
+        headerTintColor: colors.white,
         headerTitleStyle: {
           fontSize: 20,
         },
         headerStyle: {
           height: 100,
-          backgroundColor: '#1B1B1F',
+          backgroundColor: colors.gray[900],
           shadowColor: 'transparent',
           elevation: 0,
         },

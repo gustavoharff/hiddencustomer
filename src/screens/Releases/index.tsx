@@ -1,11 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import RNBootSplash from 'react-native-bootsplash';
-import { ActivityIndicator, Platform } from 'react-native';
-import { BottomButton } from 'components';
+import { ActivityIndicator, Platform, Text } from 'react-native';
+
+import { CircularButton } from 'components';
+
 import { useAuth, useReleases } from 'hooks';
 
-import { COLORS } from 'styles';
+import { colors } from 'styles';
 
 import { ReleasesList } from './ReleasesList';
 
@@ -15,9 +17,19 @@ export function Releases(): JSX.Element {
   const [loading, setLoading] = useState(true);
   const { user } = useAuth();
 
-  const { loadApiReleases, loadLocalReleases } = useReleases();
+  const { releases, loadApiReleases, loadLocalReleases } = useReleases();
 
   const navigation = useNavigation();
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <Text style={{ color: colors.gray[500], marginRight: 20 }}>
+          {releases.length ?? 0} lançamento(s)
+        </Text>
+      ),
+    });
+  }, [navigation, releases]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -39,7 +51,7 @@ export function Releases(): JSX.Element {
     return (
       <Center>
         <ActivityIndicator
-          color={Platform.OS === 'ios' ? COLORS.BACKGROUND_LIGHT : COLORS.ALERT}
+          color={Platform.OS === 'ios' ? colors.gray[800] : colors.red[500]}
           size={30}
         />
       </Center>
@@ -55,7 +67,7 @@ export function Releases(): JSX.Element {
         />
       </Container>
       {user.permission !== 'user' && (
-        <BottomButton
+        <CircularButton
           name="plus"
           onPress={() => navigation.navigate('ReleaseForm')}
         />

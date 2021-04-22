@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
 import {
@@ -29,6 +29,18 @@ export function CustomerForm(): JSX.Element {
   const { createCustomer } = useCustomers();
 
   const navigation = useNavigation();
+
+  useEffect(() => {
+    const parent = navigation.dangerouslyGetParent();
+
+    parent?.setOptions({
+      tabBarVisible: false,
+    });
+    return () =>
+      parent?.setOptions({
+        tabBarVisible: true,
+      });
+  }, [navigation]);
 
   const handleSubmit = useCallback(
     async data => {

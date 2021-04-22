@@ -39,6 +39,18 @@ export function UserForm(): JSX.Element {
   const navigation = useNavigation();
 
   useEffect(() => {
+    const parent = navigation.dangerouslyGetParent();
+
+    parent?.setOptions({
+      tabBarVisible: false,
+    });
+    return () =>
+      parent?.setOptions({
+        tabBarVisible: true,
+      });
+  }, [navigation]);
+
+  useEffect(() => {
     loadApiCompanies().catch(() => loadLocalCompanies());
   }, []);
 

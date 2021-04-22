@@ -1,5 +1,4 @@
 import React from 'react';
-import { Text } from 'react-native';
 import {
   CardStyleInterpolators,
   createStackNavigator,
@@ -16,15 +15,11 @@ import {
   ReleaseChange,
 } from 'screens';
 
-import { useReleases } from 'hooks';
-
-import { SPACING } from 'styles';
+import { SPACING, colors } from 'styles';
 
 const { Navigator, Screen } = createStackNavigator();
 
-export function ReleasesRoutes(): JSX.Element {
-  const { releases } = useReleases();
-
+export function ReleasesStack(): JSX.Element {
   return (
     <Navigator
       mode="modal"
@@ -32,16 +27,16 @@ export function ReleasesRoutes(): JSX.Element {
       screenOptions={{
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         cardStyle: {
-          backgroundColor: '#ffff',
+          backgroundColor: colors.white,
         },
         headerTitleAlign: 'left',
-        headerTintColor: '#ffff',
+        headerTintColor: colors.white,
         headerTitleStyle: {
           fontSize: 20,
         },
         headerStyle: {
           height: 100,
-          backgroundColor: '#1B1B1F',
+          backgroundColor: colors.gray[900],
           shadowColor: 'transparent',
           elevation: 0,
         },
@@ -52,11 +47,6 @@ export function ReleasesRoutes(): JSX.Element {
         component={Releases}
         options={{
           headerTitle: 'Lançamentos',
-          headerRight: () => (
-            <Text style={{ color: '#7A7A80', marginRight: 20 }}>
-              {releases.length ?? 0} lançamento(s)
-            </Text>
-          ),
         }}
       />
 

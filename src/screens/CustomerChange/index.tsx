@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
   Platform,
   KeyboardAvoidingView,
@@ -36,6 +36,18 @@ type CustomerChangeProps = StackScreenProps<Props, 'CustomerChange'>;
 export function CustomerChange({ route }: CustomerChangeProps): JSX.Element {
   const { customers, updateCustomer } = useCustomers();
   const navigation = useNavigation();
+
+  useEffect(() => {
+    const parent = navigation.dangerouslyGetParent();
+
+    parent?.setOptions({
+      tabBarVisible: false,
+    });
+    return () =>
+      parent?.setOptions({
+        tabBarVisible: true,
+      });
+  }, [navigation]);
 
   const [customer] = useState<Customer>(() => {
     const finddedCustomer = customers.find(

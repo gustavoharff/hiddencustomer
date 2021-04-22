@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-import { BottomButton } from 'components';
+import { CircularButton } from 'components';
 
 import { useReleases } from 'hooks';
 
@@ -47,7 +47,7 @@ export function ReleaseAnnotations({
           </View>
         )}
       </ScrollView>
-      <BottomButton
+      <CircularButton
         name="file-edit-outline"
         onPress={() =>
           navigation.navigate('ReleaseAnnotationsForm', {

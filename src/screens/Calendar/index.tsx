@@ -1,17 +1,18 @@
-import { useCallback, useEffect, useState } from 'react';
-import { View } from 'react-native';
+import { useCallback, useEffect } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import { Calendar as RNCalendar } from 'react-native-calendars';
 
 import './helper';
 
-import { Button } from 'components';
+import { HeaderIcon } from 'components';
 
 import { useReleases } from 'hooks';
 
 import { formatMarkedCalendar } from 'utils';
+import { SPACING } from 'styles';
 
 export function Calendar(): JSX.Element {
-  const [loading, setLoading] = useState(false);
+  const navigation = useNavigation();
 
   const {
     releasesDates,
@@ -19,22 +20,31 @@ export function Calendar(): JSX.Element {
     loadLocalReleasesDates,
   } = useReleases();
 
-  useEffect(() => {
-    loadApiReleasesDates().catch(() => {
-      loadLocalReleasesDates();
-    });
-  }, []);
-
   const onRefresh = useCallback(async () => {
-    setLoading(true);
-
     try {
       await loadApiReleasesDates();
     } catch {
       await loadLocalReleasesDates();
     }
-    setLoading(false);
   }, [loadApiReleasesDates, loadLocalReleasesDates]);
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <HeaderIcon
+          name="reload"
+          onPress={onRefresh}
+          style={{ marginRight: SPACING.S }}
+        />
+      ),
+    });
+  }, [navigation, onRefresh]);
+
+  useEffect(() => {
+    loadApiReleasesDates().catch(() => {
+      loadLocalReleasesDates();
+    });
+  }, []);
 
   return (
     <>
@@ -49,11 +59,6 @@ export function Calendar(): JSX.Element {
           },
         }}
       />
-      <View
-        style={{ alignItems: 'center', marginTop: 'auto', marginBottom: 20 }}
-      >
-        <Button loading={loading} title="Atualizar" onPress={onRefresh} />
-      </View>
     </>
   );
 }

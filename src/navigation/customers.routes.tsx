@@ -1,5 +1,4 @@
 import React from 'react';
-import { Text } from 'react-native';
 import {
   CardStyleInterpolators,
   createStackNavigator,
@@ -7,33 +6,29 @@ import {
 
 import { Customers, CustomerForm, CustomerChange } from 'screens';
 
-import { useCustomers } from 'hooks';
-
 import { HeaderIcon } from 'components';
 
-import { SPACING } from 'styles';
+import { SPACING, colors } from 'styles';
 
 const { Navigator, Screen } = createStackNavigator();
 
 export function CustomersRoutes(): JSX.Element {
-  const { customers } = useCustomers();
-
   return (
     <Navigator
       mode="modal"
       screenOptions={{
         cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
         cardStyle: {
-          backgroundColor: '#ffff',
+          backgroundColor: colors.white,
         },
         headerTitleAlign: 'left',
-        headerTintColor: '#ffff',
+        headerTintColor: colors.white,
         headerTitleStyle: {
           fontSize: 20,
         },
         headerStyle: {
           height: 100,
-          backgroundColor: '#1B1B1F',
+          backgroundColor: colors.gray[900],
           shadowColor: 'transparent',
           elevation: 0,
         },
@@ -44,11 +39,6 @@ export function CustomersRoutes(): JSX.Element {
         component={Customers}
         options={{
           headerTitle: 'Clientes',
-          headerRight: () => (
-            <Text style={{ color: '#7A7A80', marginRight: 20 }}>
-              {customers.length} cliente(s)
-            </Text>
-          ),
         }}
       />
 

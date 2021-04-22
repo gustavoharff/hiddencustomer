@@ -1,5 +1,6 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { TabView, TabBar } from 'react-native-tab-view';
+import { useNavigation } from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { Dimensions } from 'react-native';
 
@@ -7,6 +8,7 @@ import { Release } from 'types';
 
 import { ListHeader } from 'components';
 
+import { colors } from 'styles';
 import { ReleaseAnnotations } from './ReleaseAnnotations';
 import { ReleaseDates } from './ReleaseDates';
 import { ReleaseGroups } from './ReleaseGroups';
@@ -22,6 +24,20 @@ type Props = StackScreenProps<Params, 'ReleaseDetails'>;
 export function ReleaseDetails({ route }: Props): JSX.Element {
   const { release } = route.params;
   const [tabIndex, setTabIndex] = useState(0);
+
+  const navigation = useNavigation();
+
+  useEffect(() => {
+    const parent = navigation.dangerouslyGetParent();
+
+    parent?.setOptions({
+      tabBarVisible: false,
+    });
+    return () =>
+      parent?.setOptions({
+        tabBarVisible: true,
+      });
+  }, [navigation]);
 
   const tabRoutes = [
     { key: 'groups', title: 'Grupos' },
@@ -55,10 +71,10 @@ export function ReleaseDetails({ route }: Props): JSX.Element {
         initialLayout={{ width: Dimensions.get('window').width }}
         renderTabBar={props => (
           <TabBar
-            indicatorStyle={{ backgroundColor: '#DC1637' }}
-            activeColor="#fff"
-            inactiveColor="#f3f3f3"
-            style={{ backgroundColor: '#AEAEB3' }}
+            indicatorStyle={{ backgroundColor: colors.red[500] }}
+            activeColor={colors.white}
+            inactiveColor={colors.white}
+            style={{ backgroundColor: colors.gray[900] }}
             {...props}
           />
         )}

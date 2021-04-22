@@ -2,6 +2,8 @@ import React from 'react';
 import { ActivityIndicator } from 'react-native';
 import { BaseButtonProperties } from 'react-native-gesture-handler';
 
+import { colors } from 'styles';
+
 import { Container, ButtonText } from './styles';
 
 interface ButtonProps extends BaseButtonProperties {
@@ -21,7 +23,7 @@ export function Button({
   return (
     <Container backgroundColor={backgroundColor} {...rest}>
       {loading ? (
-        <ActivityIndicator color="#fff" />
+        <ActivityIndicator color={colors.white} />
       ) : (
         <ButtonText textColor={textColor}>{title}</ButtonText>
       )}

@@ -5,6 +5,6 @@ interface ImageProps {
 }
 
 export const Image = styled.Image<ImageProps>`
-  width: ${props => props.size}px;
-  height: ${props => props.size}px;
+  width: ${({ size }) => size}px;
+  height: ${({ size }) => size}px;
 `;

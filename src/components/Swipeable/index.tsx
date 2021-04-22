@@ -1,7 +1,9 @@
 import { ReactNode, useCallback, useState } from 'react';
 import RNSwipeable from 'react-native-gesture-handler/Swipeable';
 
-import { ActivateItem, DeleteItem, DisableItem, EditItem } from 'components';
+import { OptionItem } from 'components';
+
+import { colors } from 'styles';
 
 interface SwipeableProps {
   children: ReactNode;
@@ -42,7 +44,10 @@ export function Swipeable({
       renderRightActions={() => (
         <>
           {deleteOption && (
-            <DeleteItem
+            <OptionItem
+              text="Deletar"
+              textColor="light"
+              color={colors.red[500]}
               onPress={async () => {
                 if (deleteOnPress) {
                   await deleteOnPress();
@@ -52,7 +57,10 @@ export function Swipeable({
             />
           )}
           {editOption && (
-            <EditItem
+            <OptionItem
+              color={colors.orange[300]}
+              text="Editar"
+              textColor="light"
               onPress={() => {
                 if (editOnPress) {
                   editOnPress();
@@ -62,7 +70,10 @@ export function Swipeable({
             />
           )}
           {activeOption && (
-            <ActivateItem
+            <OptionItem
+              color={colors.green[300]}
+              text="Ativar"
+              textColor="light"
               onPress={async () => {
                 if (activeOnPress) {
                   await activeOnPress();
@@ -73,7 +84,10 @@ export function Swipeable({
             />
           )}
           {disableOption && (
-            <DisableItem
+            <OptionItem
+              color={colors.red[400]}
+              text="Desativar"
+              textColor="light"
               onPress={async () => {
                 if (disableOnPress) {
                   await disableOnPress();

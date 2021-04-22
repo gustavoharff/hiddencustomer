@@ -10,11 +10,11 @@ import { AppProvider } from './hooks';
 
 export default function App(): JSX.Element {
   return (
-    <AppProvider>
-      <NavigationContainer>
+    <NavigationContainer>
+      <AppProvider>
         <StatusBar barStyle="light-content" backgroundColor="#1B1B1F" />
         <Routes />
-      </NavigationContainer>
-    </AppProvider>
+      </AppProvider>
+    </NavigationContainer>
   );
 }
