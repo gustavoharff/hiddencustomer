@@ -1,12 +1,13 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useNavigation } from '@react-navigation/native';
 
 import { EmptyList, Swipeable } from 'components';
 
 import { SPACING } from 'styles';
 
-import { useReleases } from 'hooks';
+import { useAuth, useReleases } from 'hooks';
 
 import { ReleaseGroup } from 'types';
 
@@ -22,6 +23,10 @@ export function ReleaseGroupsList({
   release_id,
 }: ReleaseGroupsListProps): JSX.Element {
   const [refreshing, setRefreshing] = useState(false);
+
+  const navigation = useNavigation();
+
+  const { user } = useAuth();
 
   const { releases, deleteReleaseGroup, loadApiReleaseGroups } = useReleases();
 
@@ -91,7 +96,18 @@ export function ReleaseGroupsList({
         renderItem={({ item: group, index }) => (
           <Container style={{ paddingTop: index !== 0 ? 0 : 16 }}>
             <Swipeable
-              deleteOption
+              editOption={
+                user.permission === 'admin' || user.permission === 'client'
+              }
+              editOnPress={() =>
+                navigation.navigate('ReleaseGroupChange', {
+                  release_id: group.release_id,
+                  group_id: group.id,
+                })
+              }
+              deleteOption={
+                user.permission === 'admin' || user.permission === 'client'
+              }
               deleteOnPress={async () => {
                 await onDeleteItem(group.id);
               }}

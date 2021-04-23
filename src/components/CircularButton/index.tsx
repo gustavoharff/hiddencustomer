@@ -1,24 +1,28 @@
-import React from 'react';
+import React, { ReactElement } from 'react';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import { SPACING } from 'styles';
+import { colors, SPACING } from 'styles';
 
 import { Container, Button } from './styles';
 
 interface CircularButtonProps {
   name: string;
   onPress: () => void;
+  Image?: ReactElement;
 }
 
 export function CircularButton({
   name,
   onPress,
+  Image,
   ...rest
 }: CircularButtonProps): JSX.Element {
   return (
     <Container>
       <Button onPress={onPress} {...rest}>
-        <Icon name={name} color="#fff" size={SPACING.XL * 2} />
+        {Image || (
+          <Icon name={name} color={colors.white} size={SPACING.XL * 1.5} />
+        )}
       </Button>
     </Container>
   );

@@ -5,7 +5,7 @@ import 'moment/locale/pt-br';
 
 import { EmptyList, Swipeable } from 'components';
 
-import { useCustomers, useReleases } from 'hooks';
+import { useAuth, useCustomers, useReleases } from 'hooks';
 
 import { Container, Description, Content, Title, Item } from './styles';
 
@@ -24,6 +24,9 @@ export function CustomersList({
 
   const { customers, deleteCustomer } = useCustomers();
   const { releases } = useReleases();
+  const { user } = useAuth();
+
+  console.log(user.permission);
 
   const onDeleteItem = useCallback(
     async (customerId: string) => {
@@ -72,13 +75,17 @@ export function CustomersList({
         renderItem={({ item: customer, index }) => (
           <Container style={{ paddingTop: index !== 0 ? 0 : 16 }}>
             <Swipeable
-              editOption
+              editOption={
+                user.permission === 'admin' || user.permission === 'client'
+              }
               editOnPress={() => {
                 navigation.navigate('CustomerChange', {
                   customer_id: customer.id,
                 });
               }}
-              deleteOption
+              deleteOption={
+                user.permission === 'admin' || user.permission === 'client'
+              }
               deleteOnPress={async () => {
                 await onDeleteItem(customer.id);
               }}

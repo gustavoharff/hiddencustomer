@@ -5,7 +5,7 @@ import 'moment/locale/pt-br';
 
 import { EmptyList, Swipeable } from 'components';
 
-import { useReleases } from 'hooks';
+import { useAuth, useReleases } from 'hooks';
 
 import { ReleaseDate } from 'types';
 import { Container, Content, Date } from './styles';
@@ -20,6 +20,8 @@ export function ReleaseDatesList({
   release_id,
 }: ReleaseDatesListProps): JSX.Element {
   const [refreshing, setRefreshing] = useState(false);
+
+  const { user } = useAuth();
 
   const { deleteReleaseDate, releases, loadApiReleaseDates } = useReleases();
 
@@ -85,7 +87,9 @@ export function ReleaseDatesList({
         renderItem={({ item: date, index }) => (
           <Container style={{ paddingTop: index !== 0 ? 0 : 16 }}>
             <Swipeable
-              deleteOption
+              deleteOption={
+                user.permission === 'admin' || user.permission === 'client'
+              }
               deleteOnPress={async () => {
                 await onDeleteItem(date.id);
               }}

@@ -38,6 +38,12 @@ interface UpdateReleaseData {
   annotations?: string;
 }
 
+interface UpdateReleaseGroupData {
+  groupId: string;
+  name: string;
+  type: 'whatsapp' | 'discord' | 'telegram';
+}
+
 interface ReleasesContextData {
   releases: Release[];
   releasesDates: ReleaseDate[];
@@ -51,6 +57,7 @@ interface ReleasesContextData {
   createReleaseGroup: (data: CreateReleaseGroupData) => Promise<void>;
   createReleaseDate: (data: CreateReleaseDateData) => Promise<void>;
   updateRelease: (data: UpdateReleaseData) => Promise<void>;
+  updateReleaseGroup: (data: UpdateReleaseGroupData) => Promise<void>;
   deleteRelease: (releaseId: string) => Promise<void>;
   deleteReleaseGroup: (groupId: string) => Promise<void>;
   deleteReleaseDate: (dateId: string) => Promise<void>;
@@ -337,6 +344,25 @@ export function ReleasesProvider({
     });
   }, []);
 
+  const updateReleaseGroup = useCallback(
+    async ({ groupId, name, type }: UpdateReleaseGroupData) => {
+      const response = await api.put(`/release/groups/${groupId}`, {
+        name,
+        type,
+      });
+
+      setReleases(
+        releases.map(rls => ({
+          ...rls,
+          groups: rls.groups.map(group =>
+            group.id === groupId ? response.data : group,
+          ),
+        })),
+      );
+    },
+    [releases],
+  );
+
   const deleteReleaseGroup = useCallback(
     async (groupId: string) => {
       await api.delete(`/release/groups/${groupId}`);
@@ -396,6 +422,7 @@ export function ReleasesProvider({
         createReleaseGroup,
         createReleaseDate,
         updateRelease,
+        updateReleaseGroup,
         deleteRelease,
         deleteReleaseGroup,
         deleteReleaseDate,

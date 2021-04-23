@@ -7,7 +7,7 @@ import moment from 'moment';
 
 import { EmptyList, Swipeable } from 'components';
 
-import { useReleases } from 'hooks';
+import { useAuth, useReleases } from 'hooks';
 import {
   Container,
   Content,
@@ -33,6 +33,8 @@ export function ReleasesList({
   const [refreshing, setRefreshing] = useState(false);
 
   const { releases, deleteRelease } = useReleases();
+
+  const { user } = useAuth();
 
   const navigation = useNavigation();
 
@@ -82,13 +84,17 @@ export function ReleasesList({
           <Container style={{ paddingTop: index !== 0 ? 0 : 16 }}>
             <Top>
               <Swipeable
-                editOption
+                editOption={
+                  user.permission === 'admin' || user.permission === 'client'
+                }
                 editOnPress={() =>
                   navigation.navigate('ReleaseChange', {
                     release_id: release.id,
                   })
                 }
-                deleteOption
+                deleteOption={
+                  user.permission === 'admin' || user.permission === 'client'
+                }
                 deleteOnPress={async () => {
                   await onDeleteItem(release.id);
                 }}

@@ -18,6 +18,8 @@ export const Container = styled.View`
   bottom: 4%;
 
   z-index: 2;
+
+  box-shadow: 2px 2px 5px ${colors.gray[600]};
 `;
 
 export const Button = styled(TouchableOpacity)`

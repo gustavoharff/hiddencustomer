@@ -3,9 +3,9 @@ import { View } from 'react-native';
 
 import { SPACING } from 'styles';
 
-import { DateTimeInput, Button } from 'components';
+import { DateTimeInput, Button, CircularButton } from 'components';
 
-import { useReleases } from 'hooks';
+import { useAuth, useReleases } from 'hooks';
 
 import { Release } from 'types';
 
@@ -20,6 +20,8 @@ interface ReleaseDatedProps {
 export function ReleaseDates({ release }: ReleaseDatedProps): JSX.Element {
   const [date, setDate] = useState(new Date());
   const [isAddingDate, setIsAddingDate] = useState(false);
+
+  const { user } = useAuth();
 
   const [loadingButton, setLoadingButton] = useState(false);
 
@@ -64,15 +66,13 @@ export function ReleaseDates({ release }: ReleaseDatedProps): JSX.Element {
           </View>
         </>
       )}
-      {!isAddingDate && (
-        <View style={{ width: '100%', alignItems: 'center' }}>
-          <Button
-            title="Adicionar data"
+      {(user.permission === 'admin' || user.permission === 'client') &&
+        !isAddingDate && (
+          <CircularButton
+            name="calendar-plus"
             onPress={() => setIsAddingDate(true)}
-            style={{ marginBottom: SPACING.XL }}
           />
-        </View>
-      )}
+        )}
     </Container>
   );
 }

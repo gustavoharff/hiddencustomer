@@ -13,6 +13,7 @@ import {
   ReleaseGroupForm,
   ReleaseAnnotationsForm,
   ReleaseChange,
+  ReleaseGroupChange,
 } from 'screens';
 
 import { SPACING, colors } from 'styles';
@@ -86,6 +87,22 @@ export function ReleasesStack(): JSX.Element {
         options={({ navigation }) => ({
           cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
           headerTitle: 'Cadastrar grupo',
+          headerLeft: () => (
+            <HeaderIcon
+              name="close"
+              onPress={() => navigation.navigate('ReleaseDetails')}
+              style={{ marginLeft: SPACING.S }}
+            />
+          ),
+        })}
+      />
+
+      <Screen
+        name="ReleaseGroupChange"
+        component={ReleaseGroupChange}
+        options={({ navigation }) => ({
+          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+          headerTitle: 'Editar grupo',
           headerLeft: () => (
             <HeaderIcon
               name="close"

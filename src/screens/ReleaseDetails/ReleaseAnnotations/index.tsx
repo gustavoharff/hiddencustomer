@@ -4,7 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 
 import { CircularButton } from 'components';
 
-import { useReleases } from 'hooks';
+import { useAuth, useReleases } from 'hooks';
 
 import { Container, Annotation, Content } from './styles';
 
@@ -17,6 +17,8 @@ export function ReleaseAnnotations({
 }: ReleaseAnnotationsProps): JSX.Element {
   const navigation = useNavigation();
   const { releases } = useReleases();
+
+  const { user } = useAuth();
 
   const release = useMemo(() => {
     return releases.find(rls => rls.id === release_id);
@@ -47,15 +49,18 @@ export function ReleaseAnnotations({
           </View>
         )}
       </ScrollView>
-      <CircularButton
-        name="file-edit-outline"
-        onPress={() =>
-          navigation.navigate('ReleaseAnnotationsForm', {
-            release_id: release?.id,
-            annotations: release?.annotations,
-          })
-        }
-      />
+
+      {(user.permission === 'admin' || user.permission === 'client') && (
+        <CircularButton
+          name="file-edit-outline"
+          onPress={() =>
+            navigation.navigate('ReleaseAnnotationsForm', {
+              release_id: release?.id,
+              annotations: release?.annotations,
+            })
+          }
+        />
+      )}
     </Container>
   );
 }

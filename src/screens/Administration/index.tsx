@@ -66,7 +66,7 @@ export function Administration(): JSX.Element {
       </Container>
       {user.permission === 'admin' && (
         <CircularButton
-          name="plus"
+          name="account-plus-outline"
           onPress={() => navigation.navigate('UserForm')}
         />
       )}

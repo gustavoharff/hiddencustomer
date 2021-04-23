@@ -66,7 +66,7 @@ export function Customers(): JSX.Element {
       </Container>
       {user.permission !== 'user' && (
         <CircularButton
-          name="plus"
+          name="account-plus-outline"
           onPress={() => navigation.navigate('CustomerForm')}
         />
       )}

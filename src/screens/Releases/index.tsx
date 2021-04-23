@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import RNBootSplash from 'react-native-bootsplash';
-import { ActivityIndicator, Platform, Text } from 'react-native';
+import { ActivityIndicator, Image, Platform, Text } from 'react-native';
 
 import { CircularButton } from 'components';
 
@@ -10,6 +10,8 @@ import { useAuth, useReleases } from 'hooks';
 import { colors } from 'styles';
 
 import { ReleasesList } from './ReleasesList';
+
+import rocketPlusImg from '../../assets/icons/rocket-plus-outline.png';
 
 import { Container, Center } from './styles';
 
@@ -69,6 +71,7 @@ export function Releases(): JSX.Element {
       {user.permission !== 'user' && (
         <CircularButton
           name="plus"
+          Image={<Image source={rocketPlusImg} />}
           onPress={() => navigation.navigate('ReleaseForm')}
         />
       )}

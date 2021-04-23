@@ -29,6 +29,18 @@ export function ReleaseForm(): JSX.Element {
   const [loadingButton, setLoadingButton] = useState(false);
   const navigation = useNavigation();
 
+  useEffect(() => {
+    const parent = navigation.dangerouslyGetParent();
+
+    parent?.setOptions({
+      tabBarVisible: false,
+    });
+    return () =>
+      parent?.setOptions({
+        tabBarVisible: true,
+      });
+  }, [navigation]);
+
   const { createRelease } = useReleases();
   const { customers, loadApiCustomers, loadLocalCustomers } = useCustomers();
 

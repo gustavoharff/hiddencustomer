@@ -12,6 +12,7 @@ export * from './ReleaseDetails';
 export * from './ReleaseChange';
 export * from './ReleaseForm';
 export * from './ResetPassword';
+export * from './ReleaseGroupChange';
 export * from './ReleaseGroupForm';
 export * from './ReleaseAnnotationsForm';
 export * from './Releases';

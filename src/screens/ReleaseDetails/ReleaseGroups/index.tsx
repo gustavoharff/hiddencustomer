@@ -1,13 +1,11 @@
 import React from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { View } from 'react-native';
 
-import { Button } from 'components';
-
-import { SPACING } from 'styles';
+import { CircularButton } from 'components';
 
 import { Release } from 'types';
 
+import { useAuth } from 'hooks';
 import { ReleaseGroupsList } from './ReleaseGroupsList';
 
 import { Container } from './styles';
@@ -19,6 +17,8 @@ interface ReleaseGroupsProps {
 export function ReleaseGroups({ release }: ReleaseGroupsProps): JSX.Element {
   const navigation = useNavigation();
 
+  const { user } = useAuth();
+
   return (
     <Container>
       <ReleaseGroupsList
@@ -26,15 +26,16 @@ export function ReleaseGroups({ release }: ReleaseGroupsProps): JSX.Element {
         emptyListText="Não há grupos cadastrados!"
       />
 
-      <View style={{ width: '100%', alignItems: 'center' }}>
-        <Button
-          title="Adicionar grupo"
+      {(user.permission === 'admin' || user.permission === 'client') && (
+        <CircularButton
+          name="account-multiple-plus-outline"
           onPress={() =>
-            navigation.navigate('ReleaseGroupForm', { release_id: release.id })
+            navigation.navigate('ReleaseGroupForm', {
+              release_id: release.id,
+            })
           }
-          style={{ marginBottom: SPACING.XL }}
         />
-      </View>
+      )}
     </Container>
   );
 }
