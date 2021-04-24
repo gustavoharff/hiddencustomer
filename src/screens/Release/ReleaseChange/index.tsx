@@ -15,9 +15,8 @@ import {
   getStatusBarHeight,
 } from 'react-native-iphone-x-helper';
 import { StackScreenProps } from '@react-navigation/stack';
-import Modal from 'react-native-modal';
 
-import { Button, Input } from 'components';
+import { Button, Input, PickerIOS } from 'components';
 
 import { useCustomers, useReleases } from 'hooks';
 
@@ -75,7 +74,13 @@ export function ReleaseChange({ route }: ReleaseChangeProps): JSX.Element {
   }, []);
 
   const onPaymentChange = useCallback(value => {
-    setSelectedPayment(value);
+    if (value === '1') {
+      setSelectedPayment(true);
+    }
+
+    if (value === '0') {
+      setSelectedPayment(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -152,57 +157,26 @@ export function ReleaseChange({ route }: ReleaseChangeProps): JSX.Element {
                   style={{ color: '#333' }}
                   onPress={() => setCustomersModalOpen(true)}
                 >
-                  {
-                    customers.find(customer => customer.id === selectedCustomer)
-                      ?.name
-                  }
+                  {customers.find(customer => customer.id === selectedCustomer)
+                    ?.name || 'Selecionar'}
                 </Label>
 
-                <Modal
-                  isVisible={customersModalOpen}
-                  backdropColor="#333"
-                  onBackdropPress={() => setCustomersModalOpen(false)}
-                >
-                  <View style={{ backgroundColor: '#fff' }}>
-                    <Picker
-                      mode="dialog"
-                      selectedValue={selectedCustomer}
-                      onValueChange={onCustomerChange}
-                      style={{
-                        color: '#3D3D4D',
-                        marginHorizontal: SPACING.L,
-                      }}
-                      dropdownIconColor="#3D3D4D"
-                    >
-                      <Picker.Item
-                        color="#3D3D4D"
-                        label="Selecionar..."
-                        value={undefined}
-                      />
-                      {customers.map(customer => (
-                        <Picker.Item
-                          color="#3D3D4D"
-                          key={customer.id}
-                          label={customer.name}
-                          value={customer.id}
-                        />
-                      ))}
-                    </Picker>
-                    <View style={{ width: '100%', alignItems: 'center' }}>
-                      <Button
-                        title="Selecionar"
-                        style={{ marginBottom: 20 }}
-                        onPress={() => {
-                          if (!selectedCustomer) {
-                            Alert.alert('Selecione um cliente!');
-                            return;
-                          }
-                          setCustomersModalOpen(false);
-                        }}
-                      />
-                    </View>
-                  </View>
-                </Modal>
+                <PickerIOS
+                  modalIsVisible={customersModalOpen}
+                  modalOnBackdropPress={() => setCustomersModalOpen(false)}
+                  items={customers}
+                  nameProp="name"
+                  valueProp="id"
+                  onValueChange={onCustomerChange}
+                  selectedValue={selectedCustomer}
+                  buttonOnPress={() => {
+                    if (!selectedCustomer) {
+                      Alert.alert('Selecione um cliente!');
+                      return;
+                    }
+                    setCustomersModalOpen(false);
+                  }}
+                />
               </>
             ) : (
               <Picker
@@ -241,50 +215,25 @@ export function ReleaseChange({ route }: ReleaseChangeProps): JSX.Element {
                   {selectedPayment ? 'Realizado' : 'Não realizado'}
                 </Label>
 
-                <Modal
-                  isVisible={paymentModalOpen}
-                  backdropColor="#333"
-                  onBackdropPress={() => setPaymentModalOpen(false)}
-                >
-                  <View style={{ backgroundColor: '#fff' }}>
-                    <Picker
-                      mode="dialog"
-                      selectedValue={selectedPayment}
-                      onValueChange={onPaymentChange}
-                      style={{
-                        color: '#3D3D4D',
-                        marginHorizontal: SPACING.L,
-                      }}
-                      dropdownIconColor="#3D3D4D"
-                    >
-                      <Picker.Item
-                        color="#3D3D4D"
-                        key="true"
-                        label="Realizado"
-                        value
-                      />
-                      <Picker.Item
-                        color="#3D3D4D"
-                        key="false"
-                        label="Não Realizado"
-                        value={false}
-                      />
-                    </Picker>
-                    <View style={{ width: '100%', alignItems: 'center' }}>
-                      <Button
-                        title="Selecionar"
-                        onPress={() => setPaymentModalOpen(false)}
-                        style={{ marginBottom: 20 }}
-                      />
-                    </View>
-                  </View>
-                </Modal>
+                <PickerIOS
+                  modalIsVisible={paymentModalOpen}
+                  modalOnBackdropPress={() => setPaymentModalOpen(false)}
+                  items={[
+                    { paid: '1', name: 'Realizado' },
+                    { paid: '0', name: 'Não realizado' },
+                  ]}
+                  nameProp="name"
+                  valueProp="paid"
+                  onValueChange={onPaymentChange}
+                  selectedValue={selectedPayment ? '1' : '0'}
+                  buttonOnPress={() => setPaymentModalOpen(false)}
+                />
               </>
             ) : (
               <>
                 <Picker
                   mode="dialog"
-                  selectedValue={selectedPayment}
+                  selectedValue={selectedPayment ? '1' : '0'}
                   onValueChange={onPaymentChange}
                   style={{
                     color: '#3D3D4D',
@@ -296,13 +245,13 @@ export function ReleaseChange({ route }: ReleaseChangeProps): JSX.Element {
                     color="#3D3D4D"
                     key="true"
                     label="Realizado"
-                    value
+                    value="1"
                   />
                   <Picker.Item
                     color="#3D3D4D"
                     key="false"
                     label="Não Realizado"
-                    value={false}
+                    value="0"
                   />
                 </Picker>
               </>

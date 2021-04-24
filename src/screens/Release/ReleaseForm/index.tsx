@@ -15,7 +15,7 @@ import {
   getStatusBarHeight,
 } from 'react-native-iphone-x-helper';
 
-import { Button, Input } from 'components';
+import { Button, Input, PickerIOS } from 'components';
 
 import { useCustomers, useReleases } from 'hooks';
 
@@ -25,7 +25,8 @@ import { Container, Unform, Label } from './styles';
 
 export function ReleaseForm(): JSX.Element {
   const formRef = useRef<FormHandles>(null);
-  const [selectedValue, setSelectedValue] = useState('');
+  const [selectedCustomerId, setSelectedCustomerId] = useState('');
+  const [customerModalOpen, setCustomerModalOpen] = useState(false);
   const [loadingButton, setLoadingButton] = useState(false);
   const navigation = useNavigation();
 
@@ -44,8 +45,8 @@ export function ReleaseForm(): JSX.Element {
   const { createRelease } = useReleases();
   const { customers, loadApiCustomers, loadLocalCustomers } = useCustomers();
 
-  const onPickerChange = useCallback(value => {
-    setSelectedValue(value);
+  const onCustomerChange = useCallback(value => {
+    setSelectedCustomerId(value);
   }, []);
 
   useEffect(() => {
@@ -63,7 +64,7 @@ export function ReleaseForm(): JSX.Element {
 
         await schema.validate(data, { abortEarly: false });
 
-        if (!selectedValue) {
+        if (!selectedCustomerId) {
           setLoadingButton(false);
           Alert.alert('Atenção', 'Selecione algum cliente!');
           return;
@@ -71,7 +72,7 @@ export function ReleaseForm(): JSX.Element {
 
         await createRelease({
           name: data.name,
-          customer_id: selectedValue,
+          customer_id: selectedCustomerId,
         });
 
         navigation.navigate('Releases');
@@ -84,7 +85,7 @@ export function ReleaseForm(): JSX.Element {
         setLoadingButton(false);
       }
     },
-    [navigation, createRelease, selectedValue],
+    [navigation, createRelease, selectedCustomerId],
   );
 
   return (
@@ -109,30 +110,60 @@ export function ReleaseForm(): JSX.Element {
             </Unform>
 
             <Label>Relacione o cliente:</Label>
-            <Picker
-              mode="dialog"
-              selectedValue={selectedValue}
-              onValueChange={onPickerChange}
-              style={{
-                color: '#3D3D4D',
-                marginHorizontal: SPACING.L,
-              }}
-              dropdownIconColor="#3D3D4D"
-            >
-              <Picker.Item
-                color="#3D3D4D"
-                label="Selecionar..."
-                value={undefined}
-              />
-              {customers.map(customer => (
+            {Platform.OS === 'ios' ? (
+              <>
+                <Label
+                  style={{ color: '#333' }}
+                  onPress={() => setCustomerModalOpen(true)}
+                >
+                  {customers.find(
+                    customer => customer.id === selectedCustomerId,
+                  )?.name || 'Selecionar'}
+                </Label>
+                <PickerIOS
+                  modalIsVisible={customerModalOpen}
+                  modalOnBackdropPress={() => setCustomerModalOpen(false)}
+                  items={customers}
+                  nameProp="name"
+                  valueProp="id"
+                  selectedValue={selectedCustomerId}
+                  onValueChange={onCustomerChange}
+                  buttonOnPress={() => {
+                    if (!selectedCustomerId) {
+                      Alert.alert('Selecione um cliente!');
+                      return;
+                    }
+
+                    setCustomerModalOpen(false);
+                  }}
+                />
+              </>
+            ) : (
+              <Picker
+                mode="dialog"
+                selectedValue={selectedCustomerId}
+                onValueChange={onCustomerChange}
+                style={{
+                  color: '#3D3D4D',
+                  marginHorizontal: SPACING.L,
+                }}
+                dropdownIconColor="#3D3D4D"
+              >
                 <Picker.Item
                   color="#3D3D4D"
-                  key={customer.id}
-                  label={customer.name}
-                  value={customer.id}
+                  label="Selecionar..."
+                  value={undefined}
                 />
-              ))}
-            </Picker>
+                {customers.map(customer => (
+                  <Picker.Item
+                    color="#3D3D4D"
+                    key={customer.id}
+                    label={customer.name}
+                    value={customer.id}
+                  />
+                ))}
+              </Picker>
+            )}
           </View>
         </Container>
       </ScrollView>

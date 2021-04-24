@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FormHandles } from '@unform/core';
 import { Picker } from '@react-native-picker/picker';
+import { useNavigation } from '@react-navigation/native';
 import * as Yup from 'yup';
 import {
   getBottomSpace,
@@ -13,10 +14,8 @@ import {
   Platform,
   View,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import Modal from 'react-native-modal';
 
-import { Input, Button } from 'components';
+import { Input, Button, PickerIOS } from 'components';
 
 import { SPACING } from 'styles';
 
@@ -146,52 +145,23 @@ export function UserForm(): JSX.Element {
                   {companies.find(company => company.id === selectedCompanyId)
                     ?.name || 'Selecionar'}
                 </Label>
-                <Modal
-                  isVisible={companiesModalOpen}
-                  backdropColor="#333"
-                  onBackdropPress={() => setCompaniesModalOpen(false)}
-                >
-                  <View style={{ backgroundColor: '#fff' }}>
-                    <Picker
-                      mode="dialog"
-                      selectedValue={selectedCompanyId}
-                      onValueChange={onCompanyChange}
-                      style={{
-                        color: '#3D3D4D',
-                        marginHorizontal: SPACING.L,
-                      }}
-                      dropdownIconColor="#3D3D4D"
-                    >
-                      <Picker.Item
-                        color="#3D3D4D"
-                        label="Selecionar..."
-                        value={undefined}
-                      />
-                      {companies.map(company => (
-                        <Picker.Item
-                          color="#3D3D4D"
-                          key={company.id}
-                          label={company.name}
-                          value={company.id}
-                        />
-                      ))}
-                    </Picker>
-                    <View style={{ width: '100%', alignItems: 'center' }}>
-                      <Button
-                        title="Selecionar"
-                        style={{ marginBottom: 20 }}
-                        onPress={() => {
-                          if (!selectedCompanyId) {
-                            Alert.alert('Selecione uma empresa!');
-                            return;
-                          }
+                <PickerIOS
+                  modalIsVisible={companiesModalOpen}
+                  modalOnBackdropPress={() => setCompaniesModalOpen(false)}
+                  items={companies}
+                  nameProp="name"
+                  valueProp="id"
+                  selectedValue={selectedCompanyId}
+                  onValueChange={onCompanyChange}
+                  buttonOnPress={() => {
+                    if (!selectedCompanyId) {
+                      Alert.alert('Selecione uma empresa!');
+                      return;
+                    }
 
-                          setCompaniesModalOpen(false);
-                        }}
-                      />
-                    </View>
-                  </View>
-                </Modal>
+                    setCompaniesModalOpen(false);
+                  }}
+                />
               </>
             ) : (
               <Picker

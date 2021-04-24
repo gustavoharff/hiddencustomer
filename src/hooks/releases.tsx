@@ -41,7 +41,7 @@ interface UpdateReleaseData {
 interface UpdateReleaseGroupData {
   groupId: string;
   name: string;
-  type: 'whatsapp' | 'discord' | 'telegram';
+  type: string;
 }
 
 interface ReleasesContextData {
