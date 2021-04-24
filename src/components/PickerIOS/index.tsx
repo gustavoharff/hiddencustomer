@@ -8,7 +8,7 @@ import { ButtonContainer, Container } from './styles';
 interface PickerIOSProps {
   modalIsVisible: boolean;
   modalOnBackdropPress: () => void;
-  selectedValue: string;
+  selectedValue: string | undefined;
   onValueChange: (value: any) => void;
   items: any[];
   nameProp: string;

@@ -11,7 +11,8 @@ import { useAuth, useReleases } from 'hooks';
 
 import { ReleaseGroup } from 'types';
 
-import { Container, Content, Description } from './styles';
+import moment from 'moment';
+import { Container, Content, Description, Title } from './styles';
 
 interface ReleaseGroupsListProps {
   emptyListText: string;
@@ -124,7 +125,23 @@ export function ReleaseGroupsList({
               }}
             >
               <Content>
-                <Description>{group.name}</Description>
+                <View>
+                  <Title>{group.name}</Title>
+                  {releases
+                    .find(release => release.id === group.release_id)
+                    ?.dates.find(date => date.id === group.release_date_id)
+                    ?.date && (
+                    <Description>
+                      {moment(
+                        releases
+                          .find(release => release.id === group.release_id)
+                          ?.dates.find(
+                            date => date.id === group.release_date_id,
+                          )?.date,
+                      ).format('LL LT')}
+                    </Description>
+                  )}
+                </View>
 
                 {group.type === 'discord' && (
                   <Icon name="discord" color="#7289d9" size={SPACING.L * 1.5} />

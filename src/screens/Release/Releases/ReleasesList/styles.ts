@@ -1,11 +1,22 @@
-import styled from 'styled-components/native';
+import styled, { css } from 'styled-components/native';
+
+interface ContainerProps {
+  past: boolean;
+}
 
 interface BottomContentProps {
   between: boolean;
+  past: boolean;
 }
 
-export const Container = styled.View`
+export const Container = styled.View<ContainerProps>`
   padding: 16px;
+
+  ${props =>
+    props.past &&
+    css`
+      opacity: 0.7;
+    `}
 `;
 
 export const Top = styled.View``;
@@ -40,7 +51,20 @@ export const Bottom = styled.View`
 
 export const BottomContent = styled.View<BottomContentProps>`
   padding: 10px 24px;
-  background: ${({ between }) => (between ? '#DAF3E5' : '#f4f5f6')};
+  background: #f4f5f6;
+
+  ${props =>
+    props.between &&
+    css`
+      background: #daf3e5;
+    `}
+
+  ${props =>
+    props.past &&
+    css`
+      opacity: 0.7;
+    `}
+
   border-bottom-width: 1px;
   border-bottom-color: #ebebf0;
   flex-direction: row;

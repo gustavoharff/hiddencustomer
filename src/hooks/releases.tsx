@@ -23,6 +23,7 @@ interface CreateReleaseGroupData {
   name: string;
   type: string;
   release_id: string;
+  release_date_id?: string;
 }
 
 interface CreateReleaseDateData {
@@ -42,6 +43,7 @@ interface UpdateReleaseGroupData {
   groupId: string;
   name: string;
   type: string;
+  release_date_id?: string;
 }
 
 interface ReleasesContextData {
@@ -233,12 +235,18 @@ export function ReleasesProvider({
   );
 
   const createReleaseGroup = useCallback(
-    async ({ name, type, release_id }: CreateReleaseGroupData) => {
+    async ({
+      name,
+      type,
+      release_id,
+      release_date_id,
+    }: CreateReleaseGroupData) => {
       try {
         const response = await api.post('/release/groups', {
           name,
           type,
           release_id,
+          release_date_id,
         });
 
         setReleases(
@@ -345,10 +353,16 @@ export function ReleasesProvider({
   }, []);
 
   const updateReleaseGroup = useCallback(
-    async ({ groupId, name, type }: UpdateReleaseGroupData) => {
+    async ({
+      groupId,
+      name,
+      type,
+      release_date_id,
+    }: UpdateReleaseGroupData) => {
       const response = await api.put(`/release/groups/${groupId}`, {
         name,
         type,
+        release_date_id,
       });
 
       setReleases(

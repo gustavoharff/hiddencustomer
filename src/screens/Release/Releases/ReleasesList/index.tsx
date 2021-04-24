@@ -81,7 +81,14 @@ export function ReleasesList({
         keyExtractor={(item, index) => `${item.id} - ${index}`}
         data={releases}
         renderItem={({ item: release, index }) => (
-          <Container style={{ paddingTop: index !== 0 ? 0 : 16 }}>
+          <Container
+            style={{ paddingTop: index !== 0 ? 0 : 16 }}
+            past={
+              release.dates.length >= 1 && release.dates[0]?.date
+                ? moment(release.dates[0].date).isBefore(new Date())
+                : false
+            }
+          >
             <Top>
               <Swipeable
                 editOption={
@@ -144,6 +151,7 @@ export function ReleasesList({
             {release.dates.length >= 1 && (
               <Bottom>
                 <BottomContent
+                  past={moment(release.dates[0].date).isBefore(new Date())}
                   between={moment(new Date()).isBetween(
                     moment(release.dates[release.dates.length - 1].date),
                     moment(release.dates[0].date),

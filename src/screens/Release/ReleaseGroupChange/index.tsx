@@ -15,12 +15,15 @@ import {
   ScrollView,
   View,
 } from 'react-native';
+import moment from 'moment';
 
 import { Input, Button, PickerIOS } from 'components';
 
 import { SPACING } from 'styles';
 
 import { useReleases } from 'hooks';
+
+import { ReleaseDate } from 'types';
 
 import { Container, Unform, Label } from './styles';
 
@@ -39,6 +42,7 @@ export function ReleaseGroupChange({
   const { releases, updateReleaseGroup } = useReleases();
 
   const [groupsModalOpen, setGroupsModalOpen] = useState(false);
+  const [datesModalOpen, setDatesModalOpen] = useState(false);
 
   const { group_id, release_id } = route.params;
 
@@ -53,6 +57,10 @@ export function ReleaseGroupChange({
     initialReleaseGroup?.type || '',
   );
 
+  const [selectedDateId, setSelectedDateId] = useState(
+    initialReleaseGroup?.release_date_id || '',
+  );
+
   const navigation = useNavigation();
 
   const [loadingButton, setLoadingButton] = useState(false);
@@ -60,6 +68,25 @@ export function ReleaseGroupChange({
   const onPickerChange = useCallback(value => {
     setSelectedGroup(value);
   }, []);
+
+  const onDateChange = useCallback(value => {
+    setSelectedDateId(value);
+  }, []);
+
+  const dates = useMemo(() => {
+    const releaseDates = [] as ReleaseDate[];
+    const releaseFiltered = releases.filter(
+      release => release_id === release.id,
+    );
+
+    releaseFiltered.map(release => {
+      return release.dates.forEach(date => {
+        releaseDates.push(date);
+      });
+    });
+
+    return releaseDates;
+  }, [release_id, releases]);
 
   const handleSubmit = useCallback(
     async data => {
@@ -82,6 +109,7 @@ export function ReleaseGroupChange({
           groupId: group_id,
           name: data.name,
           type: selectedGroup,
+          release_date_id: selectedDateId,
         });
 
         navigation.navigate('ReleaseDetails');
@@ -89,12 +117,13 @@ export function ReleaseGroupChange({
         if (err instanceof Yup.ValidationError) {
           Alert.alert('Atenção!', 'Complete o campo de nome');
           setLoadingButton(false);
+          return;
         }
 
         setLoadingButton(false);
       }
     },
-    [selectedGroup, updateReleaseGroup, group_id, navigation],
+    [selectedGroup, updateReleaseGroup, group_id, selectedDateId, navigation],
   );
 
   return (
@@ -191,6 +220,65 @@ export function ReleaseGroupChange({
                   label="Telegram"
                   value="telegram"
                 />
+              </Picker>
+            )}
+
+            <Label>Informe a data do lançamento: (Opcional)</Label>
+            {Platform.OS === 'ios' ? (
+              <>
+                <Label
+                  style={{ color: '#333' }}
+                  onPress={() => setDatesModalOpen(true)}
+                >
+                  {(dates.find(date => date.id === selectedDateId)?.date &&
+                    moment(
+                      dates.find(date => date.id === selectedDateId)?.date,
+                    ).format('LLL')) ||
+                    'Selecionar'}
+                </Label>
+                <PickerIOS
+                  modalIsVisible={datesModalOpen}
+                  modalOnBackdropPress={() => setDatesModalOpen(false)}
+                  items={dates.map(date => {
+                    return {
+                      ...date,
+                      date: moment(date.date).format('L LT'),
+                    };
+                  })}
+                  nameProp="date"
+                  valueProp="id"
+                  onValueChange={onDateChange}
+                  selectedValue={selectedDateId}
+                  buttonOnPress={() => {
+                    setDatesModalOpen(false);
+                  }}
+                />
+              </>
+            ) : (
+              <Picker
+                mode="dialog"
+                selectedValue={selectedDateId}
+                onValueChange={onDateChange}
+                style={{
+                  color: '#3D3D4D',
+                  marginHorizontal: SPACING.L,
+                }}
+                dropdownIconColor="#3D3D4D"
+              >
+                <Picker.Item
+                  color="#3D3D4D"
+                  label="Selecionar..."
+                  value={undefined}
+                />
+
+                {dates.map(date => (
+                  <Picker.Item
+                    key={date.id}
+                    color="#3D3D4D"
+                    label={moment(date.date).format('L LT')}
+                    value={date.id}
+                  />
+                ))}
               </Picker>
             )}
           </View>
