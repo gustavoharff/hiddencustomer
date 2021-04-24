@@ -1,6 +1,7 @@
 import { Form } from '@unform/mobile';
 import styled from 'styled-components/native';
-import { COLORS } from '../../styles/tokens';
+
+import { COLORS } from 'styles';
 
 export const Container = styled.View`
   flex: 1;

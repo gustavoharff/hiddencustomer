@@ -9,9 +9,9 @@ import { useAuth, useReleases } from 'hooks';
 
 import { colors } from 'styles';
 
-import { ReleasesList } from './ReleasesList';
+import rocketPlusImg from 'assets/icons/rocket-plus-outline.png';
 
-import rocketPlusImg from '../../assets/icons/rocket-plus-outline.png';
+import { ReleasesList } from './ReleasesList';
 
 import { Container, Center } from './styles';
 
