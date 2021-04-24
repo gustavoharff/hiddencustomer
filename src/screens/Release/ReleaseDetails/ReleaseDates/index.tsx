@@ -1,11 +1,9 @@
-import React, { useCallback, useState } from 'react';
-import { View } from 'react-native';
+import React from 'react';
+import { useNavigation } from '@react-navigation/native';
 
-import { SPACING } from 'styles';
+import { CircularButton } from 'components';
 
-import { DateTimeInput, Button, CircularButton } from 'components';
-
-import { useAuth, useReleases } from 'hooks';
+import { useAuth } from 'hooks';
 
 import { Release } from 'types';
 
@@ -18,24 +16,9 @@ interface ReleaseDatedProps {
 }
 
 export function ReleaseDates({ release }: ReleaseDatedProps): JSX.Element {
-  const [date, setDate] = useState(new Date());
-  const [isAddingDate, setIsAddingDate] = useState(false);
+  const navigation = useNavigation();
 
   const { user } = useAuth();
-
-  const [loadingButton, setLoadingButton] = useState(false);
-
-  const { createReleaseDate } = useReleases();
-
-  const handleAddDate = useCallback(async () => {
-    await createReleaseDate({
-      date,
-      release_id: release.id,
-    });
-
-    setLoadingButton(false);
-    setIsAddingDate(false);
-  }, [createReleaseDate, date, release]);
 
   return (
     <Container>
@@ -44,35 +27,16 @@ export function ReleaseDates({ release }: ReleaseDatedProps): JSX.Element {
         release_id={release.id}
       />
 
-      {isAddingDate && (
-        <>
-          <DateTimeInput date={date} setDate={setDate} />
-          <View style={{ width: '100%', alignItems: 'center' }}>
-            <Button
-              title="Salvar"
-              loading={loadingButton}
-              onPress={() => {
-                handleAddDate();
-                setLoadingButton(true);
-              }}
-            />
-            <Button
-              title="Cancelar"
-              onPress={() => setIsAddingDate(false)}
-              backgroundColor="#1B1B1F"
-              textColor="#FFF"
-              style={{ marginBottom: SPACING.XL }}
-            />
-          </View>
-        </>
+      {(user.permission === 'admin' || user.permission === 'client') && (
+        <CircularButton
+          name="calendar-plus"
+          onPress={() =>
+            navigation.navigate('ReleaseDateForm', {
+              release_id: release.id,
+            })
+          }
+        />
       )}
-      {(user.permission === 'admin' || user.permission === 'client') &&
-        !isAddingDate && (
-          <CircularButton
-            name="calendar-plus"
-            onPress={() => setIsAddingDate(true)}
-          />
-        )}
     </Container>
   );
 }

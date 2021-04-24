@@ -3,7 +3,7 @@ import styled from 'styled-components/native';
 import { BODY, COLORS, SPACING } from 'styles';
 
 export const Container = styled.View`
-  justify-content: center;
+  width: 100%;
   padding: 10px;
 `;
 

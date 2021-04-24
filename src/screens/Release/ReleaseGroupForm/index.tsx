@@ -96,88 +96,86 @@ export function ReleaseGroupForm({
     >
       <ScrollView keyboardShouldPersistTaps="handled">
         <Container>
-          <View style={{ width: '100%' }}>
-            <Unform ref={formRef} onSubmit={handleSubmit}>
-              <Input
-                name="name"
-                label="Informe o nome do grupo:"
-                placeholder="Nome"
-                returnKeyType="send"
-                onSubmitEditing={() => formRef.current?.submitForm()}
-              />
-            </Unform>
+          <Unform ref={formRef} onSubmit={handleSubmit}>
+            <Input
+              name="name"
+              label="Informe o nome do grupo:"
+              placeholder="Nome"
+              returnKeyType="send"
+              onSubmitEditing={() => formRef.current?.submitForm()}
+            />
+          </Unform>
 
-            <Label>Informe o tipo do grupo:</Label>
-            {Platform.OS === 'ios' ? (
-              <>
-                <Label
-                  style={{ color: '#333' }}
-                  onPress={() => setGroupsModalOpen(true)}
-                >
-                  {selectedGroup === 'whatsapp' && 'WhatsApp'}
-                  {selectedGroup === 'discord' && 'Discord'}
-                  {selectedGroup === 'telegram' && 'Telegram'}
-                  {!selectedGroup && 'Selecionar'}
-                </Label>
-                <PickerIOS
-                  modalIsVisible={groupsModalOpen}
-                  modalOnBackdropPress={() => setGroupsModalOpen(false)}
-                  items={[
-                    { value: 'whatsapp', label: 'WhatsApp' },
-                    { value: 'telegram', label: 'Telegram' },
-                    { value: 'discord', label: 'Discord' },
-                  ]}
-                  nameProp="label"
-                  valueProp="value"
-                  onValueChange={onPickerChange}
-                  selectedValue={selectedGroup}
-                  buttonOnPress={() => {
-                    if (!selectedGroup) {
-                      Alert.alert('Selecione um grupo!');
-                      return;
-                    }
-                    setGroupsModalOpen(false);
-                  }}
-                />
-              </>
-            ) : (
-              <Picker
-                mode="dialog"
-                selectedValue={selectedGroup}
-                onValueChange={onPickerChange}
-                style={{
-                  color: '#3D3D4D',
-                  marginHorizontal: SPACING.L,
-                }}
-                dropdownIconColor="#3D3D4D"
+          <Label>Informe o tipo do grupo:</Label>
+          {Platform.OS === 'ios' ? (
+            <>
+              <Label
+                style={{ color: '#333' }}
+                onPress={() => setGroupsModalOpen(true)}
               >
-                <Picker.Item
-                  color="#3D3D4D"
-                  label="Selecionar..."
-                  value={undefined}
-                />
+                {selectedGroup === 'whatsapp' && 'WhatsApp'}
+                {selectedGroup === 'discord' && 'Discord'}
+                {selectedGroup === 'telegram' && 'Telegram'}
+                {!selectedGroup && 'Selecionar'}
+              </Label>
+              <PickerIOS
+                modalIsVisible={groupsModalOpen}
+                modalOnBackdropPress={() => setGroupsModalOpen(false)}
+                items={[
+                  { value: 'whatsapp', label: 'WhatsApp' },
+                  { value: 'telegram', label: 'Telegram' },
+                  { value: 'discord', label: 'Discord' },
+                ]}
+                nameProp="label"
+                valueProp="value"
+                onValueChange={onPickerChange}
+                selectedValue={selectedGroup}
+                buttonOnPress={() => {
+                  if (!selectedGroup) {
+                    Alert.alert('Selecione um grupo!');
+                    return;
+                  }
+                  setGroupsModalOpen(false);
+                }}
+              />
+            </>
+          ) : (
+            <Picker
+              mode="dialog"
+              selectedValue={selectedGroup}
+              onValueChange={onPickerChange}
+              style={{
+                color: '#3D3D4D',
+                marginHorizontal: SPACING.L,
+              }}
+              dropdownIconColor="#3D3D4D"
+            >
+              <Picker.Item
+                color="#3D3D4D"
+                label="Selecionar..."
+                value={undefined}
+              />
 
-                <Picker.Item
-                  color="#3D3D4D"
-                  key="whatsapp"
-                  label="WhatsApp"
-                  value="whatsapp"
-                />
-                <Picker.Item
-                  color="#3D3D4D"
-                  key="discord"
-                  label="Discord"
-                  value="discord"
-                />
-                <Picker.Item
-                  color="#3D3D4D"
-                  key="telegram"
-                  label="Telegram"
-                  value="telegram"
-                />
-              </Picker>
-            )}
-          </View>
+              <Picker.Item
+                color="#3D3D4D"
+                key="whatsapp"
+                label="WhatsApp"
+                value="whatsapp"
+              />
+              <Picker.Item
+                color="#3D3D4D"
+                key="discord"
+                label="Discord"
+                value="discord"
+              />
+              <Picker.Item
+                color="#3D3D4D"
+                key="telegram"
+                label="Telegram"
+                value="telegram"
+              />
+            </Picker>
+          )}
         </Container>
       </ScrollView>
       <View style={{ width: '100%', alignItems: 'center' }}>

@@ -1,5 +1,6 @@
 export * from './ReleaseAnnotationsForm';
 export * from './ReleaseChange';
+export * from './ReleaseDateForm';
 export * from './ReleaseDetails';
 export * from './ReleaseForm';
 export * from './ReleaseGroupChange';
