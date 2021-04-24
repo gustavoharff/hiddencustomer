@@ -32,6 +32,7 @@ export function ReleaseGroupsList({
 
   const groups = useMemo(() => {
     const releaseGroups = [] as ReleaseGroup[];
+
     const releaseFiltered = releases.filter(
       release => release_id === release.id,
     );
@@ -42,7 +43,17 @@ export function ReleaseGroupsList({
       });
     });
 
-    return releaseGroups;
+    return releaseGroups.sort((a, b) => {
+      if (a.name < b.name) {
+        return -1;
+      }
+
+      if (a.name > b.name) {
+        return 1;
+      }
+
+      return 0;
+    });
   }, [release_id, releases]);
 
   const onRefresh = useCallback(async () => {
