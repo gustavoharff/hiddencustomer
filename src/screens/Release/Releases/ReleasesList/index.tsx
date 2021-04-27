@@ -95,8 +95,8 @@ export function ReleasesList({
                   user.permission === 'admin' || user.permission === 'client'
                 }
                 editOnPress={() =>
-                  navigation.navigate('ReleaseChange', {
-                    release_id: release.id,
+                  navigation.navigate('ReleaseForm', {
+                    release,
                   })
                 }
                 deleteOption={

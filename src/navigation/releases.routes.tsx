@@ -12,7 +12,6 @@ import {
   ReleaseDetails,
   ReleaseGroupForm,
   ReleaseAnnotationsForm,
-  ReleaseChange,
   ReleaseGroupChange,
   ReleaseDateForm,
 } from 'screens';
@@ -139,21 +138,6 @@ export function ReleasesStack(): JSX.Element {
           headerLeft: () => (
             <HeaderIcon
               name="close"
-              onPress={() => navigation.goBack()}
-              style={{ marginLeft: SPACING.S }}
-            />
-          ),
-        })}
-      />
-
-      <Screen
-        name="ReleaseChange"
-        component={ReleaseChange}
-        options={({ navigation }) => ({
-          headerTitle: 'Editar lançamento',
-          headerLeft: () => (
-            <HeaderIcon
-              name="arrow-left"
               onPress={() => navigation.goBack()}
               style={{ marginLeft: SPACING.S }}
             />

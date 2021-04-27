@@ -10,6 +10,7 @@ import { Picker } from '@react-native-picker/picker';
 import * as Yup from 'yup';
 import { FormHandles } from '@unform/core';
 import { useNavigation } from '@react-navigation/native';
+import { StackScreenProps } from '@react-navigation/stack';
 import {
   getBottomSpace,
   getStatusBarHeight,
@@ -21,14 +22,42 @@ import { useCustomers, useReleases } from 'hooks';
 
 import { SPACING } from 'styles';
 
+import { Release } from 'types';
+
 import { Container, Unform, Label } from './styles';
 
-export function ReleaseForm(): JSX.Element {
+type Params = {
+  ReleaseForm: {
+    release?: Release;
+  };
+};
+
+type Props = StackScreenProps<Params, 'ReleaseForm'>;
+
+export function ReleaseForm({ route }: Props): JSX.Element {
   const formRef = useRef<FormHandles>(null);
-  const [selectedCustomerId, setSelectedCustomerId] = useState('');
+
+  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
+
+  const [selectedCustomerId, setSelectedCustomerId] = useState(
+    route.params?.release?.customer_id || '',
+  );
+  const [selectedPayment, setSelectedPayment] = useState(
+    route.params?.release?.paid || false,
+  );
   const [customerModalOpen, setCustomerModalOpen] = useState(false);
   const [loadingButton, setLoadingButton] = useState(false);
   const navigation = useNavigation();
+
+  useEffect(() => {
+    if (route.params?.release) {
+      navigation.setOptions({
+        headerTitle: 'Editar lançamento',
+      });
+      setSelectedCustomerId(route.params.release.customer_id);
+      formRef.current?.setFieldValue('name', route.params.release.name);
+    }
+  }, [navigation, route.params]);
 
   useEffect(() => {
     const parent = navigation.dangerouslyGetParent();
@@ -36,17 +65,28 @@ export function ReleaseForm(): JSX.Element {
     parent?.setOptions({
       tabBarVisible: false,
     });
+
     return () =>
       parent?.setOptions({
         tabBarVisible: true,
       });
   }, [navigation]);
 
-  const { createRelease } = useReleases();
+  const { createRelease, updateRelease } = useReleases();
   const { customers, loadApiCustomers, loadLocalCustomers } = useCustomers();
 
   const onCustomerChange = useCallback(value => {
     setSelectedCustomerId(value);
+  }, []);
+
+  const onPaymentChange = useCallback(value => {
+    if (value === '1') {
+      setSelectedPayment(true);
+    }
+
+    if (value === '0') {
+      setSelectedPayment(false);
+    }
   }, []);
 
   useEffect(() => {
@@ -70,10 +110,19 @@ export function ReleaseForm(): JSX.Element {
           return;
         }
 
-        await createRelease({
-          name: data.name,
-          customer_id: selectedCustomerId,
-        });
+        if (route.params?.release) {
+          await updateRelease({
+            release_id: route.params?.release.id,
+            customer_id: selectedCustomerId,
+            name: data.name,
+            paid: selectedPayment,
+          });
+        } else {
+          await createRelease({
+            name: data.name,
+            customer_id: selectedCustomerId,
+          });
+        }
 
         navigation.navigate('Releases');
       } catch (err) {
@@ -85,7 +134,14 @@ export function ReleaseForm(): JSX.Element {
         setLoadingButton(false);
       }
     },
-    [navigation, createRelease, selectedCustomerId],
+    [
+      selectedCustomerId,
+      route.params?.release,
+      navigation,
+      updateRelease,
+      selectedPayment,
+      createRelease,
+    ],
   );
 
   return (
@@ -164,12 +220,64 @@ export function ReleaseForm(): JSX.Element {
                 ))}
               </Picker>
             )}
+
+            <Label>Status do pagamento:</Label>
+            {Platform.OS === 'ios' ? (
+              <>
+                <Label
+                  style={{ color: '#333' }}
+                  onPress={() => setPaymentModalOpen(true)}
+                >
+                  {selectedPayment ? 'Realizado' : 'Não realizado'}
+                </Label>
+
+                <PickerIOS
+                  modalIsVisible={paymentModalOpen}
+                  modalOnBackdropPress={() => setPaymentModalOpen(false)}
+                  items={[
+                    { paid: '1', name: 'Realizado' },
+                    { paid: '0', name: 'Não realizado' },
+                  ]}
+                  nameProp="name"
+                  valueProp="paid"
+                  onValueChange={onPaymentChange}
+                  selectedValue={selectedPayment ? '1' : '0'}
+                  buttonOnPress={() => setPaymentModalOpen(false)}
+                />
+              </>
+            ) : (
+              <>
+                <Picker
+                  mode="dialog"
+                  selectedValue={selectedPayment ? '1' : '0'}
+                  onValueChange={onPaymentChange}
+                  style={{
+                    color: '#3D3D4D',
+                    marginHorizontal: SPACING.L,
+                  }}
+                  dropdownIconColor="#3D3D4D"
+                >
+                  <Picker.Item
+                    color="#3D3D4D"
+                    key="true"
+                    label="Realizado"
+                    value="1"
+                  />
+                  <Picker.Item
+                    color="#3D3D4D"
+                    key="false"
+                    label="Não Realizado"
+                    value="0"
+                  />
+                </Picker>
+              </>
+            )}
           </View>
         </Container>
       </ScrollView>
       <View style={{ width: '100%', alignItems: 'center' }}>
         <Button
-          title="Cadastrar"
+          title={route.params?.release ? 'Salvar' : 'Cadastrar'}
           loading={loadingButton}
           onPress={() => {
             formRef.current?.submitForm();
