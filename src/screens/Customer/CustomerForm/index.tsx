@@ -13,6 +13,7 @@ import {
   View,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { StackScreenProps } from '@react-navigation/stack';
 
 import { Input, Button } from 'components';
 
@@ -20,15 +21,34 @@ import { useCustomers } from 'hooks';
 
 import { SPACING } from 'styles';
 
+import { Customer } from 'types';
+
 import { Container, Unform } from './styles';
 
-export function CustomerForm(): JSX.Element {
+type Props = {
+  CustomerForm: {
+    customer: Customer;
+  };
+};
+
+type CustomerChangeProps = StackScreenProps<Props, 'CustomerForm'>;
+
+export function CustomerForm({ route }: CustomerChangeProps): JSX.Element {
   const [loadingButton, setLoadingButton] = useState(false);
   const formRef = useRef<FormHandles>(null);
 
-  const { createCustomer } = useCustomers();
+  const { createCustomer, updateCustomer } = useCustomers();
 
   const navigation = useNavigation();
+
+  useEffect(() => {
+    if (route.params?.customer) {
+      navigation.setOptions({
+        headerTitle: 'Editar cliente',
+      });
+      formRef.current?.setFieldValue('name', route.params.customer.name);
+    }
+  }, [navigation, route.params?.customer]);
 
   useEffect(() => {
     const parent = navigation.dangerouslyGetParent();
@@ -36,6 +56,7 @@ export function CustomerForm(): JSX.Element {
     parent?.setOptions({
       tabBarVisible: false,
     });
+
     return () =>
       parent?.setOptions({
         tabBarVisible: true,
@@ -53,7 +74,14 @@ export function CustomerForm(): JSX.Element {
 
         await schema.validate(data, { abortEarly: false });
 
-        await createCustomer(data.name);
+        if (route.params?.customer) {
+          await updateCustomer({
+            name: data.name,
+            customer_id: route.params.customer.id,
+          });
+        } else {
+          await createCustomer(data.name);
+        }
 
         navigation.navigate('Customers');
       } catch (err) {
@@ -65,7 +93,7 @@ export function CustomerForm(): JSX.Element {
         setLoadingButton(false);
       }
     },
-    [createCustomer, navigation],
+    [createCustomer, navigation, route.params?.customer, updateCustomer],
   );
 
   return (
@@ -97,7 +125,7 @@ export function CustomerForm(): JSX.Element {
         }}
       >
         <Button
-          title="Enviar"
+          title={route.params?.customer ? 'Salvar' : 'Registrar'}
           loading={loadingButton}
           onPress={() => {
             formRef.current?.submitForm();

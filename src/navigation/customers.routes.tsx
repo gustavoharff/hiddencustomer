@@ -4,7 +4,7 @@ import {
   createStackNavigator,
 } from '@react-navigation/stack';
 
-import { Customers, CustomerForm, CustomerChange } from 'screens';
+import { Customers, CustomerForm } from 'screens';
 
 import { HeaderIcon } from 'components';
 
@@ -51,21 +51,6 @@ export function CustomersRoutes(): JSX.Element {
             <HeaderIcon
               name="arrow-left"
               onPress={() => navigation.navigate('Customers')}
-              style={{ marginLeft: SPACING.S }}
-            />
-          ),
-        })}
-      />
-
-      <Screen
-        name="CustomerChange"
-        component={CustomerChange}
-        options={({ navigation }) => ({
-          headerTitle: 'Editar cliente',
-          headerLeft: () => (
-            <HeaderIcon
-              name="arrow-left"
-              onPress={() => navigation.goBack()}
               style={{ marginLeft: SPACING.S }}
             />
           ),

@@ -1,4 +1,10 @@
-import React, { useCallback, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { FormHandles } from '@unform/core';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
@@ -15,6 +21,7 @@ import {
   ScrollView,
   View,
 } from 'react-native';
+import moment from 'moment';
 
 import { Input, Button, PickerIOS } from 'components';
 
@@ -22,23 +29,22 @@ import { SPACING } from 'styles';
 
 import { useReleases } from 'hooks';
 
-import { ReleaseDate } from 'types';
-import moment from 'moment';
+import { ReleaseDate, ReleaseGroup } from 'types';
+
 import { Container, Unform, Label } from './styles';
 
 type Params = {
-  ReleaseDetails: {
-    release_id: string;
+  ReleaseGroupForm: {
+    release_id?: string;
+    group?: ReleaseGroup;
   };
 };
 
-type ReleaseGroupFormProps = StackScreenProps<Params, 'ReleaseDetails'>;
+type ReleaseGroupFormProps = StackScreenProps<Params, 'ReleaseGroupForm'>;
 
 export function ReleaseGroupForm({
   route,
 }: ReleaseGroupFormProps): JSX.Element {
-  const { release_id } = route.params;
-
   const formRef = useRef<FormHandles>(null);
 
   const [selectedGroup, setSelectedGroup] = useState('');
@@ -51,7 +57,18 @@ export function ReleaseGroupForm({
 
   const [loadingButton, setLoadingButton] = useState(false);
 
-  const { createReleaseGroup, releases } = useReleases();
+  const { createReleaseGroup, updateReleaseGroup, releases } = useReleases();
+
+  useEffect(() => {
+    if (route.params?.group) {
+      navigation.setOptions({
+        headerTitle: 'Registrar grupo',
+      });
+      setSelectedDateId(route.params?.group.release_date_id || '');
+      setSelectedGroup(route.params?.group.type);
+      formRef.current?.setFieldValue('name', route.params?.group.name);
+    }
+  }, [navigation, route.params?.group]);
 
   const onGroupChange = useCallback(value => {
     setSelectedGroup(value);
@@ -78,12 +95,21 @@ export function ReleaseGroupForm({
           return;
         }
 
-        await createReleaseGroup({
-          name: data.name,
-          type: selectedGroup,
-          release_id: route.params.release_id,
-          release_date_id: selectedDateId,
-        });
+        if (route.params?.release_id) {
+          await createReleaseGroup({
+            name: data.name,
+            type: selectedGroup,
+            release_id: route.params.release_id,
+            release_date_id: selectedDateId,
+          });
+        } else if (route.params?.group) {
+          await updateReleaseGroup({
+            groupId: route.params.group?.id,
+            name: data.name,
+            type: selectedGroup,
+            release_date_id: selectedDateId,
+          });
+        }
 
         navigation.navigate('ReleaseDetails');
       } catch (err) {
@@ -97,17 +123,21 @@ export function ReleaseGroupForm({
     },
     [
       selectedGroup,
-      createReleaseGroup,
-      route.params.release_id,
-      selectedDateId,
+      route.params?.release_id,
+      route.params?.group,
       navigation,
+      createReleaseGroup,
+      selectedDateId,
+      updateReleaseGroup,
     ],
   );
 
   const dates = useMemo(() => {
     const releaseDates = [] as ReleaseDate[];
     const releaseFiltered = releases.filter(
-      release => release_id === release.id,
+      release =>
+        route.params?.release_id === release.id ||
+        route.params.group?.release_id === release.id,
     );
 
     releaseFiltered.map(release => {
@@ -117,7 +147,7 @@ export function ReleaseGroupForm({
     });
 
     return releaseDates;
-  }, [release_id, releases]);
+  }, [releases, route.params?.release_id, route.params.group?.release_id]);
 
   return (
     <KeyboardAvoidingView
@@ -275,7 +305,7 @@ export function ReleaseGroupForm({
       </ScrollView>
       <View style={{ width: '100%', alignItems: 'center' }}>
         <Button
-          title="Cadastrar"
+          title={route.params?.group ? 'Salvar' : 'Registrar'}
           loading={loadingButton}
           onPress={() => {
             formRef.current?.submitForm();

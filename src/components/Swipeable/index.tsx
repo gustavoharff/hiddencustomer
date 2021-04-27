@@ -43,32 +43,6 @@ export function Swipeable({
       activeOffsetY={500}
       renderRightActions={() => (
         <>
-          {deleteOption && (
-            <OptionItem
-              text="Deletar"
-              textColor="light"
-              color={colors.red[500]}
-              onPress={async () => {
-                if (deleteOnPress) {
-                  await deleteOnPress();
-                }
-                close();
-              }}
-            />
-          )}
-          {editOption && (
-            <OptionItem
-              color={colors.orange[300]}
-              text="Editar"
-              textColor="light"
-              onPress={() => {
-                if (editOnPress) {
-                  editOnPress();
-                }
-                close();
-              }}
-            />
-          )}
           {activeOption && (
             <OptionItem
               color={colors.green[300]}
@@ -93,6 +67,32 @@ export function Swipeable({
                   await disableOnPress();
                 }
 
+                close();
+              }}
+            />
+          )}
+          {deleteOption && (
+            <OptionItem
+              text="Deletar"
+              textColor="light"
+              color={colors.red[500]}
+              onPress={async () => {
+                if (deleteOnPress) {
+                  await deleteOnPress();
+                }
+                close();
+              }}
+            />
+          )}
+          {editOption && (
+            <OptionItem
+              color={colors.orange[300]}
+              text="Editar"
+              textColor="light"
+              onPress={() => {
+                if (editOnPress) {
+                  editOnPress();
+                }
                 close();
               }}
             />

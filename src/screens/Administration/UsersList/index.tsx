@@ -1,6 +1,7 @@
 import React, { useCallback, useState } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { useNavigation } from '@react-navigation/native';
 
 import { Avatar, EmptyList, Swipeable } from 'components';
 
@@ -23,6 +24,8 @@ export function UsersList({
   const { companies } = useCompanies();
 
   const [refreshing, setRefreshing] = useState(false);
+
+  const navigation = useNavigation();
 
   const onActivateItem = useCallback(
     async (userId: string) => {
@@ -102,6 +105,12 @@ export function UsersList({
               disableOption={user.active}
               disableOnPress={async () => {
                 await onDisableItem(user.id);
+              }}
+              editOption
+              editOnPress={() => {
+                navigation.navigate('UserForm', {
+                  user,
+                });
               }}
             >
               <Content>

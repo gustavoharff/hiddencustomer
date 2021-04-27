@@ -9,6 +9,7 @@ import { HeaderIcon } from 'components';
 import { useReleases } from 'hooks';
 
 import { formatMarkedCalendar } from 'utils';
+
 import { SPACING } from 'styles';
 
 export function Calendar(): JSX.Element {

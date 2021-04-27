@@ -26,8 +26,6 @@ export function CustomersList({
   const { releases } = useReleases();
   const { user } = useAuth();
 
-  console.log(user.permission);
-
   const onDeleteItem = useCallback(
     async (customerId: string) => {
       return new Promise(resolve => {
@@ -79,8 +77,8 @@ export function CustomersList({
                 user.permission === 'admin' || user.permission === 'client'
               }
               editOnPress={() => {
-                navigation.navigate('CustomerChange', {
-                  customer_id: customer.id,
+                navigation.navigate('CustomerForm', {
+                  customer,
                 });
               }}
               deleteOption={

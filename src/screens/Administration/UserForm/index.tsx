@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { FormHandles } from '@unform/core';
 import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
+import { StackScreenProps } from '@react-navigation/stack';
 import * as Yup from 'yup';
 import {
   getBottomSpace,
@@ -21,13 +22,23 @@ import { SPACING } from 'styles';
 
 import { useCompanies, useUsers } from 'hooks';
 
+import { User } from 'types';
+
 import { Container, Label, Unform } from './styles';
 
-export function UserForm(): JSX.Element {
+type Props = {
+  UserForm: {
+    user?: User;
+  };
+};
+
+type UserFormProps = StackScreenProps<Props, 'UserForm'>;
+
+export function UserForm({ route }: UserFormProps): JSX.Element {
   const [loadingButton, setLoadingButton] = useState(false);
   const formRef = useRef<FormHandles>(null);
 
-  const { createUser } = useUsers();
+  const { createUser, updateUser } = useUsers();
 
   const [companiesModalOpen, setCompaniesModalOpen] = useState(false);
 
@@ -36,6 +47,17 @@ export function UserForm(): JSX.Element {
   const { companies, loadApiCompanies, loadLocalCompanies } = useCompanies();
 
   const navigation = useNavigation();
+
+  useEffect(() => {
+    if (route.params?.user) {
+      navigation.setOptions({
+        headerTitle: 'Editar usuário',
+      });
+      setSelectedCompanyId(route.params?.user.company_id);
+      formRef.current?.setFieldValue('name', route.params?.user.name);
+      formRef.current?.setFieldValue('email', route.params?.user.email);
+    }
+  }, [navigation, route.params?.user]);
 
   useEffect(() => {
     const parent = navigation.dangerouslyGetParent();
@@ -60,13 +82,21 @@ export function UserForm(): JSX.Element {
   const handleSubmit = useCallback(
     async data => {
       try {
+        let schema;
         formRef.current?.setErrors({});
 
-        const schema = Yup.object().shape({
-          name: Yup.string().required('name obrigatório'),
-          email: Yup.string().required('E-mail obrigatório'),
-          password: Yup.string().required('Senha obrigatório'),
-        });
+        if (route.params?.user) {
+          schema = Yup.object().shape({
+            name: Yup.string().required('name obrigatório'),
+            email: Yup.string().required('E-mail obrigatório'),
+          });
+        } else {
+          schema = Yup.object().shape({
+            name: Yup.string().required('name obrigatório'),
+            email: Yup.string().required('E-mail obrigatório'),
+            password: Yup.string().required('Senha obrigatório'),
+          });
+        }
 
         await schema.validate(data, { abortEarly: false });
 
@@ -76,24 +106,34 @@ export function UserForm(): JSX.Element {
           return;
         }
 
-        await createUser({
-          name: data.name,
-          email: data.email,
-          password: data.password,
-          company_id: selectedCompanyId,
-        });
+        if (!route.params?.user) {
+          await createUser({
+            name: data.name,
+            email: data.email,
+            password: data.password,
+            company_id: selectedCompanyId,
+          });
+        } else {
+          await updateUser({
+            id: route.params.user.id,
+            company_id: selectedCompanyId,
+            email: data.email,
+            name: data.name,
+            password: data.password || null,
+          });
+        }
 
         navigation.navigate('Administration');
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
-          Alert.alert('Atenção!', 'Complete o campo de nome');
+          Alert.alert('Atenção!', 'Complete todos os campos.');
           setLoadingButton(false);
         }
 
         setLoadingButton(false);
       }
     },
-    [navigation, selectedCompanyId, createUser],
+    [route.params?.user, selectedCompanyId, navigation, createUser, updateUser],
   );
 
   return (
@@ -199,7 +239,7 @@ export function UserForm(): JSX.Element {
         }}
       >
         <Button
-          title="Cadastrar"
+          title={route.params?.user ? 'Editar' : 'Cadastrar'}
           loading={loadingButton}
           onPress={() => {
             formRef.current?.submitForm();

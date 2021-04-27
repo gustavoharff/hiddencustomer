@@ -18,6 +18,7 @@ interface UsersContextData {
   loadApiUsers: (userId: string) => Promise<void>;
   loadLocalUsers: (userId: string) => Promise<void>;
   createUser: (data: UserFormData) => Promise<void>;
+  updateUser: (data: UpdateUserFormData) => Promise<void>;
   activateUser: (userId: string) => Promise<void>;
   disableUser: (userId: string) => Promise<void>;
 }
@@ -33,6 +34,13 @@ interface UserFormData {
   company_id: string;
 }
 
+interface UpdateUserFormData {
+  id: string;
+  name: string;
+  email: string;
+  password?: string;
+  company_id: string;
+}
 const UsersContext = createContext<UsersContextData>({} as UsersContextData);
 
 export function UsersProvider({ children }: UsersProviderProps): JSX.Element {
@@ -104,6 +112,29 @@ export function UsersProvider({ children }: UsersProviderProps): JSX.Element {
     [users],
   );
 
+  const updateUser = useCallback(
+    async ({ id, name, email, password, company_id }: UpdateUserFormData) => {
+      const response = await api.put(`/users/${id}`, {
+        name,
+        email,
+        password,
+        company_id,
+      });
+
+      setUsers(state =>
+        state.map(user => (user.id === id ? response.data : user)),
+      );
+
+      const realm = await getRealm();
+
+      realm.write(() => {
+        // @ts-ignore
+        realm.create('User', response.data, 'modified');
+      });
+    },
+    [],
+  );
+
   const activateUser = useCallback(
     async (userId: string) => {
       const response = await api.put(`/users/${userId}`, {
@@ -133,6 +164,7 @@ export function UsersProvider({ children }: UsersProviderProps): JSX.Element {
         loadApiUsers,
         loadLocalUsers,
         createUser,
+        updateUser,
         activateUser,
         disableUser,
       }}

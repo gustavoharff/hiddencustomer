@@ -112,9 +112,8 @@ export function ReleaseGroupsList({
                 user.permission === 'admin' || user.permission === 'client'
               }
               editOnPress={() =>
-                navigation.navigate('ReleaseGroupChange', {
-                  release_id: group.release_id,
-                  group_id: group.id,
+                navigation.navigate('ReleaseGroupForm', {
+                  group,
                 })
               }
               deleteOption={
