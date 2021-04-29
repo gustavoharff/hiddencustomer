@@ -83,7 +83,7 @@ export function ReleasesProvider({
   children,
 }: ReleasesProviderProps): JSX.Element {
   const [releases, setReleases] = useState<Release[]>([]);
-  const [activeReleasesFilter, setActiveReleasesFilter] = useState(true);
+  const [activeReleasesFilter, setActiveReleasesFilter] = useState(false);
   const [customerReleasesFilter, setCustomerReleasesFilter] = useState('all');
 
   const [releasesDates, setReleasesDates] = useState<ReleaseDate[]>([]);
@@ -130,7 +130,6 @@ export function ReleasesProvider({
         });
       }
 
-      console.log(customerReleasesFilter);
       if (customerReleasesFilter !== '' && customerReleasesFilter !== 'all') {
         initialReleases = initialReleases.filter(
           release => release.customer_id === customerReleasesFilter,
@@ -488,10 +487,6 @@ export function ReleasesProvider({
     },
     [releases],
   );
-
-  useEffect(() => {
-    loadApiReleases().catch(() => loadLocalReleases());
-  }, [activeReleasesFilter, customerReleasesFilter]);
 
   return (
     <ReleasesContext.Provider

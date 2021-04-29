@@ -6,6 +6,7 @@ import React, {
   useEffect,
   ReactNode,
 } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { User, Auth } from 'types';
 
@@ -96,6 +97,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
   }, []);
 
   const signOut = useCallback(async () => {
+    await AsyncStorage.clear();
     const realm = await getRealm();
 
     realm.write(() => {

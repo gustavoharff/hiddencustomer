@@ -72,6 +72,7 @@ export function CustomerProvider({
     const formattedCustomers = data.map(customer => ({
       id: customer.id,
       name: customer.name,
+      releases_counter: customer.releases_counter,
       created_at: customer.created_at,
       updated_at: customer.updated_at,
     }));

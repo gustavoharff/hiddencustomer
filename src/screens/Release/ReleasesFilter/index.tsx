@@ -6,6 +6,10 @@ import RNPickerSelect from 'react-native-picker-select';
 
 import { useCustomers, useReleases } from 'hooks';
 
+import { HeaderIcon } from 'components';
+
+import { SPACING } from 'styles';
+
 import { Container, Item, OptionText, PickerContainer, styles } from './styles';
 
 export function ReleasesFilter(): JSX.Element {
@@ -19,6 +23,21 @@ export function ReleasesFilter(): JSX.Element {
     setCustomerReleasesFilter,
     customerReleasesFilter,
   } = useReleases();
+
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <HeaderIcon
+          name="filter-remove-outline"
+          onPress={() => {
+            setActiveReleasesFilter(false);
+            setCustomerReleasesFilter('all');
+          }}
+          style={{ marginRight: SPACING.S }}
+        />
+      ),
+    });
+  }, [navigation, setActiveReleasesFilter, setCustomerReleasesFilter]);
 
   const onChange = useCallback(
     async value => {

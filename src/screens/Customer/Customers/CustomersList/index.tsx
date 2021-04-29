@@ -1,5 +1,11 @@
 import React, { useCallback, useState } from 'react';
-import { View, FlatList, RefreshControl, Alert } from 'react-native';
+import {
+  View,
+  FlatList,
+  RefreshControl,
+  Alert,
+  ToastAndroid,
+} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import 'moment/locale/pt-br';
 
@@ -7,6 +13,7 @@ import { EmptyList, Swipeable } from 'components';
 
 import { useAuth, useCustomers, useReleases } from 'hooks';
 
+import { RectButton } from 'react-native-gesture-handler';
 import { Container, Description, Content, Title, Item } from './styles';
 
 interface CustomersListProps {
@@ -23,7 +30,7 @@ export function CustomersList({
   const navigation = useNavigation();
 
   const { customers, deleteCustomer } = useCustomers();
-  const { releases } = useReleases();
+  const { setCustomerReleasesFilter } = useReleases();
   const { user } = useAuth();
 
   const onDeleteItem = useCallback(
@@ -88,21 +95,27 @@ export function CustomersList({
                 await onDeleteItem(customer.id);
               }}
             >
-              <Content>
-                <Description style={{ marginTop: 0 }} numberOfLines={2}>
-                  {customer.name}
-                </Description>
-                <Item>
-                  <Title>Lançamentos</Title>
-                  <Description>
-                    {
-                      releases.filter(
-                        release => release.customer_id === customer.id,
-                      ).length
-                    }
+              <RectButton
+                onPress={() => {
+                  setCustomerReleasesFilter(customer.id);
+                  ToastAndroid.showWithGravity(
+                    `Filtro para o cliente ${customer.name} aplicado!`,
+                    ToastAndroid.SHORT,
+                    ToastAndroid.CENTER,
+                  );
+                  navigation.navigate('Releases');
+                }}
+              >
+                <Content>
+                  <Description style={{ marginTop: 0 }} numberOfLines={2}>
+                    {customer.name}
                   </Description>
-                </Item>
-              </Content>
+                  <Item>
+                    <Title>Lançamentos</Title>
+                    <Description>{customer.releases_counter}</Description>
+                  </Item>
+                </Content>
+              </RectButton>
             </Swipeable>
           </Container>
         )}

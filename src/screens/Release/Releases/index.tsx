@@ -24,6 +24,7 @@ export function Releases(): JSX.Element {
     loadApiReleases,
     loadLocalReleases,
     activeReleasesFilter,
+    customerReleasesFilter,
   } = useReleases();
 
   const navigation = useNavigation();
@@ -49,6 +50,13 @@ export function Releases(): JSX.Element {
   const onRefresh = useCallback(async () => {
     loadApiReleases().catch(() => loadLocalReleases());
   }, [activeReleasesFilter]);
+
+  useEffect(() => {
+    setLoading(true);
+    loadApiReleases()
+      .catch(() => loadLocalReleases())
+      .finally(() => setLoading(false));
+  }, [activeReleasesFilter, customerReleasesFilter]);
 
   if (loading) {
     return (
