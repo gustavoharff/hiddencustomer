@@ -16,11 +16,10 @@ import { ReleasesList } from './ReleasesList';
 import { Container, Center } from './styles';
 
 export function Releases(): JSX.Element {
-  const [loading, setLoading] = useState(false);
   const { user } = useAuth();
+  const [loading, setLoading] = useState(false);
 
   const {
-    releases,
     loadApiReleases,
     loadLocalReleases,
     activeReleasesFilter,
@@ -39,7 +38,7 @@ export function Releases(): JSX.Element {
         />
       ),
     });
-  }, [navigation, releases]);
+  }, [navigation]);
 
   useEffect(() => {
     setTimeout(() => {

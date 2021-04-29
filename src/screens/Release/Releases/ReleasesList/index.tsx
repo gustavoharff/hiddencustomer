@@ -8,6 +8,7 @@ import moment from 'moment';
 import { EmptyList, Swipeable } from 'components';
 
 import { useAuth, useReleases } from 'hooks';
+
 import {
   Container,
   Content,
@@ -30,13 +31,11 @@ export function ReleasesList({
   onRefresh,
   emptyListText,
 }: ReleasesListProps): JSX.Element {
-  const [refreshing, setRefreshing] = useState(false);
-
+  const navigation = useNavigation();
+  const { user } = useAuth();
   const { releases, deleteRelease } = useReleases();
 
-  const { user } = useAuth();
-
-  const navigation = useNavigation();
+  const [refreshing, setRefreshing] = useState(false);
 
   const onDeleteItem = useCallback(
     async (releaseId: string) => {
@@ -60,11 +59,11 @@ export function ReleasesList({
     [deleteRelease],
   );
 
-  const handleRefresh = async () => {
+  const handleRefresh = useCallback(async () => {
     setRefreshing(true);
     await onRefresh();
     setRefreshing(false);
-  };
+  }, [onRefresh]);
 
   return (
     <View style={{ flex: 1 }}>

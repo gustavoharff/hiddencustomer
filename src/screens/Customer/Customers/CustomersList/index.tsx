@@ -5,6 +5,7 @@ import {
   RefreshControl,
   Alert,
   ToastAndroid,
+  Platform,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import 'moment/locale/pt-br';
@@ -98,11 +99,14 @@ export function CustomersList({
               <RectButton
                 onPress={() => {
                   setCustomerReleasesFilter(customer.id);
-                  ToastAndroid.showWithGravity(
-                    `Filtro para o cliente ${customer.name} aplicado!`,
-                    ToastAndroid.SHORT,
-                    ToastAndroid.CENTER,
-                  );
+                  if (Platform.OS === 'android') {
+                    ToastAndroid.showWithGravity(
+                      `Filtro para o cliente ${customer.name} aplicado!`,
+                      ToastAndroid.SHORT,
+                      ToastAndroid.CENTER,
+                    );
+                  }
+
                   navigation.navigate('Releases');
                 }}
               >

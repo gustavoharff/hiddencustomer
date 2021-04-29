@@ -24,6 +24,5 @@ export async function getRealm(): Promise<Realm> {
     schemaVersion: 25,
   });
 
-  console.log(realm.path);
   return realm;
 }

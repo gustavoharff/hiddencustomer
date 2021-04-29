@@ -6,7 +6,6 @@ import React, {
   useState,
 } from 'react';
 import { FormHandles } from '@unform/core';
-import { Picker } from '@react-native-picker/picker';
 import { useNavigation } from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
 import * as Yup from 'yup';
@@ -23,7 +22,7 @@ import {
 } from 'react-native';
 import moment from 'moment';
 
-import { Input, Button, PickerIOS } from 'components';
+import { Input, Button, Picker } from 'components';
 
 import { SPACING } from 'styles';
 
@@ -51,9 +50,6 @@ export function ReleaseGroupForm({
   const [selectedDateId, setSelectedDateId] = useState('');
 
   const navigation = useNavigation();
-
-  const [groupsModalOpen, setGroupsModalOpen] = useState(false);
-  const [datesModalOpen, setDatesModalOpen] = useState(false);
 
   const [loadingButton, setLoadingButton] = useState(false);
 
@@ -100,14 +96,15 @@ export function ReleaseGroupForm({
             name: data.name,
             type: selectedGroup,
             release_id: route.params.release_id,
-            release_date_id: selectedDateId,
+            release_date_id:
+              selectedDateId !== 'null' ? selectedDateId : undefined,
           });
         } else if (route.params?.group) {
           await updateReleaseGroup({
             groupId: route.params.group?.id,
             name: data.name,
             type: selectedGroup,
-            release_date_id: selectedDateId,
+            release_date_id: selectedDateId !== '' ? selectedDateId : undefined,
           });
         }
 
@@ -172,134 +169,33 @@ export function ReleaseGroupForm({
             </Unform>
 
             <Label>Informe o tipo do grupo:</Label>
-            {Platform.OS === 'ios' ? (
-              <>
-                <Label
-                  style={{ color: '#333' }}
-                  onPress={() => setGroupsModalOpen(true)}
-                >
-                  {selectedGroup === 'whatsapp' && 'WhatsApp'}
-                  {selectedGroup === 'discord' && 'Discord'}
-                  {selectedGroup === 'telegram' && 'Telegram'}
-                  {!selectedGroup && 'Selecionar'}
-                </Label>
-                <PickerIOS
-                  modalIsVisible={groupsModalOpen}
-                  modalOnBackdropPress={() => setGroupsModalOpen(false)}
-                  items={[
-                    { value: 'whatsapp', label: 'WhatsApp' },
-                    { value: 'telegram', label: 'Telegram' },
-                    { value: 'discord', label: 'Discord' },
-                  ]}
-                  nameProp="label"
-                  valueProp="value"
-                  onValueChange={onGroupChange}
-                  selectedValue={selectedGroup}
-                  buttonOnPress={() => {
-                    if (!selectedGroup) {
-                      Alert.alert('Selecione um grupo!');
-                      return;
-                    }
-                    setGroupsModalOpen(false);
-                  }}
-                />
-              </>
-            ) : (
-              <Picker
-                mode="dialog"
-                selectedValue={selectedGroup}
-                onValueChange={onGroupChange}
-                style={{
-                  color: '#3D3D4D',
-                  marginHorizontal: SPACING.L,
-                }}
-                dropdownIconColor="#3D3D4D"
-              >
-                <Picker.Item
-                  color="#3D3D4D"
-                  label="Selecionar..."
-                  value={undefined}
-                />
-
-                <Picker.Item
-                  color="#3D3D4D"
-                  key="whatsapp"
-                  label="WhatsApp"
-                  value="whatsapp"
-                />
-                <Picker.Item
-                  color="#3D3D4D"
-                  key="discord"
-                  label="Discord"
-                  value="discord"
-                />
-                <Picker.Item
-                  color="#3D3D4D"
-                  key="telegram"
-                  label="Telegram"
-                  value="telegram"
-                />
-              </Picker>
-            )}
+            <Picker
+              doneText="Selecionar"
+              items={[
+                { label: 'Selecionar', value: '' },
+                { label: 'WhatsApp', value: 'whatsapp' },
+                { label: 'Telegram', value: 'telegram' },
+                { label: 'Discord', value: 'discord' },
+              ]}
+              onChange={onGroupChange}
+              value={selectedGroup}
+              androidStyle={{ width: '100%' }}
+            />
 
             <Label>Informe a data do lançamento: (Opcional)</Label>
-            {Platform.OS === 'ios' ? (
-              <>
-                <Label
-                  style={{ color: '#333' }}
-                  onPress={() => setDatesModalOpen(true)}
-                >
-                  {(dates.find(date => date.id === selectedDateId)?.date &&
-                    moment(
-                      dates.find(date => date.id === selectedDateId)?.date,
-                    ).format('LLL')) ||
-                    'Selecionar'}
-                </Label>
-                <PickerIOS
-                  modalIsVisible={datesModalOpen}
-                  modalOnBackdropPress={() => setDatesModalOpen(false)}
-                  items={dates.map(date => {
-                    return {
-                      ...date,
-                      date: moment(date.date).format('L LT'),
-                    };
-                  })}
-                  nameProp="date"
-                  valueProp="id"
-                  onValueChange={onDateChange}
-                  selectedValue={selectedDateId}
-                  buttonOnPress={() => {
-                    setDatesModalOpen(false);
-                  }}
-                />
-              </>
-            ) : (
-              <Picker
-                mode="dialog"
-                selectedValue={selectedDateId}
-                onValueChange={onDateChange}
-                style={{
-                  color: '#3D3D4D',
-                  marginHorizontal: SPACING.L,
-                }}
-                dropdownIconColor="#3D3D4D"
-              >
-                <Picker.Item
-                  color="#3D3D4D"
-                  label="Selecionar..."
-                  value={undefined}
-                />
-
-                {dates.map(date => (
-                  <Picker.Item
-                    key={date.id}
-                    color="#3D3D4D"
-                    label={moment(date.date).format('L LT')}
-                    value={date.id}
-                  />
-                ))}
-              </Picker>
-            )}
+            <Picker
+              doneText="Selecionar"
+              items={[
+                { label: 'Selecionar', value: '' },
+                ...dates.map(date => ({
+                  label: moment(date.date).format('L LT'),
+                  value: date.id,
+                })),
+              ]}
+              onChange={onDateChange}
+              value={selectedDateId}
+              androidStyle={{ width: '100%' }}
+            />
           </View>
         </Container>
       </ScrollView>

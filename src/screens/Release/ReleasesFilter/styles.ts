@@ -1,6 +1,4 @@
-import { StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
-import { BODY, colors } from 'styles';
 
 export const Container = styled.View`
   padding: 16px;
@@ -19,25 +17,6 @@ export const Item = styled.View`
   border-bottom-color: #ebebf0;
 `;
 
-export const OptionText = styled.Text``;
-
-export const PickerContainer = styled.View``;
-
-export const styles = StyleSheet.create({
-  selectIOS: {
-    flex: 1,
-    height: 50,
-    fontWeight: '500',
-    color: colors.gray[600],
-    fontSize: BODY.M.SIZE,
-  },
-  selectAndroid: {
-    height: 50,
-    width: 150,
-    fontWeight: '500',
-    color: colors.gray[600],
-  },
-  selectContainer: {
-    alignItems: 'flex-end',
-  },
-});
+export const OptionText = styled.Text`
+  max-width: 70%;
+`;

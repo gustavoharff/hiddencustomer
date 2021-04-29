@@ -10,6 +10,7 @@ import { Alert } from 'react-native';
 import produce from 'immer';
 import moment from 'moment';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useQuery } from 'react-query';
 
 import { api, getRealm } from 'services';
 
@@ -55,7 +56,7 @@ interface ReleasesContextData {
   customerReleasesFilter: string;
   setCustomerReleasesFilter: React.Dispatch<React.SetStateAction<string>>;
   releasesDates: ReleaseDate[];
-  loadApiReleases: () => Promise<void>;
+  loadApiReleases: () => Promise<Release[]>;
   loadApiReleaseDates: (releaseId: string) => Promise<void>;
   loadApiReleaseGroups: (releaseId: string) => Promise<void>;
   loadApiReleasesDates: () => Promise<void>;
@@ -150,13 +151,22 @@ export function ReleasesProvider({
           }
         });
       });
+
+      return response.data;
     } catch (err) {
       if (err.response.status === 440) {
         Alert.alert('Sessão expirada', 'Realize o login novamente!');
         signOut();
       }
+
+      return [] as Release[];
     }
   }, [activeReleasesFilter, customerReleasesFilter, signOut]);
+
+  useQuery('releases', loadApiReleases, {
+    refetchInterval: 1800 * 15,
+    refetchOnWindowFocus: true,
+  });
 
   const loadApiReleaseDates = useCallback(
     async releaseId => {
@@ -201,8 +211,8 @@ export function ReleasesProvider({
       const realm = await getRealm();
 
       realm.write(() => {
-        const data = realm.objects('ReleaseDate');
-        realm.delete(data);
+        const localReleasesDates = realm.objects('ReleaseDate');
+        realm.delete(localReleasesDates);
 
         response.data.map((releaseDate: ReleaseDate) =>
           realm.create('ReleaseDate', releaseDate),
@@ -219,9 +229,11 @@ export function ReleasesProvider({
   const loadLocalReleases = useCallback(async () => {
     const realm = await getRealm();
 
-    const data = realm.objects<Release>('Release').sorted('name', true);
+    const localReleases = realm
+      .objects<Release>('Release')
+      .sorted('name', true);
 
-    const formatedReleases = data.map(release => ({
+    const formatedReleases = localReleases.map(release => ({
       id: release.id,
       name: release.name,
       customer_id: release.customer_id,
@@ -257,9 +269,11 @@ export function ReleasesProvider({
   const loadLocalReleasesDates = useCallback(async () => {
     const realm = await getRealm();
 
-    const data = realm.objects<ReleaseDate>('ReleaseDate').sorted('date', true);
+    const localReleasesDates = realm
+      .objects<ReleaseDate>('ReleaseDate')
+      .sorted('date', true);
 
-    const formatedReleasesDates = data.map(releaseDate => ({
+    const formatedReleasesDates = localReleasesDates.map(releaseDate => ({
       id: releaseDate.id,
       date: releaseDate.date,
       release_id: releaseDate.release_id,

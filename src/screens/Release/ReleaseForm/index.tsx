@@ -6,7 +6,6 @@ import {
   Alert,
   View,
 } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
 import * as Yup from 'yup';
 import { FormHandles } from '@unform/core';
 import { useNavigation } from '@react-navigation/native';
@@ -16,7 +15,7 @@ import {
   getStatusBarHeight,
 } from 'react-native-iphone-x-helper';
 
-import { Button, Input, PickerIOS } from 'components';
+import { Button, Input, Picker } from 'components';
 
 import { useCustomers, useReleases } from 'hooks';
 
@@ -37,15 +36,12 @@ type Props = StackScreenProps<Params, 'ReleaseForm'>;
 export function ReleaseForm({ route }: Props): JSX.Element {
   const formRef = useRef<FormHandles>(null);
 
-  const [paymentModalOpen, setPaymentModalOpen] = useState(false);
-
   const [selectedCustomerId, setSelectedCustomerId] = useState(
     route.params?.release?.customer_id || '',
   );
   const [selectedPayment, setSelectedPayment] = useState(
     route.params?.release?.paid || false,
   );
-  const [customerModalOpen, setCustomerModalOpen] = useState(false);
   const [loadingButton, setLoadingButton] = useState(false);
   const navigation = useNavigation();
 
@@ -166,112 +162,32 @@ export function ReleaseForm({ route }: Props): JSX.Element {
             </Unform>
 
             <Label>Relacione o cliente:</Label>
-            {Platform.OS === 'ios' ? (
-              <>
-                <Label
-                  style={{ color: '#333' }}
-                  onPress={() => setCustomerModalOpen(true)}
-                >
-                  {customers.find(
-                    customer => customer.id === selectedCustomerId,
-                  )?.name || 'Selecionar'}
-                </Label>
-                <PickerIOS
-                  modalIsVisible={customerModalOpen}
-                  modalOnBackdropPress={() => setCustomerModalOpen(false)}
-                  items={customers}
-                  nameProp="name"
-                  valueProp="id"
-                  selectedValue={selectedCustomerId}
-                  onValueChange={onCustomerChange}
-                  buttonOnPress={() => {
-                    if (!selectedCustomerId) {
-                      Alert.alert('Selecione um cliente!');
-                      return;
-                    }
-
-                    setCustomerModalOpen(false);
-                  }}
-                />
-              </>
-            ) : (
-              <Picker
-                mode="dialog"
-                selectedValue={selectedCustomerId}
-                onValueChange={onCustomerChange}
-                style={{
-                  color: '#3D3D4D',
-                  marginHorizontal: SPACING.L,
-                }}
-                dropdownIconColor="#3D3D4D"
-              >
-                <Picker.Item
-                  color="#3D3D4D"
-                  label="Selecionar..."
-                  value={undefined}
-                />
-                {customers.map(customer => (
-                  <Picker.Item
-                    color="#3D3D4D"
-                    key={customer.id}
-                    label={customer.name}
-                    value={customer.id}
-                  />
-                ))}
-              </Picker>
-            )}
+            <Picker
+              doneText="Selecionar"
+              items={[
+                { label: 'Selecionar', value: '' },
+                ...customers.map(customer => ({
+                  label: customer.name,
+                  value: customer.id,
+                })),
+              ]}
+              onChange={onCustomerChange}
+              value={selectedCustomerId}
+              androidStyle={{ width: '100%' }}
+            />
 
             <Label>Status do pagamento:</Label>
-            {Platform.OS === 'ios' ? (
-              <>
-                <Label
-                  style={{ color: '#333' }}
-                  onPress={() => setPaymentModalOpen(true)}
-                >
-                  {selectedPayment ? 'Realizado' : 'Não realizado'}
-                </Label>
-
-                <PickerIOS
-                  modalIsVisible={paymentModalOpen}
-                  modalOnBackdropPress={() => setPaymentModalOpen(false)}
-                  items={[
-                    { paid: '1', name: 'Realizado' },
-                    { paid: '0', name: 'Não realizado' },
-                  ]}
-                  nameProp="name"
-                  valueProp="paid"
-                  onValueChange={onPaymentChange}
-                  selectedValue={selectedPayment ? '1' : '0'}
-                  buttonOnPress={() => setPaymentModalOpen(false)}
-                />
-              </>
-            ) : (
-              <>
-                <Picker
-                  mode="dialog"
-                  selectedValue={selectedPayment ? '1' : '0'}
-                  onValueChange={onPaymentChange}
-                  style={{
-                    color: '#3D3D4D',
-                    marginHorizontal: SPACING.L,
-                  }}
-                  dropdownIconColor="#3D3D4D"
-                >
-                  <Picker.Item
-                    color="#3D3D4D"
-                    key="true"
-                    label="Realizado"
-                    value="1"
-                  />
-                  <Picker.Item
-                    color="#3D3D4D"
-                    key="false"
-                    label="Não Realizado"
-                    value="0"
-                  />
-                </Picker>
-              </>
-            )}
+            <Picker
+              doneText="Selecionar"
+              items={[
+                { label: 'Selecionar', value: '' },
+                { label: 'Realizado', value: '1' },
+                { label: 'Não realizado', value: '0' },
+              ]}
+              onChange={onPaymentChange}
+              value={selectedPayment ? '1' : '0'}
+              androidStyle={{ width: '100%' }}
+            />
           </View>
         </Container>
       </ScrollView>

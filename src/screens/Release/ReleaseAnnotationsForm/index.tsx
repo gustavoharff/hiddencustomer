@@ -14,7 +14,7 @@ import { useReleases } from 'hooks';
 
 import { SPACING } from 'styles';
 
-import { Container, Unform } from './styles';
+import { Unform } from './styles';
 
 type Params = {
   ReleaseAnnotationsForm: {
@@ -64,21 +64,13 @@ export function ReleaseAnnotationsForm({
       enabled
     >
       <ScrollView keyboardShouldPersistTaps="handled">
-        <Container>
-          <Unform
-            ref={formRef}
-            onSubmit={handleSubmit}
-            initialData={route.params}
-          >
-            <TextArea
-              name="annotations"
-              label="Anotações"
-              multiline
-              numberOfLines={50}
-              style={{ height: '100%' }}
-            />
-          </Unform>
-        </Container>
+        <Unform
+          ref={formRef}
+          onSubmit={handleSubmit}
+          initialData={route.params}
+        >
+          <TextArea name="annotations" multiline numberOfLines={40} />
+        </Unform>
       </ScrollView>
       <View
         style={{

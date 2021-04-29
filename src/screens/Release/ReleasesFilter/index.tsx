@@ -2,7 +2,6 @@ import React, { useCallback, useEffect } from 'react';
 import { Switch } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import RNPickerSelect from 'react-native-picker-select';
 
 import { useCustomers, useReleases } from 'hooks';
 
@@ -10,7 +9,9 @@ import { HeaderIcon } from 'components';
 
 import { SPACING } from 'styles';
 
-import { Container, Item, OptionText, PickerContainer, styles } from './styles';
+import { Picker } from 'components/Picker';
+
+import { Container, Item, OptionText } from './styles';
 
 export function ReleasesFilter(): JSX.Element {
   const navigation = useNavigation();
@@ -75,34 +76,25 @@ export function ReleasesFilter(): JSX.Element {
   return (
     <Container>
       <Item>
-        <OptionText>Exibir apenas lançamentos ativos</OptionText>
+        <OptionText>Exibir apenas lançamentos ativos e futuros</OptionText>
         <Switch onValueChange={onChange} value={activeReleasesFilter} />
       </Item>
 
       <Item style={{ marginTop: 10 }}>
         <OptionText>Exibir apenas lançamentos de: </OptionText>
-        <PickerContainer>
-          <RNPickerSelect
-            placeholder={{}}
-            style={{
-              inputAndroid: { ...styles.selectAndroid },
-              inputIOS: { ...styles.selectIOS },
-              viewContainer: {
-                ...styles.selectContainer,
-              },
-            }}
-            value={customerReleasesFilter}
-            doneText="Selecionar"
-            onValueChange={onCustomerChange}
-            items={[
-              { label: 'Todos', value: 'all' },
-              ...customers.map(customer => ({
-                label: customer.name,
-                value: customer.id,
-              })),
-            ]}
-          />
-        </PickerContainer>
+        <Picker
+          value={customerReleasesFilter}
+          doneText="Selecionar"
+          onChange={onCustomerChange}
+          items={[
+            { label: 'Todos', value: 'all' },
+            ...customers.map(customer => ({
+              label: customer.name,
+              value: customer.id,
+            })),
+          ]}
+          containerStyle={{ alignItems: 'flex-end' }}
+        />
       </Item>
     </Container>
   );
