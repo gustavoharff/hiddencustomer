@@ -49,7 +49,7 @@ export function Releases(): JSX.Element {
 
   const onRefresh = useCallback(async () => {
     loadApiReleases().catch(() => loadLocalReleases());
-  }, [activeReleasesFilter]);
+  }, [loadApiReleases, loadLocalReleases]);
 
   useEffect(() => {
     setLoading(true);
