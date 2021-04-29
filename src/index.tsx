@@ -14,14 +14,14 @@ LogBox.ignoreLogs(['Remote debugger is in']);
 
 export default function App(): JSX.Element {
   return (
-    <AppProvider>
-      <NavigationContainer>
+    <NavigationContainer>
+      <AppProvider>
         <StatusBar
           barStyle="light-content"
           backgroundColor={colors.gray[900]}
         />
         <Routes />
-      </NavigationContainer>
-    </AppProvider>
+      </AppProvider>
+    </NavigationContainer>
   );
 }

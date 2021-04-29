@@ -13,6 +13,7 @@ import {
   ReleaseGroupForm,
   ReleaseAnnotationsForm,
   ReleaseDateForm,
+  ReleasesFilter,
 } from 'screens';
 
 import { SPACING, colors } from 'styles';
@@ -89,7 +90,7 @@ export function ReleasesStack(): JSX.Element {
           headerLeft: () => (
             <HeaderIcon
               name="close"
-              onPress={() => navigation.navigate('ReleaseDetails')}
+              onPress={() => navigation.goBack()}
               style={{ marginLeft: SPACING.S }}
             />
           ),
@@ -118,6 +119,22 @@ export function ReleasesStack(): JSX.Element {
         options={({ navigation }) => ({
           cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
           headerTitle: 'Editar anotação',
+          headerLeft: () => (
+            <HeaderIcon
+              name="close"
+              onPress={() => navigation.goBack()}
+              style={{ marginLeft: SPACING.S }}
+            />
+          ),
+        })}
+      />
+
+      <Screen
+        name="ReleasesFilter"
+        component={ReleasesFilter}
+        options={({ navigation }) => ({
+          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+          headerTitle: 'Filtrar lançamentos',
           headerLeft: () => (
             <HeaderIcon
               name="close"

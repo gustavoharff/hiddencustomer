@@ -4,9 +4,12 @@ import React, {
   useContext,
   useCallback,
   ReactNode,
+  useEffect,
 } from 'react';
 import { Alert } from 'react-native';
 import produce from 'immer';
+import moment from 'moment';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import { api, getRealm } from 'services';
 
@@ -19,18 +22,6 @@ interface CreateReleaseData {
   customer_id: string;
 }
 
-interface CreateReleaseGroupData {
-  name: string;
-  type: string;
-  release_id: string;
-  release_date_id?: string;
-}
-
-interface CreateReleaseDateData {
-  date: Date;
-  release_id: string;
-}
-
 interface UpdateReleaseData {
   release_id: string;
   name?: string;
@@ -39,6 +30,12 @@ interface UpdateReleaseData {
   annotations?: string;
 }
 
+interface CreateReleaseGroupData {
+  name: string;
+  type: string;
+  release_id: string;
+  release_date_id?: string;
+}
 interface UpdateReleaseGroupData {
   groupId: string;
   name: string;
@@ -46,8 +43,17 @@ interface UpdateReleaseGroupData {
   release_date_id?: string;
 }
 
+interface CreateReleaseDateData {
+  date: Date;
+  release_id: string;
+}
+
 interface ReleasesContextData {
   releases: Release[];
+  activeReleasesFilter: boolean;
+  setActiveReleasesFilter: React.Dispatch<React.SetStateAction<boolean>>;
+  customerReleasesFilter: string;
+  setCustomerReleasesFilter: React.Dispatch<React.SetStateAction<string>>;
   releasesDates: ReleaseDate[];
   loadApiReleases: () => Promise<void>;
   loadApiReleaseDates: (releaseId: string) => Promise<void>;
@@ -77,15 +83,61 @@ export function ReleasesProvider({
   children,
 }: ReleasesProviderProps): JSX.Element {
   const [releases, setReleases] = useState<Release[]>([]);
+  const [activeReleasesFilter, setActiveReleasesFilter] = useState(true);
+  const [customerReleasesFilter, setCustomerReleasesFilter] = useState('all');
 
   const [releasesDates, setReleasesDates] = useState<ReleaseDate[]>([]);
 
   const { signOut } = useAuth();
 
+  useEffect(() => {
+    async function loadLocalFilters() {
+      const localActiveReleasesFilter = await AsyncStorage.getItem(
+        'ReleaseActiveFilter',
+      );
+
+      const localCustomerReleasesFilter = await AsyncStorage.getItem(
+        'CustomerReleasesFilter',
+      );
+
+      if (localActiveReleasesFilter) {
+        setActiveReleasesFilter(localActiveReleasesFilter === '1');
+      }
+
+      if (localCustomerReleasesFilter) {
+        setCustomerReleasesFilter(localCustomerReleasesFilter);
+      }
+    }
+
+    loadLocalFilters();
+  }, []);
+
   const loadApiReleases = useCallback(async () => {
+    let initialReleases = [] as Release[];
     try {
       const response = await api.get('/releases');
-      setReleases(response.data);
+      initialReleases = response.data;
+
+      if (activeReleasesFilter) {
+        initialReleases = initialReleases.filter(release => {
+          if (release.dates.length >= 1) {
+            if (moment(release.dates[0].date).isBefore(new Date())) {
+              return false;
+            }
+          }
+
+          return true;
+        });
+      }
+
+      console.log(customerReleasesFilter);
+      if (customerReleasesFilter !== '' && customerReleasesFilter !== 'all') {
+        initialReleases = initialReleases.filter(
+          release => release.customer_id === customerReleasesFilter,
+        );
+      }
+
+      setReleases(initialReleases);
 
       const realm = await getRealm();
 
@@ -105,7 +157,7 @@ export function ReleasesProvider({
         signOut();
       }
     }
-  }, [setReleases, signOut]);
+  }, [activeReleasesFilter, customerReleasesFilter, signOut]);
 
   const loadApiReleaseDates = useCallback(
     async releaseId => {
@@ -184,8 +236,24 @@ export function ReleasesProvider({
       updated_at: release.updated_at,
     })) as Release[];
 
-    setReleases(formatedReleases);
-  }, [setReleases]);
+    let initialReleases = [] as Release[];
+
+    initialReleases = formatedReleases;
+
+    if (activeReleasesFilter) {
+      initialReleases = initialReleases.filter(release => {
+        if (release.dates.length >= 1) {
+          if (moment(release.dates[0].date).isBefore(new Date())) {
+            return false;
+          }
+        }
+
+        return true;
+      });
+    }
+
+    setReleases(initialReleases);
+  }, [activeReleasesFilter]);
 
   const loadLocalReleasesDates = useCallback(async () => {
     const realm = await getRealm();
@@ -232,74 +300,6 @@ export function ReleasesProvider({
       }
     },
     [signOut],
-  );
-
-  const createReleaseGroup = useCallback(
-    async ({
-      name,
-      type,
-      release_id,
-      release_date_id,
-    }: CreateReleaseGroupData) => {
-      try {
-        const response = await api.post('/release/groups', {
-          name,
-          type,
-          release_id,
-          release_date_id,
-        });
-
-        setReleases(
-          produce(releases, drafts => {
-            drafts.forEach(release => {
-              if (release.id === release_id) {
-                release.groups.push(response.data);
-              }
-            });
-          }),
-        );
-
-        const realm = await getRealm();
-
-        realm.write(() => {
-          realm.create('ReleaseGroup', response.data);
-        });
-      } catch (err) {
-        if (err.response.status === 440) {
-          Alert.alert('Sessão expirada', 'Realize o login novamente!');
-          signOut();
-        }
-      }
-    },
-    [signOut, releases],
-  );
-
-  const createReleaseDate = useCallback(
-    async ({ date, release_id }: CreateReleaseDateData) => {
-      const response = await api.post('/release/dates', {
-        release_id,
-        date: date.toISOString(),
-      });
-
-      setReleases(rls =>
-        rls.map(release => {
-          if (release.id === release_id) {
-            return {
-              ...release,
-              dates: [...release.dates, response.data],
-            };
-          }
-          return release;
-        }),
-      );
-
-      const realm = await getRealm();
-
-      realm.write(() => {
-        realm.create('ReleaseDate', response.data);
-      });
-    },
-    [],
   );
 
   const updateRelease = useCallback(
@@ -352,6 +352,46 @@ export function ReleasesProvider({
     });
   }, []);
 
+  const createReleaseGroup = useCallback(
+    async ({
+      name,
+      type,
+      release_id,
+      release_date_id,
+    }: CreateReleaseGroupData) => {
+      try {
+        const response = await api.post('/release/groups', {
+          name,
+          type,
+          release_id,
+          release_date_id,
+        });
+
+        setReleases(
+          produce(releases, drafts => {
+            drafts.forEach(release => {
+              if (release.id === release_id) {
+                release.groups.push(response.data);
+              }
+            });
+          }),
+        );
+
+        const realm = await getRealm();
+
+        realm.write(() => {
+          realm.create('ReleaseGroup', response.data);
+        });
+      } catch (err) {
+        if (err.response.status === 440) {
+          Alert.alert('Sessão expirada', 'Realize o login novamente!');
+          signOut();
+        }
+      }
+    },
+    [signOut, releases],
+  );
+
   const updateReleaseGroup = useCallback(
     async ({
       groupId,
@@ -397,6 +437,34 @@ export function ReleasesProvider({
     [releases],
   );
 
+  const createReleaseDate = useCallback(
+    async ({ date, release_id }: CreateReleaseDateData) => {
+      const response = await api.post('/release/dates', {
+        release_id,
+        date: date.toISOString(),
+      });
+
+      setReleases(rls =>
+        rls.map(release => {
+          if (release.id === release_id) {
+            return {
+              ...release,
+              dates: [...release.dates, response.data],
+            };
+          }
+          return release;
+        }),
+      );
+
+      const realm = await getRealm();
+
+      realm.write(() => {
+        realm.create('ReleaseDate', response.data);
+      });
+    },
+    [],
+  );
+
   const deleteReleaseDate = useCallback(
     async (dateId: string) => {
       try {
@@ -421,10 +489,18 @@ export function ReleasesProvider({
     [releases],
   );
 
+  useEffect(() => {
+    loadApiReleases().catch(() => loadLocalReleases());
+  }, [activeReleasesFilter, customerReleasesFilter]);
+
   return (
     <ReleasesContext.Provider
       value={{
         releases,
+        activeReleasesFilter,
+        setActiveReleasesFilter,
+        customerReleasesFilter,
+        setCustomerReleasesFilter,
         releasesDates,
         loadApiReleases,
         loadApiReleaseDates,

@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import RNBootSplash from 'react-native-bootsplash';
-import { ActivityIndicator, Image, Platform, Text } from 'react-native';
+import { ActivityIndicator, Image, Platform } from 'react-native';
 
-import { CircularButton } from 'components';
+import { CircularButton, HeaderIcon } from 'components';
 
 import { useAuth, useReleases } from 'hooks';
 
-import { colors } from 'styles';
+import { colors, SPACING } from 'styles';
 
 import rocketPlusImg from 'assets/icons/rocket-plus-outline.png';
 
@@ -16,19 +16,26 @@ import { ReleasesList } from './ReleasesList';
 import { Container, Center } from './styles';
 
 export function Releases(): JSX.Element {
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const { user } = useAuth();
 
-  const { releases, loadApiReleases, loadLocalReleases } = useReleases();
+  const {
+    releases,
+    loadApiReleases,
+    loadLocalReleases,
+    activeReleasesFilter,
+  } = useReleases();
 
   const navigation = useNavigation();
 
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <Text style={{ color: colors.gray[500], marginRight: 20 }}>
-          {releases.length ?? 0} lançamento(s)
-        </Text>
+        <HeaderIcon
+          name="filter-outline"
+          onPress={() => navigation.navigate('ReleasesFilter')}
+          style={{ marginRight: SPACING.S }}
+        />
       ),
     });
   }, [navigation, releases]);
@@ -39,15 +46,9 @@ export function Releases(): JSX.Element {
     }, 300);
   }, []);
 
-  useEffect(() => {
-    loadApiReleases()
-      .catch(() => loadLocalReleases())
-      .finally(() => setLoading(false));
-  }, []);
-
   const onRefresh = useCallback(async () => {
     loadApiReleases().catch(() => loadLocalReleases());
-  }, []);
+  }, [activeReleasesFilter]);
 
   if (loading) {
     return (
