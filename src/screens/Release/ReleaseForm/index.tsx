@@ -1,21 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import {
-  Platform,
-  KeyboardAvoidingView,
-  ScrollView,
-  Alert,
-  View,
-} from 'react-native';
-import * as Yup from 'yup';
-import { FormHandles } from '@unform/core';
+import { ScrollView, Alert, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
+import { FormHandles } from '@unform/core';
 import { StackScreenProps } from '@react-navigation/stack';
-import {
-  getBottomSpace,
-  getStatusBarHeight,
-} from 'react-native-iphone-x-helper';
+import * as Yup from 'yup';
 
-import { Button, Input, Picker } from 'components';
+import { Button, Input, Picker, Screen } from 'components';
 
 import { useCustomers, useReleases } from 'hooks';
 
@@ -42,7 +32,7 @@ export function ReleaseForm({ route }: Props): JSX.Element {
   const [selectedPayment, setSelectedPayment] = useState(
     route.params?.release?.paid || false,
   );
-  const [loadingButton, setLoadingButton] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -91,6 +81,7 @@ export function ReleaseForm({ route }: Props): JSX.Element {
 
   const handleSubmit = useCallback(
     async data => {
+      setLoading(true);
       try {
         formRef.current?.setErrors({});
 
@@ -101,7 +92,7 @@ export function ReleaseForm({ route }: Props): JSX.Element {
         await schema.validate(data, { abortEarly: false });
 
         if (!selectedCustomerId) {
-          setLoadingButton(false);
+          setLoading(false);
           Alert.alert('Atenção', 'Selecione algum cliente!');
           return;
         }
@@ -124,11 +115,10 @@ export function ReleaseForm({ route }: Props): JSX.Element {
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           Alert.alert('Atenção!', 'Complete o campo de nome');
-          setLoadingButton(false);
+          return;
         }
-
-        setLoadingButton(false);
       }
+      setLoading(false);
     },
     [
       selectedCustomerId,
@@ -141,14 +131,7 @@ export function ReleaseForm({ route }: Props): JSX.Element {
   );
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={
-        getBottomSpace() + getStatusBarHeight(false) + SPACING.L * 5
-      }
-      enabled
-    >
+    <Screen keyboard>
       <ScrollView keyboardShouldPersistTaps="handled">
         <Container>
           <View style={{ width: '100%' }}>
@@ -191,17 +174,14 @@ export function ReleaseForm({ route }: Props): JSX.Element {
           </View>
         </Container>
       </ScrollView>
-      <View style={{ width: '100%', alignItems: 'center' }}>
-        <Button
-          title={route.params?.release ? 'Salvar' : 'Cadastrar'}
-          loading={loadingButton}
-          onPress={() => {
-            formRef.current?.submitForm();
-            setLoadingButton(true);
-          }}
-          style={{ marginBottom: SPACING.M }}
-        />
-      </View>
-    </KeyboardAvoidingView>
+      <Button
+        title={route.params?.release ? 'Salvar' : 'Cadastrar'}
+        loading={loading}
+        onPress={() => {
+          formRef.current?.submitForm();
+        }}
+        style={{ marginBottom: SPACING.M }}
+      />
+    </Screen>
   );
 }

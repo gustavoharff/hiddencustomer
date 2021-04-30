@@ -32,7 +32,7 @@ type SignInFormData = {
   password: string;
 };
 
-const SignIn: React.FC = () => {
+export function SignIn(): JSX.Element {
   const [loadingButton, setLoadingButton] = useState(false);
 
   useEffect(() => {
@@ -48,6 +48,7 @@ const SignIn: React.FC = () => {
 
   const handleSubmit = useCallback(
     async (data: SignInFormData) => {
+      setLoadingButton(true);
       try {
         formRef.current?.setErrors({});
 
@@ -82,9 +83,8 @@ const SignIn: React.FC = () => {
         } else {
           Alert.alert('Erro', 'Erro na autenticação, verifique seus dados.');
         }
-
-        setLoadingButton(false);
       }
+      setLoadingButton(false);
     },
     [signIn],
   );
@@ -131,7 +131,6 @@ const SignIn: React.FC = () => {
               title="Entrar"
               onPress={() => {
                 formRef.current?.submitForm();
-                setLoadingButton(true);
               }}
               loading={loadingButton}
             />
@@ -145,6 +144,4 @@ const SignIn: React.FC = () => {
       </ScrollView>
     </KeyboardAvoidingView>
   );
-};
-
-export { SignIn };
+}

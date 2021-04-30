@@ -25,6 +25,7 @@
     "prettier/prettier": "error",
     "@typescript-eslint/ban-ts-comment": "off",
     "camelcase": "off",
+    "no-nested-ternary": "off",
     "@typescript-eslint/ban-types": "off",
     "react/require-default-props": "off",
     "react/jsx-props-no-spreading": "off",

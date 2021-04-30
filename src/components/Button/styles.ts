@@ -26,3 +26,8 @@ export const Container = styled(RectButton)<ContainerProps>`
 export const ButtonText = styled.Text<ButtonTextProps>`
   color: ${props => props.textColor || colors.white};
 `;
+
+export const MaxWidth = styled.View`
+  width: 100%;
+  align-items: center;
+`;

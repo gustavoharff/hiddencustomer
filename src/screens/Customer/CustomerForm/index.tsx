@@ -1,21 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { FormHandles } from '@unform/core';
-import * as Yup from 'yup';
-import {
-  getBottomSpace,
-  getStatusBarHeight,
-} from 'react-native-iphone-x-helper';
-import {
-  Alert,
-  KeyboardAvoidingView,
-  ScrollView,
-  Platform,
-  View,
-} from 'react-native';
+import { Alert, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
+import { FormHandles } from '@unform/core';
+import * as Yup from 'yup';
 
-import { Input, Button } from 'components';
+import { Input, Button, Screen } from 'components';
 
 import { useCustomers } from 'hooks';
 
@@ -34,7 +24,7 @@ type Props = {
 type CustomerChangeProps = StackScreenProps<Props, 'CustomerForm'>;
 
 export function CustomerForm({ route }: CustomerChangeProps): JSX.Element {
-  const [loadingButton, setLoadingButton] = useState(false);
+  const [loading, setLoading] = useState(false);
   const formRef = useRef<FormHandles>(null);
 
   const { createCustomer, updateCustomer } = useCustomers();
@@ -65,6 +55,7 @@ export function CustomerForm({ route }: CustomerChangeProps): JSX.Element {
 
   const handleSubmit = useCallback(
     async data => {
+      setLoading(true);
       try {
         formRef.current?.setErrors({});
 
@@ -87,24 +78,16 @@ export function CustomerForm({ route }: CustomerChangeProps): JSX.Element {
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           Alert.alert('Atenção!', 'Complete o campo de nome');
-          setLoadingButton(false);
+          return;
         }
-
-        setLoadingButton(false);
       }
+      setLoading(false);
     },
     [createCustomer, navigation, route.params?.customer, updateCustomer],
   );
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={
-        getBottomSpace() + getStatusBarHeight(false) + SPACING.L * 5
-      }
-      enabled
-    >
+    <Screen keyboard>
       <ScrollView keyboardShouldPersistTaps="handled">
         <Container>
           <Unform ref={formRef} onSubmit={handleSubmit}>
@@ -118,22 +101,15 @@ export function CustomerForm({ route }: CustomerChangeProps): JSX.Element {
           </Unform>
         </Container>
       </ScrollView>
-      <View
-        style={{
-          width: '100%',
-          alignItems: 'center',
+
+      <Button
+        title={route.params?.customer ? 'Salvar' : 'Registrar'}
+        loading={loading}
+        onPress={() => {
+          formRef.current?.submitForm();
         }}
-      >
-        <Button
-          title={route.params?.customer ? 'Salvar' : 'Registrar'}
-          loading={loadingButton}
-          onPress={() => {
-            formRef.current?.submitForm();
-            setLoadingButton(true);
-          }}
-          style={{ marginBottom: SPACING.M }}
-        />
-      </View>
-    </KeyboardAvoidingView>
+        style={{ marginBottom: SPACING.M }}
+      />
+    </Screen>
   );
 }

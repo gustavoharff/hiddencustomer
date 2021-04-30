@@ -4,7 +4,7 @@ import { BaseButtonProperties } from 'react-native-gesture-handler';
 
 import { colors } from 'styles';
 
-import { Container, ButtonText } from './styles';
+import { Container, ButtonText, MaxWidth } from './styles';
 
 interface ButtonProps extends BaseButtonProperties {
   title: string;
@@ -21,12 +21,14 @@ export function Button({
   ...rest
 }: ButtonProps): JSX.Element {
   return (
-    <Container backgroundColor={backgroundColor} {...rest}>
-      {loading ? (
-        <ActivityIndicator color={colors.white} />
-      ) : (
-        <ButtonText textColor={textColor}>{title}</ButtonText>
-      )}
-    </Container>
+    <MaxWidth>
+      <Container backgroundColor={backgroundColor} {...rest}>
+        {loading ? (
+          <ActivityIndicator color={colors.white} />
+        ) : (
+          <ButtonText textColor={textColor}>{title}</ButtonText>
+        )}
+      </Container>
+    </MaxWidth>
   );
 }

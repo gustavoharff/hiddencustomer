@@ -9,6 +9,7 @@ export * from './ListHeader';
 export * from './Logo';
 export * from './OptionItem';
 export * from './Picker';
+export * from './Screen';
 export * from './ScreenIndicator';
 export * from './Swipeable';
 export * from './TabBarIcon';

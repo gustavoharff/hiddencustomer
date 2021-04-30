@@ -150,7 +150,6 @@ export function ReleasesList({
             {release.dates.length >= 1 && (
               <Bottom>
                 <BottomContent
-                  past={moment(release.dates[0].date).isBefore(new Date())}
                   between={moment(new Date()).isBetween(
                     moment(release.dates[release.dates.length - 1].date),
                     moment(release.dates[0].date),

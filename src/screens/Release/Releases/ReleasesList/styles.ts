@@ -6,7 +6,6 @@ interface ContainerProps {
 
 interface BottomContentProps {
   between: boolean;
-  past: boolean;
 }
 
 export const Container = styled.View<ContainerProps>`
@@ -57,12 +56,6 @@ export const BottomContent = styled.View<BottomContentProps>`
     props.between &&
     css`
       background: #daf3e5;
-    `}
-
-  ${props =>
-    props.past &&
-    css`
-      opacity: 0.7;
     `}
 
   border-bottom-width: 1px;

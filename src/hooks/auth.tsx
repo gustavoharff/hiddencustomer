@@ -97,7 +97,11 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
   }, []);
 
   const signOut = useCallback(async () => {
-    await AsyncStorage.clear();
+    try {
+      await AsyncStorage.clear();
+    } catch (e) {
+      console.error(e);
+    }
     const realm = await getRealm();
 
     realm.write(() => {

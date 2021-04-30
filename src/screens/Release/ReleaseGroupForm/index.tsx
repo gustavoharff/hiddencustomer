@@ -5,24 +5,14 @@ import React, {
   useRef,
   useState,
 } from 'react';
-import { FormHandles } from '@unform/core';
+import { Alert, ScrollView, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
+import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
-import {
-  getBottomSpace,
-  getStatusBarHeight,
-} from 'react-native-iphone-x-helper';
-import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  View,
-} from 'react-native';
 import moment from 'moment';
 
-import { Input, Button, Picker } from 'components';
+import { Input, Button, Picker, Screen } from 'components';
 
 import { SPACING } from 'styles';
 
@@ -76,6 +66,7 @@ export function ReleaseGroupForm({
 
   const handleSubmit = useCallback(
     async data => {
+      setLoadingButton(true);
       try {
         formRef.current?.setErrors({});
 
@@ -112,11 +103,10 @@ export function ReleaseGroupForm({
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           Alert.alert('Atenção!', 'Complete o campo de nome');
-          setLoadingButton(false);
+          return;
         }
-
-        setLoadingButton(false);
       }
+      setLoadingButton(false);
     },
     [
       selectedGroup,
@@ -147,14 +137,7 @@ export function ReleaseGroupForm({
   }, [releases, route.params?.release_id, route.params.group?.release_id]);
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={
-        getBottomSpace() + getStatusBarHeight(true) + SPACING.L * 5
-      }
-      enabled
-    >
+    <Screen keyboard>
       <ScrollView keyboardShouldPersistTaps="handled">
         <Container>
           <View style={{ width: '100%' }}>
@@ -199,17 +182,14 @@ export function ReleaseGroupForm({
           </View>
         </Container>
       </ScrollView>
-      <View style={{ width: '100%', alignItems: 'center' }}>
-        <Button
-          title={route.params?.group ? 'Salvar' : 'Registrar'}
-          loading={loadingButton}
-          onPress={() => {
-            formRef.current?.submitForm();
-            setLoadingButton(true);
-          }}
-          style={{ marginBottom: SPACING.M }}
-        />
-      </View>
-    </KeyboardAvoidingView>
+      <Button
+        title={route.params?.group ? 'Salvar' : 'Registrar'}
+        loading={loadingButton}
+        onPress={() => {
+          formRef.current?.submitForm();
+        }}
+        style={{ marginBottom: SPACING.M }}
+      />
+    </Screen>
   );
 }

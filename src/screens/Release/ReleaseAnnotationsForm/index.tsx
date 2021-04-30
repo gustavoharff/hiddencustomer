@@ -1,14 +1,10 @@
 import React, { useCallback, useRef, useState } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, View } from 'react-native';
+import { ScrollView } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { FormHandles } from '@unform/core';
 import { useNavigation } from '@react-navigation/native';
-import {
-  getBottomSpace,
-  getStatusBarHeight,
-} from 'react-native-iphone-x-helper';
 
-import { TextArea, Button } from 'components';
+import { TextArea, Button, Screen } from 'components';
 
 import { useReleases } from 'hooks';
 
@@ -55,14 +51,7 @@ export function ReleaseAnnotationsForm({
   );
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={
-        getBottomSpace() + getStatusBarHeight(false) + SPACING.L * 5
-      }
-      enabled
-    >
+    <Screen keyboard>
       <ScrollView keyboardShouldPersistTaps="handled">
         <Unform
           ref={formRef}
@@ -72,19 +61,13 @@ export function ReleaseAnnotationsForm({
           <TextArea name="annotations" multiline numberOfLines={40} />
         </Unform>
       </ScrollView>
-      <View
-        style={{
-          width: '100%',
-          alignItems: 'center',
-        }}
-      >
-        <Button
-          loading={loading}
-          title="Salvar"
-          onPress={() => formRef.current?.submitForm()}
-          style={{ marginBottom: SPACING.M }}
-        />
-      </View>
-    </KeyboardAvoidingView>
+
+      <Button
+        loading={loading}
+        title="Salvar"
+        onPress={() => formRef.current?.submitForm()}
+        style={{ marginBottom: SPACING.M }}
+      />
+    </Screen>
   );
 }

@@ -1,21 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { FormHandles } from '@unform/core';
+import { Alert, ScrollView, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
+import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
-import {
-  getBottomSpace,
-  getStatusBarHeight,
-} from 'react-native-iphone-x-helper';
-import {
-  Alert,
-  KeyboardAvoidingView,
-  ScrollView,
-  Platform,
-  View,
-} from 'react-native';
 
-import { Input, Button, Picker } from 'components';
+import { Input, Button, Picker, Screen } from 'components';
 
 import { SPACING } from 'styles';
 
@@ -34,7 +24,7 @@ type Props = {
 type UserFormProps = StackScreenProps<Props, 'UserForm'>;
 
 export function UserForm({ route }: UserFormProps): JSX.Element {
-  const [loadingButton, setLoadingButton] = useState(false);
+  const [loading, setLoading] = useState(false);
   const formRef = useRef<FormHandles>(null);
 
   const { createUser, updateUser } = useUsers();
@@ -78,6 +68,7 @@ export function UserForm({ route }: UserFormProps): JSX.Element {
 
   const handleSubmit = useCallback(
     async data => {
+      setLoading(true);
       try {
         let schema;
         formRef.current?.setErrors({});
@@ -98,7 +89,7 @@ export function UserForm({ route }: UserFormProps): JSX.Element {
         await schema.validate(data, { abortEarly: false });
 
         if (!selectedCompanyId) {
-          setLoadingButton(false);
+          setLoading(false);
           Alert.alert('Atenção', 'Selecione alguma empresa!');
           return;
         }
@@ -124,25 +115,16 @@ export function UserForm({ route }: UserFormProps): JSX.Element {
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           Alert.alert('Atenção!', 'Complete todos os campos.');
-          setLoadingButton(false);
           return;
         }
-
-        setLoadingButton(false);
       }
+      setLoading(false);
     },
     [route.params?.user, selectedCompanyId, navigation, createUser, updateUser],
   );
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={
-        getBottomSpace() + getStatusBarHeight(false) + SPACING.L * 5
-      }
-      enabled
-    >
+    <Screen keyboard>
       <ScrollView keyboardShouldPersistTaps="handled">
         <Container>
           <View>
@@ -190,22 +172,15 @@ export function UserForm({ route }: UserFormProps): JSX.Element {
           </View>
         </Container>
       </ScrollView>
-      <View
-        style={{
-          width: '100%',
-          alignItems: 'center',
+
+      <Button
+        title={route.params?.user ? 'Editar' : 'Cadastrar'}
+        loading={loading}
+        onPress={() => {
+          formRef.current?.submitForm();
         }}
-      >
-        <Button
-          title={route.params?.user ? 'Editar' : 'Cadastrar'}
-          loading={loadingButton}
-          onPress={() => {
-            formRef.current?.submitForm();
-            setLoadingButton(true);
-          }}
-          style={{ marginBottom: SPACING.M }}
-        />
-      </View>
-    </KeyboardAvoidingView>
+        style={{ marginBottom: SPACING.M }}
+      />
+    </Screen>
   );
 }
