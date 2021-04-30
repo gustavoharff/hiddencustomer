@@ -1,5 +1,7 @@
 import React, { useCallback, useMemo, useState } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { RectButton } from 'react-native-gesture-handler';
 import moment from 'moment';
 import 'moment/locale/pt-br';
 
@@ -19,6 +21,7 @@ export function ReleaseDatesList({
   emptyListText,
   release_id,
 }: ReleaseDatesListProps): JSX.Element {
+  const navigation = useNavigation();
   const [refreshing, setRefreshing] = useState(false);
 
   const { user } = useAuth();
@@ -94,9 +97,15 @@ export function ReleaseDatesList({
                 await onDeleteItem(date.id);
               }}
             >
-              <Content past={moment(date.date).isSameOrBefore()}>
-                <Date>{moment(date.date).locale('pt-br').format('LLL')}</Date>
-              </Content>
+              <RectButton
+                onPress={() =>
+                  navigation.navigate('ReleaseDateGroups', { date_id: date.id })
+                }
+              >
+                <Content past={moment(date.date).isSameOrBefore()}>
+                  <Date>{moment(date.date).locale('pt-br').format('LLL')}</Date>
+                </Content>
+              </RectButton>
             </Swipeable>
           </Container>
         )}

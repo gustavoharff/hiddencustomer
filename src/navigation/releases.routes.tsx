@@ -14,6 +14,7 @@ import {
   ReleaseAnnotationsForm,
   ReleaseDateForm,
   ReleasesFilter,
+  ReleaseDateGroups,
 } from 'screens';
 
 import { SPACING, colors } from 'styles';
@@ -103,6 +104,22 @@ export function ReleasesStack(): JSX.Element {
         options={({ navigation }) => ({
           cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
           headerTitle: 'Cadastrar data',
+          headerLeft: () => (
+            <HeaderIcon
+              name="close"
+              onPress={() => navigation.navigate('ReleaseDetails')}
+              style={{ marginLeft: SPACING.S }}
+            />
+          ),
+        })}
+      />
+
+      <Screen
+        name="ReleaseDateGroups"
+        component={ReleaseDateGroups}
+        options={({ navigation }) => ({
+          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+          headerTitle: 'Grupos da data',
           headerLeft: () => (
             <HeaderIcon
               name="close"

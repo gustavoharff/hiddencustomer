@@ -298,7 +298,7 @@ export function ReleasesProvider({
   const loadReleasesDates = useCallback(async () => {
     const realm = await getRealm();
     try {
-      const response = await api.get('/release/dates/company');
+      const response = await api.get('/releases/dates/company');
 
       setReleasesDates(response.data);
 
