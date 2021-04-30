@@ -9,7 +9,7 @@ import { useAuth } from 'hooks';
 
 import { Company } from 'types';
 
-import { api } from 'services';
+import { api, getRealm } from 'services';
 
 import { Container, FieldDescription, Text, Title } from './styles';
 
@@ -18,9 +18,35 @@ export function Profile(): JSX.Element {
   const [company, setCompany] = useState({} as Company);
 
   useEffect(() => {
-    api.get('/companies/me').then(response => {
-      setCompany(response.data);
-    });
+    api
+      .get('/companies/me')
+      .then(response => {
+        setCompany(response.data);
+
+        getRealm().then(realm => {
+          realm.write(() => {
+            // @ts-ignore
+            realm.create('Company', response.data, 'modified');
+          });
+        });
+      })
+      .catch(() => {
+        getRealm().then(realm => {
+          const data = realm.objectForPrimaryKey<Company>(
+            'Company',
+            user.company_id,
+          );
+
+          if (data) {
+            setCompany({
+              id: data.id,
+              name: data.name,
+              created_at: data.created_at,
+              updated_at: data.updated_at,
+            });
+          }
+        });
+      });
   }, []);
 
   return (

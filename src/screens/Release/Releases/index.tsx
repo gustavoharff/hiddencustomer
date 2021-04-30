@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import RNBootSplash from 'react-native-bootsplash';
-import { ActivityIndicator, Image, Platform } from 'react-native';
+import { ActivityIndicator, Image, Platform, View } from 'react-native';
 
 import { CircularButton, HeaderIcon } from 'components';
 
-import { useAuth } from 'hooks';
+import { useAuth, useReleases } from 'hooks';
 
 import { colors, SPACING } from 'styles';
 
@@ -17,21 +17,30 @@ import { Container, Center } from './styles';
 
 export function Releases(): JSX.Element {
   const { user } = useAuth();
-  const [loading, setLoading] = useState(false);
+  const { isLoading, isFetching } = useReleases();
 
   const navigation = useNavigation();
 
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <HeaderIcon
-          name="filter-outline"
-          onPress={() => navigation.navigate('ReleasesFilter')}
-          style={{ marginRight: SPACING.S }}
-        />
+        <View style={{ flexDirection: 'row' }}>
+          {isFetching && (
+            <ActivityIndicator
+              color={colors.red[500]}
+              size={30}
+              style={{ marginRight: SPACING.S }}
+            />
+          )}
+          <HeaderIcon
+            name="filter-outline"
+            onPress={() => navigation.navigate('ReleasesFilter')}
+            style={{ marginRight: SPACING.S }}
+          />
+        </View>
       ),
     });
-  }, [navigation]);
+  }, [navigation, isFetching]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -39,7 +48,7 @@ export function Releases(): JSX.Element {
     }, 300);
   }, []);
 
-  if (loading) {
+  if (isLoading) {
     return (
       <Center>
         <ActivityIndicator

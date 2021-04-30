@@ -51,6 +51,8 @@ interface CreateReleaseDateData {
 
 interface ReleasesContextData {
   releases: Release[];
+  isLoading: boolean;
+  isFetching: boolean;
   activeReleasesFilter: boolean;
   setActiveReleasesFilter: React.Dispatch<React.SetStateAction<boolean>>;
   customerReleasesFilter: string;
@@ -121,16 +123,12 @@ export function ReleasesProvider({
 
       realm.write(() => {
         response.data.forEach((release: Release) => {
-          try {
-            realm.create('Release', release);
-          } catch {
-            /* @ts-ignore */
-            realm.create('Release', release, 'modified');
-          }
+          /* @ts-ignore */
+          realm.create('Release', release, 'modified');
         });
       });
     } catch (err) {
-      if (err.response.status === 440) {
+      if (err.response?.status === 440) {
         Alert.alert('Sessão expirada', 'Realize o login novamente!');
         signOut();
         throw new Error('Session timeout!');
@@ -153,6 +151,7 @@ export function ReleasesProvider({
         updated_at: release.updated_at,
       })) as Release[];
     }
+
     if (activeReleasesFilter) {
       data = data.filter(release => {
         if (release.dates.length >= 1) {
@@ -176,7 +175,7 @@ export function ReleasesProvider({
     return data;
   }, [activeReleasesFilter, customerReleasesFilter, signOut]);
 
-  useQuery('releases', loadReleases, {
+  const { isLoading, isFetching } = useQuery('releases', loadReleases, {
     refetchInterval: 1800 * 15,
     refetchOnWindowFocus: true,
   });
@@ -204,7 +203,7 @@ export function ReleasesProvider({
           });
         });
       } catch (err) {
-        if (err.response.status === 440) {
+        if (err.response?.status === 440) {
           Alert.alert('Sessão expirada', 'Realize o login novamente!');
           signOut();
           return;
@@ -262,7 +261,7 @@ export function ReleasesProvider({
           });
         });
       } catch (err) {
-        if (err.response.status === 440) {
+        if (err.response?.status === 440) {
           Alert.alert('Sessão expirada', 'Realize o login novamente!');
           signOut();
           return;
@@ -312,7 +311,7 @@ export function ReleasesProvider({
         );
       });
     } catch (err) {
-      if (err.response.status === 440) {
+      if (err.response?.status === 440) {
         Alert.alert('Sessão expirada', 'Realize o login novamente!');
         signOut();
         return;
@@ -356,7 +355,7 @@ export function ReleasesProvider({
           }
         });
       } catch (err) {
-        if (err.response.status === 440) {
+        if (err.response?.status === 440) {
           Alert.alert('Sessão expirada', 'Realize o login novamente!');
           signOut();
         }
@@ -394,7 +393,7 @@ export function ReleasesProvider({
           realm.create('Release', response.data, 'modified');
         });
       } catch (err) {
-        if (err.response.status === 440) {
+        if (err.response?.status === 440) {
           Alert.alert('Sessão expirada', 'Realize o login novamente!');
           signOut();
         }
@@ -446,7 +445,7 @@ export function ReleasesProvider({
           realm.create('ReleaseGroup', response.data);
         });
       } catch (err) {
-        if (err.response.status === 440) {
+        if (err.response?.status === 440) {
           Alert.alert('Sessão expirada', 'Realize o login novamente!');
           signOut();
         }
@@ -554,12 +553,18 @@ export function ReleasesProvider({
 
   useEffect(() => {
     loadReleases();
-  }, [activeReleasesFilter, customerReleasesFilter]);
+  }, [
+    activeReleasesFilter,
+    customerReleasesFilter,
+    api.defaults.headers.authorization,
+  ]);
 
   return (
     <ReleasesContext.Provider
       value={{
         releases,
+        isLoading,
+        isFetching,
         activeReleasesFilter,
         setActiveReleasesFilter,
         customerReleasesFilter,
