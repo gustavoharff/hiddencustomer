@@ -2,9 +2,9 @@ name: ESLint
 
 on:
   push:
-    branches: [ master, development]
+    branches: [ main]
   pull_request:
-    branches: [ master, development]
+    branches: [ main]
 
 jobs:
   code:
