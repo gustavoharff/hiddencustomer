@@ -17,7 +17,10 @@ export function TabRoutes(): JSX.Element {
   const { user } = useAuth();
 
   return (
-    <Navigator screenOptions={{ tabBarLabel: () => null }}>
+    <Navigator
+      screenOptions={{ tabBarLabel: () => null }}
+      initialRouteName="Releases"
+    >
       <Screen
         name="Releases"
         component={ReleasesStack}

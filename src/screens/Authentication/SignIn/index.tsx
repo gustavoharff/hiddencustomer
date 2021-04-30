@@ -78,10 +78,15 @@ export function SignIn(): JSX.Element {
           return;
         }
 
-        if (err.response.status === 402) {
+        if (err.response.status === 401) {
           Alert.alert('Erro', 'Usuário sem permissão de acesso ao sistema.');
-        } else {
+        } else if (err.response.status === 400) {
           Alert.alert('Erro', 'Erro na autenticação, verifique seus dados.');
+        } else {
+          Alert.alert(
+            'Erro',
+            'Ocoreu um erro durante a tentativa de acesso ao sistema.',
+          );
         }
       }
       setLoadingButton(false);
