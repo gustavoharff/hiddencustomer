@@ -15,19 +15,11 @@ import { SPACING } from 'styles';
 export function Calendar(): JSX.Element {
   const navigation = useNavigation();
 
-  const {
-    releasesDates,
-    loadApiReleasesDates,
-    loadLocalReleasesDates,
-  } = useReleases();
+  const { releasesDates, loadReleasesDates } = useReleases();
 
   const onRefresh = useCallback(async () => {
-    try {
-      await loadApiReleasesDates();
-    } catch {
-      await loadLocalReleasesDates();
-    }
-  }, [loadApiReleasesDates, loadLocalReleasesDates]);
+    await loadReleasesDates();
+  }, [loadReleasesDates]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -42,9 +34,7 @@ export function Calendar(): JSX.Element {
   }, [navigation, onRefresh]);
 
   useEffect(() => {
-    loadApiReleasesDates().catch(() => {
-      loadLocalReleasesDates();
-    });
+    loadReleasesDates();
   }, []);
 
   return (

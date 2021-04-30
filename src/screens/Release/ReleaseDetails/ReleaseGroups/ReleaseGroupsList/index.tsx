@@ -29,7 +29,7 @@ export function ReleaseGroupsList({
 
   const { user } = useAuth();
 
-  const { releases, deleteReleaseGroup, loadApiReleaseGroups } = useReleases();
+  const { releases, deleteReleaseGroup, loadReleaseGroups } = useReleases();
 
   const groups = useMemo(() => {
     const releaseGroups = [] as ReleaseGroup[];
@@ -57,10 +57,6 @@ export function ReleaseGroupsList({
     });
   }, [release_id, releases]);
 
-  const onRefresh = useCallback(async () => {
-    loadApiReleaseGroups(release_id);
-  }, [loadApiReleaseGroups, release_id]);
-
   const onDeleteItem = useCallback(
     async (groupId: string) => {
       return new Promise(resolve => {
@@ -85,11 +81,11 @@ export function ReleaseGroupsList({
     [deleteReleaseGroup],
   );
 
-  const handleRefresh = async () => {
+  const handleRefresh = useCallback(async () => {
     setRefreshing(true);
-    await onRefresh();
+    await loadReleaseGroups(release_id);
     setRefreshing(false);
-  };
+  }, [loadReleaseGroups, release_id]);
 
   return (
     <View style={{ flex: 1, width: '100%' }}>

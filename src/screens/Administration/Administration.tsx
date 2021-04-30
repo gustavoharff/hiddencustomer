@@ -18,22 +18,19 @@ export function Administration(): JSX.Element {
 
   const { loadApiUsers, loadLocalUsers } = useUsers();
   const { loadApiCompanies, loadLocalCompanies } = useCompanies();
+  const { user } = useAuth();
 
   useEffect(() => {
     loadApiCompanies()
       .catch(() => loadLocalCompanies())
       .finally(() => setLoadingCompanies(false));
-  }, []); // Performance warning
 
-  const navigation = useNavigation();
-
-  const { user } = useAuth();
-
-  useEffect(() => {
     loadApiUsers(user.id)
       .catch(() => loadLocalUsers(user.id))
       .finally(() => setLoadingUsers(false));
   }, [user.id]); // Performance warning
+
+  const navigation = useNavigation();
 
   const onRefresh = useCallback(async () => {
     try {

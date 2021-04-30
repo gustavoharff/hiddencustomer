@@ -1,11 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import RNBootSplash from 'react-native-bootsplash';
 import { ActivityIndicator, Image, Platform } from 'react-native';
 
 import { CircularButton, HeaderIcon } from 'components';
 
-import { useAuth, useReleases } from 'hooks';
+import { useAuth } from 'hooks';
 
 import { colors, SPACING } from 'styles';
 
@@ -18,13 +18,6 @@ import { Container, Center } from './styles';
 export function Releases(): JSX.Element {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
-
-  const {
-    loadApiReleases,
-    loadLocalReleases,
-    activeReleasesFilter,
-    customerReleasesFilter,
-  } = useReleases();
 
   const navigation = useNavigation();
 
@@ -46,17 +39,6 @@ export function Releases(): JSX.Element {
     }, 300);
   }, []);
 
-  const onRefresh = useCallback(async () => {
-    loadApiReleases().catch(() => loadLocalReleases());
-  }, [loadApiReleases, loadLocalReleases]);
-
-  useEffect(() => {
-    setLoading(true);
-    loadApiReleases()
-      .catch(() => loadLocalReleases())
-      .finally(() => setLoading(false));
-  }, [activeReleasesFilter, customerReleasesFilter]);
-
   if (loading) {
     return (
       <Center>
@@ -71,10 +53,7 @@ export function Releases(): JSX.Element {
   return (
     <>
       <Container>
-        <ReleasesList
-          onRefresh={onRefresh}
-          emptyListText="Nenhum lançamento cadastrado."
-        />
+        <ReleasesList />
       </Container>
       {user.permission !== 'user' && (
         <CircularButton

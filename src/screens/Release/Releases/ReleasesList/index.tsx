@@ -22,18 +22,10 @@ import {
   TimeText,
 } from './styles';
 
-interface ReleasesListProps {
-  onRefresh: () => Promise<void>;
-  emptyListText: string;
-}
-
-export function ReleasesList({
-  onRefresh,
-  emptyListText,
-}: ReleasesListProps): JSX.Element {
+export function ReleasesList(): JSX.Element {
   const navigation = useNavigation();
   const { user } = useAuth();
-  const { releases, deleteRelease } = useReleases();
+  const { releases, deleteRelease, loadReleases } = useReleases();
 
   const [refreshing, setRefreshing] = useState(false);
 
@@ -61,14 +53,14 @@ export function ReleasesList({
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
-    await onRefresh();
+    await loadReleases();
     setRefreshing(false);
-  }, [onRefresh]);
+  }, [loadReleases]);
 
   return (
     <View style={{ flex: 1 }}>
       <FlatList
-        ListEmptyComponent={<EmptyList text={emptyListText} />}
+        ListEmptyComponent={<EmptyList text="Nenhum lançamento cadastrado." />}
         refreshControl={
           <RefreshControl
             tintColor="rgba(0,0,0,0.5)"

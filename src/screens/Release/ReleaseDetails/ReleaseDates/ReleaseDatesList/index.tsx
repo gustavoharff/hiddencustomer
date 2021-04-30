@@ -23,7 +23,7 @@ export function ReleaseDatesList({
 
   const { user } = useAuth();
 
-  const { deleteReleaseDate, releases, loadApiReleaseDates } = useReleases();
+  const { deleteReleaseDate, releases, loadReleaseDates } = useReleases();
 
   const dates = useMemo(() => {
     const releaseDates = [] as ReleaseDate[];
@@ -64,11 +64,11 @@ export function ReleaseDatesList({
     [deleteReleaseDate],
   );
 
-  const onRefresh = async () => {
+  const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await loadApiReleaseDates(release_id);
+    await loadReleaseDates(release_id);
     setRefreshing(false);
-  };
+  }, [loadReleaseDates, release_id]);
 
   return (
     <View style={{ flex: 1, width: '100%' }}>
