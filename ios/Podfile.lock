@@ -255,7 +255,7 @@ PODS:
     - React
   - RNBootSplash (3.1.5):
     - React-Core
-  - RNCAsyncStorage (1.14.1):
+  - RNCAsyncStorage (1.15.4):
     - React-Core
   - RNCMaskedView (0.1.10):
     - React
@@ -426,7 +426,7 @@ SPEC CHECKSUMS:
   ReactCommon: 73d79c7039f473b76db6ff7c6b159c478acbbb3b
   RealmJS: 5195064e9aeccf94ae3756bd9d0f2301b9074b07
   RNBootSplash: c7304515f0b7502878ecc0fdcce8136134419cdc
-  RNCAsyncStorage: fe58eec522885718d6b297b7b658bf87d7ca557b
+  RNCAsyncStorage: f47a7e8f927f7c9da947491fc55752eb9ce17f2d
   RNCMaskedView: 5a8ec07677aa885546a0d98da336457e2bea557f
   RNCPicker: 5256da29a92406cac439ac6605719e233714a86a
   RNDateTimePicker: 17593e41b6b1585aeb8ecbe1c1cbc30cba3d0b4b

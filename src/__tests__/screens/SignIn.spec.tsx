@@ -44,11 +44,10 @@ describe('SignIn screen', () => {
   });
 
   it('should not be able to sign in whith invalid email format', async () => {
-    const { getByPlaceholderText, getByText } = render(<SignIn />);
+    const { getByPlaceholderText } = render(<SignIn />);
 
     const emailInputElement = getByPlaceholderText('E-mail');
     const passwordInputElement = getByPlaceholderText('Senha');
-    const buttonElement = getByText('Entrar');
 
     fireEvent.changeText(emailInputElement, 'example');
 
@@ -57,8 +56,6 @@ describe('SignIn screen', () => {
     fireEvent.changeText(passwordInputElement, '1234567');
 
     fireEvent(passwordInputElement, 'onSubmitEditing');
-
-    fireEvent.press(buttonElement);
 
     jest.spyOn(Alert, 'alert');
 
@@ -74,15 +71,14 @@ describe('SignIn screen', () => {
   it('should not be able to sign in whith no permission', async () => {
     mockedSignIn.mockImplementation(() => {
       return new Promise((resolve, reject) => {
-        return reject({ response: { status: 402 } }); // eslint-disable-line
+        return reject({ response: { status: 401 } }); // eslint-disable-line
       });
     });
 
-    const { getByPlaceholderText, getByText } = render(<SignIn />);
+    const { getByPlaceholderText } = render(<SignIn />);
 
     const emailInputElement = getByPlaceholderText('E-mail');
     const passwordInputElement = getByPlaceholderText('Senha');
-    const buttonElement = getByText('Entrar');
 
     fireEvent.changeText(emailInputElement, 'user@email.com');
 
@@ -92,14 +88,42 @@ describe('SignIn screen', () => {
 
     fireEvent(passwordInputElement, 'onSubmitEditing');
 
-    fireEvent.press(buttonElement);
-
     jest.spyOn(Alert, 'alert');
 
     await waitFor(() => {
       expect(Alert.alert).toHaveBeenCalledWith(
         'Erro',
         'Usuário sem permissão de acesso ao sistema.',
+      );
+    });
+  });
+
+  it('should not be able to sign in whith invalid credentials', async () => {
+    mockedSignIn.mockImplementation(() => {
+      return new Promise((resolve, reject) => {
+        return reject({ response: { status: 400 } }); // eslint-disable-line
+      });
+    });
+
+    const { getByPlaceholderText } = render(<SignIn />);
+
+    const emailInputElement = getByPlaceholderText('E-mail');
+    const passwordInputElement = getByPlaceholderText('Senha');
+
+    fireEvent.changeText(emailInputElement, 'user@email.com');
+
+    fireEvent(emailInputElement, 'onSubmitEditing');
+
+    fireEvent.changeText(passwordInputElement, '1234567');
+
+    fireEvent(passwordInputElement, 'onSubmitEditing');
+
+    jest.spyOn(Alert, 'alert');
+
+    await waitFor(() => {
+      expect(Alert.alert).toHaveBeenCalledWith(
+        'Erro',
+        'Erro na autenticação, verifique seus dados.',
       );
     });
   });
@@ -123,15 +147,13 @@ describe('SignIn screen', () => {
 
     fireEvent.changeText(passwordInputElement, '1234567');
 
-    fireEvent(passwordInputElement, 'onSubmitEditing');
-
     fireEvent.press(buttonElement);
 
     await waitFor(() => {
       expect(mockedSignIn).toHaveBeenCalled();
       expect(Alert.alert).toHaveBeenCalledWith(
         'Erro',
-        'Erro na autenticação, verifique seus dados.',
+        'Ocoreu um erro durante a tentativa de acesso ao sistema.',
       );
     });
   });

@@ -73,8 +73,6 @@ export function SignIn(): JSX.Element {
 
           Alert.alert('Alerta', 'Complete os campos corretamente.');
 
-          setLoadingButton(false);
-
           return;
         }
 
@@ -88,8 +86,9 @@ export function SignIn(): JSX.Element {
             'Ocoreu um erro durante a tentativa de acesso ao sistema.',
           );
         }
+      } finally {
+        setLoadingButton(false);
       }
-      setLoadingButton(false);
     },
     [signIn],
   );
