@@ -9,29 +9,35 @@ import { Input, Button, Picker, Screen } from 'components';
 
 import { SPACING } from 'styles';
 
-import { useCompanies, useUsers } from 'hooks';
+import { Company, User } from 'types';
 
-import { User } from 'types';
+import { api } from 'services';
 
 import { Container, Label, Unform } from './styles';
 
 type Props = {
   UserForm: {
     user?: User;
+    setUsers: React.Dispatch<React.SetStateAction<User[]>>;
   };
 };
 
 type UserFormProps = StackScreenProps<Props, 'UserForm'>;
 
 export function UserForm({ route }: UserFormProps): JSX.Element {
+  const [companies, setCompanies] = useState<Company[]>([]);
   const [loading, setLoading] = useState(false);
   const formRef = useRef<FormHandles>(null);
 
-  const { createUser, updateUser } = useUsers();
+  const { setUsers } = route.params;
 
   const [selectedCompanyId, setSelectedCompanyId] = useState('');
 
-  const { companies, loadApiCompanies, loadLocalCompanies } = useCompanies();
+  useEffect(() => {
+    api.get('/companies').then(response => {
+      setCompanies(response.data);
+    });
+  }, []);
 
   const navigation = useNavigation();
 
@@ -57,10 +63,6 @@ export function UserForm({ route }: UserFormProps): JSX.Element {
         tabBarVisible: true,
       });
   }, [navigation]);
-
-  useEffect(() => {
-    loadApiCompanies().catch(() => loadLocalCompanies());
-  }, []);
 
   const onCompanyChange = useCallback(value => {
     setSelectedCompanyId(value);
@@ -95,20 +97,27 @@ export function UserForm({ route }: UserFormProps): JSX.Element {
         }
 
         if (!route.params?.user) {
-          await createUser({
+          const response = await api.post('/users', {
             name: data.name,
             email: data.email,
             password: data.password,
             company_id: selectedCompanyId,
           });
+
+          setUsers(state => [response.data, ...state]);
         } else {
-          await updateUser({
-            id: route.params.user.id,
+          const response = await api.put(`/users/${route.params.user.id}`, {
             company_id: selectedCompanyId,
             email: data.email,
             name: data.name,
             password: data.password || null,
           });
+
+          setUsers(state =>
+            state.map(user =>
+              user.id === route.params.user?.id ? response.data : user,
+            ),
+          );
         }
 
         navigation.navigate('Administration');
@@ -120,7 +129,7 @@ export function UserForm({ route }: UserFormProps): JSX.Element {
       }
       setLoading(false);
     },
-    [route.params?.user, selectedCompanyId, navigation, createUser, updateUser],
+    [route.params.user, selectedCompanyId, navigation, setUsers],
   );
 
   return (

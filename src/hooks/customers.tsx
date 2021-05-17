@@ -5,13 +5,10 @@ import React, {
   useCallback,
   ReactNode,
 } from 'react';
-import { Alert } from 'react-native';
 
 import { api, getRealm } from 'services';
 
 import { Customer } from 'types';
-
-import { useAuth } from './auth';
 
 interface UpdateCustomerData {
   customer_id: string;
@@ -40,29 +37,20 @@ export function CustomerProvider({
 }: CustomerProviderProps): JSX.Element {
   const [customers, setCustomers] = useState<Customer[]>([]);
 
-  const { signOut } = useAuth();
-
   const loadApiCustomers = useCallback(async () => {
-    try {
-      const response = await api.get('/customers/me');
-      setCustomers(response.data);
+    const response = await api.get('/customers/me');
+    setCustomers(response.data);
 
-      const realm = await getRealm();
-      realm.write(() => {
-        const data = realm.objects('Customer');
+    const realm = await getRealm();
+    realm.write(() => {
+      const data = realm.objects('Customer');
 
-        realm.delete(data);
-        response.data.map((customer: Customer) =>
-          realm.create('Customer', customer),
-        );
-      });
-    } catch (err) {
-      if (err.response.status === 440) {
-        Alert.alert('Sessão expirada', 'Realize o login novamente!');
-        signOut();
-      }
-    }
-  }, [setCustomers, signOut]);
+      realm.delete(data);
+      response.data.map((customer: Customer) =>
+        realm.create('Customer', customer),
+      );
+    });
+  }, [setCustomers]);
 
   const loadLocalCustomers = useCallback(async () => {
     const realm = await getRealm();
@@ -80,79 +68,50 @@ export function CustomerProvider({
     setCustomers(formattedCustomers);
   }, [setCustomers]);
 
-  const createCustomer = useCallback(
-    async (name: string) => {
-      try {
-        const response = await api.post('/customers', {
-          name,
-        });
+  const createCustomer = useCallback(async (name: string) => {
+    const response = await api.post('/customers', {
+      name,
+    });
 
-        setCustomers(state => [response.data, ...state]);
+    setCustomers(state => [response.data, ...state]);
 
-        const realm = await getRealm();
+    const realm = await getRealm();
 
-        realm.write(() => {
-          realm.create('Customer', response.data);
-        });
-      } catch (err) {
-        if (err.response.status === 440) {
-          Alert.alert('Sessão expirada', 'Realize o login novamente!');
-          signOut();
-        }
-      }
-    },
-    [signOut],
-  );
+    realm.write(() => {
+      realm.create('Customer', response.data);
+    });
+  }, []);
 
   const updateCustomer = useCallback(
     async ({ customer_id, name }: UpdateCustomerData) => {
-      try {
-        const response = await api.put(`/customer/${customer_id}`, {
-          name,
-        });
+      const response = await api.put(`/customer/${customer_id}`, {
+        name,
+      });
 
-        setCustomers(
-          customers.map(customer =>
-            customer.id === customer_id
-              ? {
-                  ...customer,
-                  ...response.data,
-                }
-              : customer,
-          ),
-        );
-      } catch (err) {
-        if (err.response.status === 440) {
-          Alert.alert('Sessão expirada', 'Realize o login novamente!');
-          signOut();
-        }
-      }
+      setCustomers(
+        customers.map(customer =>
+          customer.id === customer_id
+            ? {
+                ...customer,
+                ...response.data,
+              }
+            : customer,
+        ),
+      );
     },
-    [customers, signOut],
+    [customers],
   );
 
-  const deleteCustomer = useCallback(
-    async (customerId: string) => {
-      try {
-        await api.delete(`/customer/${customerId}`);
-        setCustomers(state =>
-          state.filter(customer => customer.id !== customerId),
-        );
+  const deleteCustomer = useCallback(async (customerId: string) => {
+    await api.delete(`/customer/${customerId}`);
+    setCustomers(state => state.filter(customer => customer.id !== customerId));
 
-        const realm = await getRealm();
+    const realm = await getRealm();
 
-        realm.write(() => {
-          realm.delete(realm.objectForPrimaryKey('Customer', customerId));
-        });
-      } catch (err) {
-        if (err.response.status === 440) {
-          Alert.alert('Sessão expirada', 'Realize o login novamente!');
-          signOut();
-        }
-      }
-    },
-    [signOut],
-  );
+    realm.write(() => {
+      realm.delete(realm.objectForPrimaryKey('Customer', customerId));
+    });
+  }, []);
 
   return (
     <CustomersContext.Provider

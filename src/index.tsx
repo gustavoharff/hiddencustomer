@@ -8,6 +8,7 @@ import { QueryClientProvider, QueryClient } from 'react-query';
 import { colors } from 'styles';
 
 import { AppProvider } from 'hooks';
+import { navigationRef } from './navigation/navigate';
 
 import { Routes } from './navigation';
 
@@ -18,7 +19,7 @@ export default function App(): JSX.Element {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <NavigationContainer>
+      <NavigationContainer ref={navigationRef}>
         <AppProvider>
           <StatusBar
             barStyle="light-content"

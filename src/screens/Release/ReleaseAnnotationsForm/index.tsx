@@ -6,16 +6,16 @@ import { useNavigation } from '@react-navigation/native';
 
 import { TextArea, Button, Screen } from 'components';
 
-import { useReleases } from 'hooks';
-
 import { SPACING } from 'styles';
 
+import { api } from 'services';
 import { Unform } from './styles';
 
 type Params = {
   ReleaseAnnotationsForm: {
     release_id: string;
     annotations: string;
+    setAnnotations: React.Dispatch<React.SetStateAction<string>>;
   };
 };
 
@@ -27,27 +27,27 @@ type ReleaseAnnotationsFormProps = StackScreenProps<
 export function ReleaseAnnotationsForm({
   route,
 }: ReleaseAnnotationsFormProps): JSX.Element {
+  const { setAnnotations } = route.params;
   const formRef = useRef<FormHandles>(null);
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
-
-  const { updateRelease } = useReleases();
 
   const handleSubmit = useCallback(
     async data => {
       try {
         setLoading(true);
-        await updateRelease({
-          release_id: route.params.release_id,
+        const response = await api.put(`/release/${route.params.release_id}`, {
           annotations: data.annotations,
         });
+
+        setAnnotations(response.data.annotations);
 
         navigation.goBack();
       } catch {
         setLoading(false);
       }
     },
-    [route.params.release_id, updateRelease, navigation],
+    [route.params.release_id, setAnnotations, navigation],
   );
 
   return (

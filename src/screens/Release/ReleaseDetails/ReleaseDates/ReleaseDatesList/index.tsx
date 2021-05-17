@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { RectButton } from 'react-native-gesture-handler';
@@ -7,44 +7,37 @@ import 'moment/locale/pt-br';
 
 import { EmptyList, Swipeable } from 'components';
 
-import { useAuth, useReleases } from 'hooks';
+import { useAuth } from 'hooks';
 
 import { ReleaseDate } from 'types';
+
+import { api } from 'services';
+
 import { Container, Content, Date } from './styles';
 
 type ReleaseDatesListProps = {
-  emptyListText: string;
   release_id: string;
+  dates: ReleaseDate[];
+  setDates: React.Dispatch<React.SetStateAction<ReleaseDate[]>>;
 };
 
 export function ReleaseDatesList({
-  emptyListText,
   release_id,
+  dates,
+  setDates,
 }: ReleaseDatesListProps): JSX.Element {
   const navigation = useNavigation();
   const [refreshing, setRefreshing] = useState(false);
 
   const { user } = useAuth();
 
-  const { deleteReleaseDate, releases, loadReleaseDates } = useReleases();
-
-  const dates = useMemo(() => {
-    const releaseDates = [] as ReleaseDate[];
-    const releaseFiltered = releases.filter(
-      release => release_id === release.id,
-    );
-
-    releaseFiltered.map(release => {
-      return release.dates.forEach(date => {
-        releaseDates.push(date);
-      });
-    });
-
-    return releaseDates;
-  }, [release_id, releases]);
-
   const onDeleteItem = useCallback(
     async (dateId: string) => {
+      async function remove() {
+        await api.delete(`/release/dates/${dateId}`);
+
+        setDates(state => state.filter(date => date.id !== dateId));
+      }
       return new Promise(resolve => {
         Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
           {
@@ -57,26 +50,29 @@ export function ReleaseDatesList({
           {
             text: 'Sim',
             onPress: async () => {
-              await deleteReleaseDate(dateId);
+              await remove();
               return resolve(200);
             },
           },
         ]);
       });
     },
-    [deleteReleaseDate],
+    [setDates],
   );
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await loadReleaseDates(release_id);
+    const response = await api.get(`release/dates/${release_id}`);
+
+    setDates(response.data);
+
     setRefreshing(false);
-  }, [loadReleaseDates, release_id]);
+  }, [release_id, setDates]);
 
   return (
     <View style={{ flex: 1, width: '100%' }}>
       <FlatList
-        ListEmptyComponent={<EmptyList text={emptyListText} />}
+        ListEmptyComponent={<EmptyList text="Não há datas cadastradas!" />}
         refreshControl={
           <RefreshControl
             tintColor="rgba(0, 0, 0, 0.5)"

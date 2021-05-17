@@ -1,18 +1,11 @@
 import React, { useCallback, useState } from 'react';
-import {
-  View,
-  FlatList,
-  RefreshControl,
-  Alert,
-  ToastAndroid,
-  Platform,
-} from 'react-native';
+import { View, FlatList, RefreshControl, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import 'moment/locale/pt-br';
 
 import { EmptyList, Swipeable } from 'components';
 
-import { useAuth, useCustomers, useReleases } from 'hooks';
+import { useAuth, useCustomers } from 'hooks';
 
 import { RectButton } from 'react-native-gesture-handler';
 import { Container, Description, Content, Title, Item } from './styles';
@@ -31,7 +24,6 @@ export function CustomersList({
   const navigation = useNavigation();
 
   const { customers, deleteCustomer } = useCustomers();
-  const { setCustomerReleasesFilter } = useReleases();
   const { user } = useAuth();
 
   const onDeleteItem = useCallback(
@@ -97,18 +89,18 @@ export function CustomersList({
               }}
             >
               <RectButton
-                onPress={() => {
-                  setCustomerReleasesFilter(customer.id);
-                  if (Platform.OS === 'android') {
-                    ToastAndroid.showWithGravity(
-                      `Filtro para o cliente ${customer.name} aplicado!`,
-                      ToastAndroid.SHORT,
-                      ToastAndroid.CENTER,
-                    );
-                  }
+              // onPress={() => {
+              //   setCustomerReleasesFilter(customer.id);
+              //   if (Platform.OS === 'android') {
+              //     ToastAndroid.showWithGravity(
+              //       `Filtro para o cliente ${customer.name} aplicado!`,
+              //       ToastAndroid.SHORT,
+              //       ToastAndroid.CENTER,
+              //     );
+              //   }
 
-                  navigation.navigate('Releases');
-                }}
+              // navigation.navigate('Releases');
+              // }}
               >
                 <Content>
                   <Description style={{ marginTop: 0 }} numberOfLines={2}>

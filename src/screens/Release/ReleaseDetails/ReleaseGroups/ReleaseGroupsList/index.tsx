@@ -1,27 +1,31 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
+import moment from 'moment';
 
 import { EmptyList, Swipeable } from 'components';
 
 import { SPACING } from 'styles';
 
-import { useAuth, useReleases } from 'hooks';
+import { useAuth } from 'hooks';
 
 import { ReleaseGroup } from 'types';
 
-import moment from 'moment';
+import { api } from 'services';
+
 import { Container, Content, Description, Title } from './styles';
 
 interface ReleaseGroupsListProps {
-  emptyListText: string;
   release_id: string;
+  groups: ReleaseGroup[];
+  setGroups: React.Dispatch<React.SetStateAction<ReleaseGroup[]>>;
 }
 
 export function ReleaseGroupsList({
-  emptyListText,
   release_id,
+  groups,
+  setGroups,
 }: ReleaseGroupsListProps): JSX.Element {
   const [refreshing, setRefreshing] = useState(false);
 
@@ -29,36 +33,13 @@ export function ReleaseGroupsList({
 
   const { user } = useAuth();
 
-  const { releases, deleteReleaseGroup, loadReleaseGroups } = useReleases();
-
-  const groups = useMemo(() => {
-    const releaseGroups = [] as ReleaseGroup[];
-
-    const releaseFiltered = releases.filter(
-      release => release_id === release.id,
-    );
-
-    releaseFiltered.map(release => {
-      return release.groups.forEach(group => {
-        releaseGroups.push(group);
-      });
-    });
-
-    return releaseGroups.sort((a, b) => {
-      if (a.name < b.name) {
-        return -1;
-      }
-
-      if (a.name > b.name) {
-        return 1;
-      }
-
-      return 0;
-    });
-  }, [release_id, releases]);
-
   const onDeleteItem = useCallback(
     async (groupId: string) => {
+      async function remove() {
+        await api.delete(`/release/groups/${groupId}`);
+
+        setGroups(state => state.filter(group => group.id !== groupId));
+      }
       return new Promise(resolve => {
         Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
           {
@@ -71,26 +52,44 @@ export function ReleaseGroupsList({
           {
             text: 'Sim',
             onPress: async () => {
-              await deleteReleaseGroup(groupId);
+              await remove();
               return resolve(200);
             },
           },
         ]);
       });
     },
-    [deleteReleaseGroup],
+    [setGroups],
   );
+
+  const renderIcon = useCallback((type: string) => {
+    switch (type) {
+      case 'discord': {
+        return <Icon name="discord" color="#7289d9" size={SPACING.L * 1.5} />;
+      }
+      case 'telegram': {
+        return <Icon name="telegram" color="#0088cc" size={SPACING.L * 1.5} />;
+      }
+      case 'whatsapp': {
+        return <Icon name="whatsapp" color="#25D366" size={SPACING.L * 1.5} />;
+      }
+      default:
+        return undefined;
+    }
+  }, []);
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
-    await loadReleaseGroups(release_id);
+    const response = await api.get(`/release/groups/${release_id}`);
+    setGroups(response.data);
+
     setRefreshing(false);
-  }, [loadReleaseGroups, release_id]);
+  }, [release_id, setGroups]);
 
   return (
     <View style={{ flex: 1, width: '100%' }}>
       <FlatList
-        ListEmptyComponent={<EmptyList text={emptyListText} />}
+        ListEmptyComponent={<EmptyList text="Não há grupos cadastrados!" />}
         refreshControl={
           <RefreshControl
             tintColor="rgba(0, 0, 0, 0.5)"
@@ -109,7 +108,10 @@ export function ReleaseGroupsList({
               }
               editOnPress={() =>
                 navigation.navigate('ReleaseGroupForm', {
+                  type: 'update',
                   group,
+                  release_id: group.release_id,
+                  setGroups,
                 })
               }
               deleteOption={
@@ -122,39 +124,14 @@ export function ReleaseGroupsList({
               <Content>
                 <View>
                   <Title>{group.name}</Title>
-                  {releases
-                    .find(release => release.id === group.release_id)
-                    ?.dates.find(date => date.id === group.release_date_id)
-                    ?.date && (
+                  {group.release_date?.id && (
                     <Description>
-                      {moment(
-                        releases
-                          .find(release => release.id === group.release_id)
-                          ?.dates.find(
-                            date => date.id === group.release_date_id,
-                          )?.date,
-                      ).format('LL LT')}
+                      {moment(group.release_date.date).format('LL LT')}
                     </Description>
                   )}
                 </View>
 
-                {group.type === 'discord' && (
-                  <Icon name="discord" color="#7289d9" size={SPACING.L * 1.5} />
-                )}
-                {group.type === 'whatsapp' && (
-                  <Icon
-                    name="whatsapp"
-                    color="#25D366"
-                    size={SPACING.L * 1.5}
-                  />
-                )}
-                {group.type === 'telegram' && (
-                  <Icon
-                    name="telegram"
-                    color="#0088cc"
-                    size={SPACING.L * 1.5}
-                  />
-                )}
+                {renderIcon(group.type)}
               </Content>
             </Swipeable>
           </Container>

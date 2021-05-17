@@ -1,9 +1,8 @@
 import React, { useCallback, useEffect } from 'react';
 import { Switch } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 
-import { useCustomers, useReleases } from 'hooks';
+import { useCustomers } from 'hooks';
 
 import { HeaderIcon } from 'components';
 
@@ -18,43 +17,27 @@ export function ReleasesFilter(): JSX.Element {
 
   const { customers, loadApiCustomers, loadLocalCustomers } = useCustomers();
 
-  const {
-    activeReleasesFilter,
-    setActiveReleasesFilter,
-    setCustomerReleasesFilter,
-    customerReleasesFilter,
-  } = useReleases();
-
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <HeaderIcon
           name="filter-remove-outline"
           onPress={() => {
-            setActiveReleasesFilter(false);
-            setCustomerReleasesFilter('all');
+            console.log();
           }}
           style={{ marginRight: SPACING.S }}
         />
       ),
     });
-  }, [navigation, setActiveReleasesFilter, setCustomerReleasesFilter]);
+  }, [navigation]);
 
-  const onChange = useCallback(
-    async value => {
-      setActiveReleasesFilter(value);
-      await AsyncStorage.setItem('ReleaseActiveFilter', value ? '1' : '0');
-    },
-    [setActiveReleasesFilter],
-  );
+  const onChange = useCallback(async value => {
+    console.log(value);
+  }, []);
 
-  const onCustomerChange = useCallback(
-    async value => {
-      setCustomerReleasesFilter(value);
-      await AsyncStorage.setItem('CustomerReleasesFilter', value);
-    },
-    [setCustomerReleasesFilter],
-  );
+  const onCustomerChange = useCallback(async value => {
+    console.log(value);
+  }, []);
 
   useEffect(() => {
     loadApiCustomers().catch(() => loadLocalCustomers());
@@ -77,13 +60,13 @@ export function ReleasesFilter(): JSX.Element {
     <Container>
       <Item>
         <OptionText>Exibir apenas lançamentos ativos e futuros</OptionText>
-        <Switch onValueChange={onChange} value={activeReleasesFilter} />
+        <Switch onValueChange={onChange} value />
       </Item>
 
       <Item style={{ marginTop: 10 }}>
         <OptionText>Exibir apenas lançamentos de: </OptionText>
         <Picker
-          value={customerReleasesFilter}
+          value=""
           doneText="Selecionar"
           onChange={onCustomerChange}
           items={[

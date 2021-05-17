@@ -1,23 +1,41 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import RNBootSplash from 'react-native-bootsplash';
 import { ActivityIndicator, Image, Platform, View } from 'react-native';
+import { useQuery } from 'react-query';
 
 import { CircularButton, HeaderIcon } from 'components';
 
-import { useAuth, useReleases } from 'hooks';
+import { useAuth } from 'hooks';
 
 import { colors, SPACING } from 'styles';
 
 import rocketPlusImg from 'assets/icons/rocket-plus-outline.png';
+
+import { Release } from 'types';
+
+import { api } from 'services';
 
 import { ReleasesList } from './ReleasesList';
 
 import { Container, Center } from './styles';
 
 export function Releases(): JSX.Element {
+  const [releases, setReleases] = useState<Release[]>([]);
+
+  const { isLoading, isFetching } = useQuery(
+    'releases',
+    async () => {
+      const response = await api.get('/releases');
+      setReleases(response.data);
+    },
+    {
+      refetchInterval: 1800 * 15,
+      refetchOnWindowFocus: true,
+    },
+  );
+
   const { user } = useAuth();
-  const { isLoading, isFetching } = useReleases();
 
   const navigation = useNavigation();
 
@@ -32,11 +50,11 @@ export function Releases(): JSX.Element {
               style={{ marginRight: SPACING.S }}
             />
           )}
-          <HeaderIcon
+          {/* <HeaderIcon
             name="filter-outline"
             onPress={() => navigation.navigate('ReleasesFilter')}
             style={{ marginRight: SPACING.S }}
-          />
+          /> */}
         </View>
       ),
     });
@@ -62,13 +80,18 @@ export function Releases(): JSX.Element {
   return (
     <>
       <Container>
-        <ReleasesList />
+        <ReleasesList releases={releases} setReleases={setReleases} />
       </Container>
       {user.permission !== 'user' && (
         <CircularButton
           name="plus"
           Image={<Image source={rocketPlusImg} />}
-          onPress={() => navigation.navigate('ReleaseForm')}
+          onPress={() =>
+            navigation.navigate('ReleaseForm', {
+              type: 'create',
+              setReleases,
+            })
+          }
         />
       )}
     </>

@@ -6,15 +6,18 @@ import { useNavigation } from '@react-navigation/native';
 
 import { Button, DateTimeInput, Screen } from 'components';
 
-import { useReleases } from 'hooks';
-
 import { SPACING } from 'styles';
+
+import { api } from 'services';
+
+import { ReleaseDate } from 'types';
 
 import { Container, Label } from './styles';
 
 type Params = {
   ReleaseDateForm: {
     release_id: string;
+    setDates: React.Dispatch<React.SetStateAction<ReleaseDate[]>>;
   };
 };
 
@@ -23,23 +26,37 @@ type ReleaseDateFormProps = StackScreenProps<Params, 'ReleaseDateForm'>;
 export function ReleaseDateForm({ route }: ReleaseDateFormProps): JSX.Element {
   const [date, setDate] = useState(new Date(new Date().setHours(0, 0)));
 
+  const { setDates } = route.params;
+
   const [loadingButton, setLoadingButton] = useState(false);
 
   const navigation = useNavigation();
 
-  const { createReleaseDate } = useReleases();
-
   const handleAddDate = useCallback(async () => {
     setLoadingButton(true);
-    await createReleaseDate({
-      date,
+    const response = await api.post<ReleaseDate>('/release/dates', {
       release_id: route.params.release_id,
+      date: date.toISOString(),
     });
+
+    setDates(state =>
+      [...state, response.data].sort((a, b) => {
+        if (a.date < b.date) {
+          return 1;
+        }
+
+        if (a.date > b.date) {
+          return -1;
+        }
+
+        return 0;
+      }),
+    );
 
     setLoadingButton(false);
 
     navigation.goBack();
-  }, [createReleaseDate, date, navigation, route.params.release_id]);
+  }, [date, navigation, route.params.release_id, setDates]);
 
   return (
     <Screen keyboard>

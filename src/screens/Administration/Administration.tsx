@@ -1,70 +1,43 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { ActivityIndicator, Platform } from 'react-native';
+import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 
-import { COLORS } from 'styles';
-
-import { useAuth, useCompanies, useUsers } from 'hooks';
+import { useAuth } from 'hooks';
 
 import { CircularButton } from 'components';
 
+import { User } from 'types';
+
+import { api } from 'services';
 import { UsersList } from './UsersList';
 
-import { Container, Center } from './styles';
+import { Container } from './styles';
 
 export function Administration(): JSX.Element {
-  const [loadingUsers, setLoadingUsers] = useState(true);
-  const [loadingCompanies, setLoadingCompanies] = useState(true);
+  const [users, setUsers] = useState<User[]>([]);
 
-  const { loadApiUsers, loadLocalUsers } = useUsers();
-  const { loadApiCompanies, loadLocalCompanies } = useCompanies();
   const { user } = useAuth();
-
-  useEffect(() => {
-    loadApiCompanies()
-      .catch(() => loadLocalCompanies())
-      .finally(() => setLoadingCompanies(false));
-
-    loadApiUsers(user.id)
-      .catch(() => loadLocalUsers(user.id))
-      .finally(() => setLoadingUsers(false));
-  }, [user.id]); // Performance warning
 
   const navigation = useNavigation();
 
-  const onRefresh = useCallback(async () => {
-    try {
-      await loadApiUsers(user.id);
-    } catch {
-      await loadLocalUsers(user.id);
-    }
-  }, [user.id, loadApiUsers, loadLocalUsers]);
-
-  if (loadingUsers || loadingCompanies) {
-    return (
-      <Center>
-        <ActivityIndicator
-          color={Platform.OS === 'ios' ? COLORS.BACKGROUND_LIGHT : COLORS.ALERT}
-          size={30}
-        />
-      </Center>
-    );
-  }
+  useEffect(() => {
+    api.get<User[]>('/users').then(response => {
+      setUsers(response.data.filter((u: User) => u.id !== user.id));
+    });
+  }, [user.id]);
 
   return (
     <>
       <Container>
-        <Container>
-          <UsersList
-            onRefresh={onRefresh}
-            emptyListText="Nenhum usuário cadastrado."
-          />
-        </Container>
+        <UsersList users={users} setUsers={setUsers} />
       </Container>
       {user.permission === 'admin' && (
         <CircularButton
           name="account-plus-outline"
-          onPress={() => navigation.navigate('UserForm')}
+          onPress={() =>
+            navigation.navigate('UserForm', {
+              setUsers,
+            })
+          }
         />
       )}
     </>

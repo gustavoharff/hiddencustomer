@@ -9,62 +9,37 @@ import { useAuth } from 'hooks';
 
 import { Company } from 'types';
 
-import { api, getRealm } from 'services';
+import { api } from 'services';
 
-import { Container, FieldDescription, Text, Title } from './styles';
+import pckg from '../../../package.json';
+
+import {
+  AvatarContainer,
+  Container,
+  FieldDescription,
+  Text,
+  Title,
+} from './styles';
 
 export function Profile(): JSX.Element {
   const { user } = useAuth();
   const [company, setCompany] = useState({} as Company);
 
   useEffect(() => {
-    api
-      .get('/companies/me')
-      .then(response => {
-        setCompany(response.data);
-
-        getRealm().then(realm => {
-          realm.write(() => {
-            // @ts-ignore
-            realm.create('Company', response.data, 'modified');
-          });
-        });
-      })
-      .catch(() => {
-        getRealm().then(realm => {
-          const data = realm.objectForPrimaryKey<Company>(
-            'Company',
-            user.company_id,
-          );
-
-          if (data) {
-            setCompany({
-              id: data.id,
-              name: data.name,
-              created_at: data.created_at,
-              updated_at: data.updated_at,
-            });
-          }
-        });
-      });
+    api.get('/companies/me').then(response => {
+      setCompany(response.data);
+    });
   }, []);
 
   return (
     <Container>
       <View style={{ flex: 1, width: '100%' }}>
-        <View
-          style={{
-            width: '100%',
-            alignItems: 'center',
-            paddingVertical: SPACING.L,
-            backgroundColor: '#29292E',
-          }}
-        >
+        <AvatarContainer>
           <Avatar
             url="https://iupac.org/wp-content/uploads/2018/05/default-avatar.png"
             size={SPACING.XL * 6}
           />
-        </View>
+        </AvatarContainer>
 
         <Title>Suas informações</Title>
         <FieldDescription>Nome completo</FieldDescription>
@@ -75,6 +50,9 @@ export function Profile(): JSX.Element {
 
         <FieldDescription>Empresa</FieldDescription>
         <Text>{company.name}</Text>
+
+        <FieldDescription>Versão do aplicativo</FieldDescription>
+        <Text>{pckg.version}</Text>
       </View>
     </Container>
   );

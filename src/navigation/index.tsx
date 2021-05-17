@@ -4,7 +4,7 @@ import { ActivityIndicator, View } from 'react-native';
 import { useAuth } from 'hooks';
 
 import { AuthRoutes } from './auth.routes';
-import { TabRoutes } from './app.routes';
+import { AppStack } from './app.routes';
 
 export function Routes(): JSX.Element {
   const { user, loading } = useAuth();
@@ -17,5 +17,5 @@ export function Routes(): JSX.Element {
     );
   }
 
-  return user ? <TabRoutes /> : <AuthRoutes />;
+  return user ? <AppStack /> : <AuthRoutes />;
 }

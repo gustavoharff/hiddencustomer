@@ -27,7 +27,7 @@ import { SPACING } from 'styles';
 import { Container, Unform } from './styles';
 
 export function ChangeUserPassword(): JSX.Element {
-  const { updateUser, signOut } = useAuth();
+  const { updateUser } = useAuth();
 
   const formRef = useRef<FormHandles>(null);
   const oldPasswordInputRef = useRef<TextInput>(null);
@@ -73,19 +73,13 @@ export function ChangeUserPassword(): JSX.Element {
           return;
         }
 
-        if (err.response.status === 440) {
-          Alert.alert('Sessão expirada', 'Realize o login novamente!');
-          signOut();
-          return;
-        }
-
         Alert.alert(
           'Atenção!',
           'Ocorreu um erro ao alterar sua senha, verifique seus dados.',
         );
       }
     },
-    [updateUser, signOut],
+    [updateUser],
   );
 
   return (

@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { TabView, TabBar } from 'react-native-tab-view';
-import { useNavigation } from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { Dimensions } from 'react-native';
 
@@ -9,6 +8,9 @@ import { Release } from 'types';
 import { ListHeader } from 'components';
 
 import { colors } from 'styles';
+
+import { api } from 'services';
+
 import { ReleaseAnnotations } from './ReleaseAnnotations';
 import { ReleaseDates } from './ReleaseDates';
 import { ReleaseGroups } from './ReleaseGroups';
@@ -22,22 +24,14 @@ type Params = {
 type Props = StackScreenProps<Params, 'ReleaseDetails'>;
 
 export function ReleaseDetails({ route }: Props): JSX.Element {
-  const { release } = route.params;
+  const [release, setRelease] = useState(route.params.release);
   const [tabIndex, setTabIndex] = useState(0);
 
-  const navigation = useNavigation();
-
   useEffect(() => {
-    const parent = navigation.dangerouslyGetParent();
-
-    parent?.setOptions({
-      tabBarVisible: false,
+    api.get(`/release/${route.params.release.id}`).then(response => {
+      setRelease(response.data);
     });
-    return () =>
-      parent?.setOptions({
-        tabBarVisible: true,
-      });
-  }, [navigation]);
+  }, [route.params.release]);
 
   const tabRoutes = [
     { key: 'groups', title: 'Grupos' },
@@ -53,7 +47,7 @@ export function ReleaseDetails({ route }: Props): JSX.Element {
         case 'groups':
           return <ReleaseGroups release={release} />;
         case 'annotations':
-          return <ReleaseAnnotations release_id={release.id} />;
+          return <ReleaseAnnotations release={release} />;
         default:
           return null;
       }

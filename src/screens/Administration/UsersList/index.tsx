@@ -1,90 +1,109 @@
 import React, { useCallback, useState } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import { Avatar, EmptyList, Swipeable } from 'components';
 
 import { COLORS, SPACING } from 'styles';
 
-import { useCompanies, useUsers } from 'hooks';
+import { useAuth, useCompanies } from 'hooks';
+
+import { api } from 'services';
+
+import { User } from 'types';
 
 import { Container, Name, Email, UserInfo, Content } from './styles';
 
-type UsersListProps = {
-  onRefresh: () => Promise<void>;
-  emptyListText: string;
-};
+interface UsersListProps {
+  users: User[];
+  setUsers: React.Dispatch<React.SetStateAction<User[]>>;
+}
 
-export function UsersList({
-  onRefresh,
-  emptyListText,
-}: UsersListProps): JSX.Element {
-  const { users, activateUser, disableUser } = useUsers();
-  const { companies } = useCompanies();
+export function UsersList({ setUsers, users }: UsersListProps): JSX.Element {
+  const { companies } = useCompanies(); // TO-DO: Adicionar esse relacionamento na chamada api do useEffect
+  const navigation = useNavigation();
+  const { user: authenticateUser } = useAuth();
 
   const [refreshing, setRefreshing] = useState(false);
 
-  const navigation = useNavigation();
-
-  const onActivateItem = useCallback(
+  const handleActiveUser = useCallback(
     async (userId: string) => {
+      async function active() {
+        const response = await api.put(`/users/${userId}`, {
+          active: true,
+        });
+
+        setUsers(state =>
+          state.map(user => (user.id === userId ? response.data : user)),
+        );
+      }
+
       return new Promise(resolve => {
         Alert.alert('Atenção!', 'Deseja mesmo ativar este usuário?', [
           {
             text: 'Cancelar',
-            onPress: () => {
-              return resolve(200);
-            },
+            onPress: () => resolve(200),
             style: 'cancel',
           },
           {
             text: 'Sim',
             onPress: async () => {
-              await activateUser(userId);
+              await active();
               return resolve(200);
             },
           },
         ]);
       });
     },
-    [activateUser],
+    [setUsers],
   );
 
-  const onDisableItem = useCallback(
+  const handleDisableUser = useCallback(
     async (userId: string) => {
+      async function disable() {
+        const response = await api.put(`/users/${userId}`, {
+          active: false,
+        });
+
+        setUsers(state =>
+          state.map(user => (user.id === userId ? response.data : user)),
+        );
+      }
+
       return new Promise(resolve => {
         Alert.alert('Atenção!', 'Deseja mesmo desativar este usuário?', [
           {
             text: 'Cancelar',
-            onPress: () => {
-              return resolve(200);
-            },
+            onPress: () => resolve(200),
             style: 'cancel',
           },
           {
             text: 'Sim',
             onPress: async () => {
-              await disableUser(userId);
+              await disable();
               return resolve(200);
             },
           },
         ]);
       });
     },
-    [disableUser],
+    [setUsers],
   );
 
   const handleRefresh = async () => {
     setRefreshing(true);
-    await onRefresh();
+
+    const response = await api.get('/users');
+    setUsers(response.data.filter((u: User) => u.id !== authenticateUser.id));
+
     setRefreshing(false);
   };
 
   return (
     <View style={{ flex: 1 }}>
       <FlatList
-        ListEmptyComponent={<EmptyList text={emptyListText} />}
+        ListEmptyComponent={<EmptyList text="Nenhum usuário cadastrado." />}
         refreshControl={
           <RefreshControl
             tintColor="rgba(0,0,0,0.5)"
@@ -100,16 +119,17 @@ export function UsersList({
             <Swipeable
               activeOption={!user.active}
               activeOnPress={async () => {
-                await onActivateItem(user.id);
+                await handleActiveUser(user.id);
               }}
               disableOption={user.active}
               disableOnPress={async () => {
-                await onDisableItem(user.id);
+                await handleDisableUser(user.id);
               }}
               editOption
               editOnPress={() => {
                 navigation.navigate('UserForm', {
                   user,
+                  setUsers,
                 });
               }}
             >

@@ -7,7 +7,11 @@ import moment from 'moment';
 
 import { EmptyList, Swipeable } from 'components';
 
-import { useAuth, useReleases } from 'hooks';
+import { useAuth } from 'hooks';
+
+import { Release } from 'types';
+
+import { api } from 'services';
 
 import {
   Container,
@@ -22,15 +26,27 @@ import {
   TimeText,
 } from './styles';
 
-export function ReleasesList(): JSX.Element {
+interface ReleasesListProps {
+  releases: Release[];
+  setReleases: React.Dispatch<React.SetStateAction<Release[]>>;
+}
+
+export function ReleasesList({
+  releases,
+  setReleases,
+}: ReleasesListProps): JSX.Element {
   const navigation = useNavigation();
   const { user } = useAuth();
-  const { releases, deleteRelease, loadReleases } = useReleases();
 
   const [refreshing, setRefreshing] = useState(false);
 
-  const onDeleteItem = useCallback(
+  const handleDeleteRelease = useCallback(
     async (releaseId: string) => {
+      async function remove() {
+        await api.delete(`/release/${releaseId}`);
+
+        setReleases(state => state.filter(release => release.id !== releaseId));
+      }
       return new Promise(resolve => {
         Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
           {
@@ -41,21 +57,23 @@ export function ReleasesList(): JSX.Element {
           {
             text: 'Sim',
             onPress: async () => {
-              await deleteRelease(releaseId);
+              await remove();
               return resolve(200);
             },
           },
         ]);
       });
     },
-    [deleteRelease],
+    [setReleases],
   );
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
-    await loadReleases();
+    const response = await api.get('/releases');
+
+    setReleases(response.data);
     setRefreshing(false);
-  }, [loadReleases]);
+  }, [setReleases]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -87,14 +105,16 @@ export function ReleasesList(): JSX.Element {
                 }
                 editOnPress={() =>
                   navigation.navigate('ReleaseForm', {
+                    type: 'update',
                     release,
+                    setReleases,
                   })
                 }
                 deleteOption={
                   user.permission === 'admin' || user.permission === 'client'
                 }
                 deleteOnPress={async () => {
-                  await onDeleteItem(release.id);
+                  await handleDeleteRelease(release.id);
                 }}
               >
                 <RectButton

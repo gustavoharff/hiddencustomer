@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { Calendar as RNCalendar } from 'react-native-calendars';
 
@@ -6,20 +6,26 @@ import './helper';
 
 import { HeaderIcon } from 'components';
 
-import { useReleases } from 'hooks';
-
 import { formatMarkedCalendar } from 'utils';
 
 import { SPACING } from 'styles';
+import { api } from 'services';
 
 export function Calendar(): JSX.Element {
+  const [dates, setDates] = useState([]);
+
+  useEffect(() => {
+    api.get('/releases/dates/company').then(response => {
+      setDates(response.data);
+    });
+  }, []);
   const navigation = useNavigation();
 
-  const { releasesDates, loadReleasesDates } = useReleases();
-
   const onRefresh = useCallback(async () => {
-    await loadReleasesDates();
-  }, [loadReleasesDates]);
+    const response = await api.get('/releases/dates/company');
+
+    setDates(response.data);
+  }, []);
 
   useEffect(() => {
     navigation.setOptions({
@@ -33,15 +39,11 @@ export function Calendar(): JSX.Element {
     });
   }, [navigation, onRefresh]);
 
-  useEffect(() => {
-    loadReleasesDates();
-  }, []);
-
   return (
     <>
       <RNCalendar
         current={new Date()}
-        markedDates={formatMarkedCalendar(releasesDates)}
+        markedDates={formatMarkedCalendar(dates)}
         theme={{
           arrowColor: '#DC1637',
           dotStyle: {

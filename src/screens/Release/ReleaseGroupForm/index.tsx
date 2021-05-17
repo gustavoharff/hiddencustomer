@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Alert, ScrollView, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -16,16 +10,17 @@ import { Input, Button, Picker, Screen } from 'components';
 
 import { SPACING } from 'styles';
 
-import { useReleases } from 'hooks';
-
 import { ReleaseDate, ReleaseGroup } from 'types';
 
+import { api } from 'services';
 import { Container, Unform, Label } from './styles';
 
 type Params = {
   ReleaseGroupForm: {
+    type: 'create' | 'update';
     release_id?: string;
     group?: ReleaseGroup;
+    setGroups: React.Dispatch<React.SetStateAction<ReleaseGroup[]>>;
   };
 };
 
@@ -34,7 +29,10 @@ type ReleaseGroupFormProps = StackScreenProps<Params, 'ReleaseGroupForm'>;
 export function ReleaseGroupForm({
   route,
 }: ReleaseGroupFormProps): JSX.Element {
+  const { setGroups } = route.params;
   const formRef = useRef<FormHandles>(null);
+
+  const [dates, setDates] = useState<ReleaseDate[]>([]);
 
   const [selectedGroup, setSelectedGroup] = useState('');
   const [selectedDateId, setSelectedDateId] = useState('');
@@ -43,10 +41,8 @@ export function ReleaseGroupForm({
 
   const [loadingButton, setLoadingButton] = useState(false);
 
-  const { createReleaseGroup, updateReleaseGroup, releases } = useReleases();
-
   useEffect(() => {
-    if (route.params?.group) {
+    if (route.params.type === 'update' && route.params?.group) {
       navigation.setOptions({
         headerTitle: 'Registrar grupo',
       });
@@ -54,7 +50,13 @@ export function ReleaseGroupForm({
       setSelectedGroup(route.params?.group.type);
       formRef.current?.setFieldValue('name', route.params?.group.name);
     }
-  }, [navigation, route.params?.group]);
+  }, [navigation, route.params?.group, route.params.type]);
+
+  useEffect(() => {
+    api.get(`/release/dates/${route.params.release_id}`).then(response => {
+      setDates(response.data);
+    });
+  }, [route.params.release_id]);
 
   const onGroupChange = useCallback(value => {
     setSelectedGroup(value);
@@ -82,24 +84,34 @@ export function ReleaseGroupForm({
           return;
         }
 
-        if (route.params?.release_id) {
-          await createReleaseGroup({
+        if (route.params.type === 'create') {
+          const response = await api.post('/release/groups', {
             name: data.name,
             type: selectedGroup,
             release_id: route.params.release_id,
             release_date_id:
               selectedDateId !== 'null' ? selectedDateId : undefined,
           });
-        } else if (route.params?.group) {
-          await updateReleaseGroup({
-            groupId: route.params.group?.id,
-            name: data.name,
-            type: selectedGroup,
-            release_date_id: selectedDateId !== '' ? selectedDateId : undefined,
-          });
+
+          setGroups(state => [...state, response.data]);
+        } else if (route.params.type === 'update' && route.params.group) {
+          const response = await api.put(
+            `/release/groups/${route.params.group.id}`,
+            {
+              name: data.name,
+              type: selectedGroup,
+              release_date_id: selectedDateId || undefined,
+            },
+          );
+
+          setGroups(state =>
+            state.map(group =>
+              group.id === response.data.id ? response.data : group,
+            ),
+          );
         }
 
-        navigation.navigate('ReleaseDetails');
+        navigation.goBack();
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
           Alert.alert('Atenção!', 'Complete o campo de nome');
@@ -110,31 +122,14 @@ export function ReleaseGroupForm({
     },
     [
       selectedGroup,
-      route.params?.release_id,
+      route.params.type,
       route.params?.group,
+      route.params.release_id,
       navigation,
-      createReleaseGroup,
       selectedDateId,
-      updateReleaseGroup,
+      setGroups,
     ],
   );
-
-  const dates = useMemo(() => {
-    const releaseDates = [] as ReleaseDate[];
-    const releaseFiltered = releases.filter(
-      release =>
-        route.params?.release_id === release.id ||
-        route.params.group?.release_id === release.id,
-    );
-
-    releaseFiltered.map(release => {
-      return release.dates.forEach(date => {
-        releaseDates.push(date);
-      });
-    });
-
-    return releaseDates;
-  }, [releases, route.params?.release_id, route.params.group?.release_id]);
 
   return (
     <Screen keyboard>

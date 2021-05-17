@@ -1,35 +1,33 @@
-import React, { useMemo } from 'react';
+import React, { useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 import { CircularButton } from 'components';
 
-import { useAuth, useReleases } from 'hooks';
+import { useAuth } from 'hooks';
+
+import { Release } from 'types';
 
 import { Container, Annotation, Content } from './styles';
 
 interface ReleaseAnnotationsProps {
-  release_id: string;
+  release: Release;
 }
 
 export function ReleaseAnnotations({
-  release_id,
+  release,
 }: ReleaseAnnotationsProps): JSX.Element {
+  const [annotations, setAnnotations] = useState(release.annotations);
   const navigation = useNavigation();
-  const { releases } = useReleases();
 
   const { user } = useAuth();
-
-  const release = useMemo(() => {
-    return releases.find(rls => rls.id === release_id);
-  }, [release_id, releases]);
 
   return (
     <Container>
       <ScrollView keyboardShouldPersistTaps="never">
-        {release?.annotations ? (
+        {annotations ? (
           <Content>
-            <Annotation>{release.annotations}</Annotation>
+            <Annotation>{annotations}</Annotation>
           </Content>
         ) : (
           <View
@@ -55,8 +53,9 @@ export function ReleaseAnnotations({
           name="file-edit-outline"
           onPress={() =>
             navigation.navigate('ReleaseAnnotationsForm', {
-              release_id: release?.id,
-              annotations: release?.annotations,
+              release_id: release.id,
+              annotations,
+              setAnnotations,
             })
           }
         />

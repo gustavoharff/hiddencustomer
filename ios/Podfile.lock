@@ -250,7 +250,7 @@ PODS:
     - React-Core (= 0.63.4)
     - React-cxxreact (= 0.63.4)
     - React-jsi (= 0.63.4)
-  - RealmJS (10.2.0):
+  - RealmJS (10.4.0):
     - GCDWebServer
     - React
   - RNBootSplash (3.1.5):
@@ -424,7 +424,7 @@ SPEC CHECKSUMS:
   React-RCTText: 5c51df3f08cb9dedc6e790161195d12bac06101c
   React-RCTVibration: ae4f914cfe8de7d4de95ae1ea6cc8f6315d73d9d
   ReactCommon: 73d79c7039f473b76db6ff7c6b159c478acbbb3b
-  RealmJS: 5195064e9aeccf94ae3756bd9d0f2301b9074b07
+  RealmJS: 2f319044327bafdd1b5eaaa13db09226fab4e55b
   RNBootSplash: c7304515f0b7502878ecc0fdcce8136134419cdc
   RNCAsyncStorage: f47a7e8f927f7c9da947491fc55752eb9ce17f2d
   RNCMaskedView: 5a8ec07677aa885546a0d98da336457e2bea557f

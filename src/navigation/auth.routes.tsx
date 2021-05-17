@@ -9,6 +9,7 @@ import { SignIn, ForgotPassword, ResetPassword } from 'screens';
 import { colors, SPACING } from 'styles';
 
 import { HeaderIcon } from 'components';
+import { DEFAULT } from './helper';
 
 const { Navigator, Screen } = createStackNavigator();
 
@@ -35,18 +36,13 @@ export function AuthRoutes(): JSX.Element {
         name="ForgotPassword"
         component={ForgotPassword}
         options={({ navigation }) => ({
-          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-          headerStyle: {
-            height: 100,
-            backgroundColor: colors.gray[900],
-            shadowColor: 'transparent',
-            elevation: 0,
-          },
+          ...DEFAULT,
+          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
           headerShown: true,
-          headerTitle: '',
+          headerTitle: 'Esqueci minha senha',
           headerLeft: () => (
             <HeaderIcon
-              name="arrow-left"
+              name="close"
               onPress={() => navigation.goBack()}
               style={{ marginLeft: SPACING.S }}
             />
@@ -58,15 +54,9 @@ export function AuthRoutes(): JSX.Element {
         name="ResetPassword"
         component={ResetPassword}
         options={({ navigation }) => ({
-          cardStyleInterpolator: CardStyleInterpolators.forHorizontalIOS,
-          headerStyle: {
-            height: 100,
-            backgroundColor: colors.gray[900],
-            shadowColor: 'transparent',
-            elevation: 0,
-          },
-          headerTitle: '',
+          ...DEFAULT,
           headerShown: true,
+          headerTitle: 'Redefinir senha',
           headerLeft: () => (
             <HeaderIcon
               name="arrow-left"

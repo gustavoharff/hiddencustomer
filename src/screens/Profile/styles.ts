@@ -1,5 +1,5 @@
 import styled from 'styled-components/native';
-import { SPACING } from 'styles';
+import { colors, SPACING } from 'styles';
 
 export const Container = styled.View`
   flex: 1;
@@ -7,9 +7,16 @@ export const Container = styled.View`
   justify-content: space-between;
 `;
 
+export const AvatarContainer = styled.View`
+  width: 100%;
+  align-items: center;
+  padding: ${SPACING.L}px 0;
+  background: #29292e;
+`;
+
 export const Title = styled.Text`
   width: 100%;
-  background: #333;
+  background: ${colors.gray[900]};
   font-size: 18px;
   font-weight: bold;
   color: #f4f4f4;

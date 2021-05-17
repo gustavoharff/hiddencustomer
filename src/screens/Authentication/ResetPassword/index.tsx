@@ -15,7 +15,7 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import * as Yup from 'yup';
 
-import { Button, Input, ListHeader } from 'components';
+import { Button, Input } from 'components';
 
 import { SPACING } from 'styles';
 
@@ -68,54 +68,51 @@ export function ResetPassword({ route }: Props): JSX.Element {
   );
 
   return (
-    <>
-      <ListHeader title="Redefinir senha" loading={false} />
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={
-          getBottomSpace() + getStatusBarHeight(false) + SPACING.L * 5
-        }
-        enabled
-      >
-        <ScrollView keyboardShouldPersistTaps="handled">
-          <Unform ref={formRef} onSubmit={handleSubmit}>
-            <Input
-              name="password"
-              label="Escolha uma nova senha"
-              placeholder="Nova senha"
-              returnKeyType="next"
-              autoCorrect={false}
-              secureTextEntry
-            />
-
-            <Input
-              name="password_confirmation"
-              label="Confirme sua senha"
-              placeholder="Confirmação de senha"
-              returnKeyType="send"
-              autoCorrect={false}
-              secureTextEntry
-            />
-          </Unform>
-        </ScrollView>
-        <View
-          style={{
-            width: '100%',
-            alignItems: 'center',
-          }}
-        >
-          <Button
-            title="Enviar"
-            loading={loadingButton}
-            onPress={() => {
-              setLoadingButton(true);
-              formRef.current?.submitForm();
-            }}
-            style={{ marginBottom: SPACING.M }}
+    <KeyboardAvoidingView
+      style={{ flex: 1 }}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+      keyboardVerticalOffset={
+        getBottomSpace() + getStatusBarHeight(false) + SPACING.L * 5
+      }
+      enabled
+    >
+      <ScrollView keyboardShouldPersistTaps="handled">
+        <Unform ref={formRef} onSubmit={handleSubmit}>
+          <Input
+            name="password"
+            label="Escolha uma nova senha"
+            placeholder="Nova senha"
+            returnKeyType="next"
+            autoCorrect={false}
+            secureTextEntry
           />
-        </View>
-      </KeyboardAvoidingView>
-    </>
+
+          <Input
+            name="password_confirmation"
+            label="Confirme sua senha"
+            placeholder="Confirmação de senha"
+            returnKeyType="send"
+            autoCorrect={false}
+            secureTextEntry
+          />
+        </Unform>
+      </ScrollView>
+      <View
+        style={{
+          width: '100%',
+          alignItems: 'center',
+        }}
+      >
+        <Button
+          title="Enviar"
+          loading={loadingButton}
+          onPress={() => {
+            setLoadingButton(true);
+            formRef.current?.submitForm();
+          }}
+          style={{ marginBottom: SPACING.M }}
+        />
+      </View>
+    </KeyboardAvoidingView>
   );
 }

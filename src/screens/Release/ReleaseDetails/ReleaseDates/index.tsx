@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 
 import { CircularButton } from 'components';
 
 import { useAuth } from 'hooks';
 
-import { Release } from 'types';
+import { Release, ReleaseDate } from 'types';
+
+import { api } from 'services';
 
 import { ReleaseDatesList } from './ReleaseDatesList';
 
@@ -16,6 +18,14 @@ interface ReleaseDatedProps {
 }
 
 export function ReleaseDates({ release }: ReleaseDatedProps): JSX.Element {
+  const [dates, setDates] = useState<ReleaseDate[]>([]);
+
+  useEffect(() => {
+    api.get(`release/dates/${release.id}`).then(response => {
+      setDates(response.data);
+    });
+  }, [release.id]);
+
   const navigation = useNavigation();
 
   const { user } = useAuth();
@@ -23,7 +33,8 @@ export function ReleaseDates({ release }: ReleaseDatedProps): JSX.Element {
   return (
     <Container>
       <ReleaseDatesList
-        emptyListText="Não há datas cadastradas!"
+        dates={dates}
+        setDates={setDates}
         release_id={release.id}
       />
 
@@ -33,6 +44,7 @@ export function ReleaseDates({ release }: ReleaseDatedProps): JSX.Element {
           onPress={() =>
             navigation.navigate('ReleaseDateForm', {
               release_id: release.id,
+              setDates,
             })
           }
         />

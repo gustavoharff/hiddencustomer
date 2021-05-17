@@ -28,7 +28,7 @@ import { useAuth } from 'hooks';
 import { Container, Unform } from './styles';
 
 export function ChangeUserInfo(): JSX.Element {
-  const { updateUser, user, signOut } = useAuth();
+  const { updateUser, user } = useAuth();
 
   const navigation = useNavigation();
 
@@ -63,16 +63,10 @@ export function ChangeUserInfo(): JSX.Element {
           return;
         }
 
-        if (err.response.status === 440) {
-          Alert.alert('Sessão expirada', 'Realize o login novamente!');
-          signOut();
-          return;
-        }
-
         Alert.alert('Atenção!', 'Ocorreu um erro ao alterar seus dados.');
       }
     },
-    [updateUser, signOut, navigation],
+    [updateUser, navigation],
   );
 
   return (

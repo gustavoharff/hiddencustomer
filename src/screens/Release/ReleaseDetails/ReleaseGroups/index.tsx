@@ -1,11 +1,14 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 
 import { CircularButton } from 'components';
 
-import { Release } from 'types';
+import { Release, ReleaseGroup } from 'types';
 
 import { useAuth } from 'hooks';
+
+import { api } from 'services';
+
 import { ReleaseGroupsList } from './ReleaseGroupsList';
 
 import { Container } from './styles';
@@ -15,15 +18,23 @@ interface ReleaseGroupsProps {
 }
 
 export function ReleaseGroups({ release }: ReleaseGroupsProps): JSX.Element {
+  const [groups, setGroups] = useState<ReleaseGroup[]>([]);
   const navigation = useNavigation();
 
   const { user } = useAuth();
+
+  useEffect(() => {
+    api.get(`/release/groups/${release.id}`).then(response => {
+      setGroups(response.data);
+    });
+  }, [release.id]);
 
   return (
     <Container>
       <ReleaseGroupsList
         release_id={release.id}
-        emptyListText="Não há grupos cadastrados!"
+        groups={groups}
+        setGroups={setGroups}
       />
 
       {(user.permission === 'admin' || user.permission === 'client') && (
@@ -31,7 +42,9 @@ export function ReleaseGroups({ release }: ReleaseGroupsProps): JSX.Element {
           name="account-multiple-plus-outline"
           onPress={() =>
             navigation.navigate('ReleaseGroupForm', {
+              type: 'create',
               release_id: release.id,
+              setGroups,
             })
           }
         />
