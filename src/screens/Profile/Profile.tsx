@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
+import DeviceInfo from 'react-native-device-info';
 
 import { Avatar } from 'components';
 
@@ -10,8 +11,6 @@ import { useAuth } from 'hooks';
 import { Company } from 'types';
 
 import { api } from 'services';
-
-import pckg from '../../../package.json';
 
 import {
   AvatarContainer,
@@ -24,6 +23,7 @@ import {
 export function Profile(): JSX.Element {
   const { user } = useAuth();
   const [company, setCompany] = useState({} as Company);
+  const [version, setVersion] = useState(DeviceInfo.getReadableVersion());
 
   useEffect(() => {
     api.get('/companies/me').then(response => {
@@ -52,7 +52,7 @@ export function Profile(): JSX.Element {
         <Text>{company.name}</Text>
 
         <FieldDescription>Versão do aplicativo</FieldDescription>
-        <Text>{pckg.version}</Text>
+        <Text>{version}</Text>
       </View>
     </Container>
   );
