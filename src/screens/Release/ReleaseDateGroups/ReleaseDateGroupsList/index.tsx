@@ -17,7 +17,7 @@ export function ReleaseDateGroupsList({
   groups,
 }: ReleseDateGroupsListProps): JSX.Element {
   return (
-    <View style={{ flex: 1, width: '100%' }}>
+    <View style={{ width: '100%' }}>
       <FlatList
         ListEmptyComponent={
           <EmptyList text="Não há grupos cadastrados para essa data." />

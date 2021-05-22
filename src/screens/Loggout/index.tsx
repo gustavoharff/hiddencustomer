@@ -1,7 +1,8 @@
-import { StackScreenProps } from '@react-navigation/stack';
-import { useAuth } from 'hooks';
 import React, { useEffect } from 'react';
 import { ActivityIndicator, Alert } from 'react-native';
+import { StackScreenProps } from '@react-navigation/stack';
+
+import { useAuth } from 'hooks';
 
 type Params = {
   Loggout: {
