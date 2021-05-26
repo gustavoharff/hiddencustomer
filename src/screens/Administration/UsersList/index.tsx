@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -7,7 +7,7 @@ import { Avatar, EmptyList, Swipeable } from 'components';
 
 import { COLORS, SPACING } from 'styles';
 
-import { useAuth, useCompanies } from 'hooks';
+import { useAuth } from 'hooks';
 
 import { api } from 'services';
 
@@ -21,15 +21,10 @@ interface UsersListProps {
 }
 
 export function UsersList({ setUsers, users }: UsersListProps): JSX.Element {
-  const { companies, loadApiCompanies, loadLocalCompanies } = useCompanies(); // TO-DO: Adicionar esse relacionamento na chamada api do useEffect
   const navigation = useNavigation();
   const { user: authenticateUser } = useAuth();
 
   const [refreshing, setRefreshing] = useState(false);
-
-  useEffect(() => {
-    loadApiCompanies().catch(() => loadLocalCompanies());
-  }, []);
 
   const handleActiveUser = useCallback(
     async (userId: string) => {
@@ -148,12 +143,7 @@ export function UsersList({ setUsers, users }: UsersListProps): JSX.Element {
                 <UserInfo>
                   <Name>{user.name}</Name>
                   <Email numberOfLines={1}>{user.email}</Email>
-                  <Email numberOfLines={1}>
-                    {
-                      companies.find(company => company.id === user.company_id)
-                        ?.name
-                    }
-                  </Email>
+                  <Email numberOfLines={1}>{user.company.name}</Email>
                 </UserInfo>
                 <Icon
                   name={user.active ? 'check' : 'close'}
