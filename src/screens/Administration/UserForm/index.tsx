@@ -32,6 +32,7 @@ export function UserForm({ route }: UserFormProps): JSX.Element {
   const { setUsers } = route.params;
 
   const [selectedCompanyId, setSelectedCompanyId] = useState('');
+  const [selectedPermission, setSelectedPermission] = useState('user');
 
   useEffect(() => {
     api.get('/companies').then(response => {
@@ -47,6 +48,7 @@ export function UserForm({ route }: UserFormProps): JSX.Element {
         headerTitle: 'Editar usuário',
       });
       setSelectedCompanyId(route.params?.user.company_id);
+      setSelectedPermission(route.params?.user.permission);
       formRef.current?.setFieldValue('name', route.params?.user.name);
       formRef.current?.setFieldValue('email', route.params?.user.email);
     }
@@ -66,6 +68,10 @@ export function UserForm({ route }: UserFormProps): JSX.Element {
 
   const onCompanyChange = useCallback(value => {
     setSelectedCompanyId(value);
+  }, []);
+
+  const onPermissionChange = useCallback(value => {
+    setSelectedPermission(value);
   }, []);
 
   const handleSubmit = useCallback(
@@ -102,6 +108,7 @@ export function UserForm({ route }: UserFormProps): JSX.Element {
             email: data.email,
             password: data.password,
             company_id: selectedCompanyId,
+            permission: selectedPermission,
           });
 
           setUsers(state => [response.data, ...state]);
@@ -111,6 +118,7 @@ export function UserForm({ route }: UserFormProps): JSX.Element {
             email: data.email,
             name: data.name,
             password: data.password || null,
+            permission: selectedPermission,
           });
 
           setUsers(state =>
@@ -123,13 +131,20 @@ export function UserForm({ route }: UserFormProps): JSX.Element {
         navigation.navigate('Administration');
       } catch (err) {
         if (err instanceof Yup.ValidationError) {
-          Alert.alert('Atenção!', 'Complete todos os campos.');
+          Alert.alert('Atenção!', 'Complete os campos obrigatórios.');
+          setLoading(false);
           return;
         }
       }
       setLoading(false);
     },
-    [route.params.user, selectedCompanyId, navigation, setUsers],
+    [
+      route.params.user,
+      selectedCompanyId,
+      navigation,
+      selectedPermission,
+      setUsers,
+    ],
   );
 
   return (
@@ -156,7 +171,7 @@ export function UserForm({ route }: UserFormProps): JSX.Element {
 
               <Input
                 name="password"
-                label="Senha de acesso:"
+                label="Senha de acesso: (Opcional)"
                 placeholder="Senha"
                 secureTextEntry
                 returnKeyType="send"
@@ -176,6 +191,19 @@ export function UserForm({ route }: UserFormProps): JSX.Element {
               ]}
               onChange={onCompanyChange}
               value={selectedCompanyId}
+              androidStyle={{ width: '100%' }}
+            />
+
+            <Label>Permissão:</Label>
+            <Picker
+              doneText="Selecionar"
+              items={[
+                { label: 'Usuário', value: 'user' },
+                { label: 'Cliente', value: 'client' },
+                { label: 'Administrador', value: 'admin' },
+              ]}
+              onChange={onPermissionChange}
+              value={selectedPermission}
               androidStyle={{ width: '100%' }}
             />
           </View>

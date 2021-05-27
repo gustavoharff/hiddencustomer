@@ -143,7 +143,7 @@ export function UsersList({ setUsers, users }: UsersListProps): JSX.Element {
                 <UserInfo>
                   <Name>{user.name}</Name>
                   <Email numberOfLines={1}>{user.email}</Email>
-                  <Email numberOfLines={1}>{user.company.name}</Email>
+                  <Email numberOfLines={1}>{user.company?.name}</Email>
                 </UserInfo>
                 <Icon
                   name={user.active ? 'check' : 'close'}
