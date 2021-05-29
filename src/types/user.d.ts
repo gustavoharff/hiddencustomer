@@ -7,7 +7,7 @@ type User = {
   permission: 'admin' | 'client' | 'user';
   active: boolean;
   company_id: string;
-  company: Company;
+  company?: Company;
   avatar_url?: string;
   created_at: string;
   updated_at: string;

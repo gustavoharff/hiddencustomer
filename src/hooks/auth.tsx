@@ -7,6 +7,7 @@ import React, {
   ReactNode,
 } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import OneSignal from 'react-native-onesignal';
 
 import { User, Auth } from 'types';
 
@@ -94,6 +95,8 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
     api.defaults.headers.authorization = `Bearer ${token}`;
 
     setData({ token, user });
+
+    OneSignal.setEmail(user.email);
   }, []);
 
   const signOut = useCallback(async () => {
@@ -109,6 +112,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
     });
 
     setData({} as AuthState);
+    OneSignal.logoutEmail();
   }, []);
 
   const updateUser = useCallback(
