@@ -12,6 +12,7 @@ import OneSignal from 'react-native-onesignal';
 import { User, Auth } from 'types';
 
 import { api, getRealm } from 'services';
+import { Platform } from 'react-native';
 
 interface AuthState {
   token: string;
@@ -96,7 +97,9 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
 
     setData({ token, user });
 
-    OneSignal.setEmail(user.email);
+    if (Platform.OS === 'android') {
+      OneSignal.setEmail(user.email);
+    }
   }, []);
 
   const signOut = useCallback(async () => {
@@ -112,7 +115,9 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
     });
 
     setData({} as AuthState);
-    OneSignal.logoutEmail();
+    if (Platform.OS === 'android') {
+      OneSignal.logoutEmail();
+    }
   }, []);
 
   const updateUser = useCallback(

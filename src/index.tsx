@@ -19,9 +19,9 @@ export default function App(): JSX.Element {
   const queryClient = new QueryClient();
 
   useEffect(() => {
-    // if (Platform.OS === 'android') {
-    OneSignal.setAppId('e49de3b9-9f90-4a03-a503-fe45126e8ba0');
-    // }
+    if (Platform.OS === 'android') {
+      OneSignal.setAppId('e49de3b9-9f90-4a03-a503-fe45126e8ba0');
+    }
   }, []);
 
   return (
