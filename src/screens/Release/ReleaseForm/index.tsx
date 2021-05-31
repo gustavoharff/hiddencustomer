@@ -5,7 +5,7 @@ import { FormHandles } from '@unform/core';
 import { StackScreenProps } from '@react-navigation/stack';
 import * as Yup from 'yup';
 
-import { Button, Input, Picker, Screen } from 'components';
+import { Button, Input, Picker, Screen, MultipleOptionInput } from 'components';
 
 import { useCustomers } from 'hooks';
 
@@ -14,7 +14,7 @@ import { SPACING } from 'styles';
 import { Release } from 'types';
 
 import { api } from 'services';
-import { Container, Unform, Label } from './styles';
+import { Container, Unform } from './styles';
 
 type Params = {
   ReleaseForm: {
@@ -144,7 +144,6 @@ export function ReleaseForm({ route }: Props): JSX.Element {
               />
             </Unform>
 
-            <Label>Relacione o cliente:</Label>
             <Picker
               doneText="Selecionar"
               items={[
@@ -157,19 +156,21 @@ export function ReleaseForm({ route }: Props): JSX.Element {
               onChange={onCustomerChange}
               value={selectedCustomerId}
               androidStyle={{ width: '100%' }}
+              label="Relacione o cliente:"
             />
 
-            <Label>Status do pagamento:</Label>
-            <Picker
-              doneText="Selecionar"
-              items={[
-                { label: 'Selecionar', value: '' },
-                { label: 'Realizado', value: '1' },
-                { label: 'Não realizado', value: '0' },
-              ]}
-              onChange={onPaymentChange}
+            <MultipleOptionInput
+              label="Status do pagamento:"
               value={selectedPayment ? '1' : '0'}
-              androidStyle={{ width: '100%' }}
+              onChange={onPaymentChange}
+              items={[
+                { label: 'Realizado', value: '1', backgroundColor: '#03B252' },
+                {
+                  label: 'Não realizado',
+                  value: '0',
+                  backgroundColor: '#DC1637',
+                },
+              ]}
             />
           </View>
         </Container>

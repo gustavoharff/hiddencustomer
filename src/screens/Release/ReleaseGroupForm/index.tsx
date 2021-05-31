@@ -6,7 +6,7 @@ import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
 import moment from 'moment';
 
-import { Input, Button, Picker, Screen } from 'components';
+import { Input, Button, Picker, Screen, MultipleOptionInput } from 'components';
 
 import { SPACING } from 'styles';
 
@@ -146,22 +146,19 @@ export function ReleaseGroupForm({
               />
             </Unform>
 
-            <Label>Informe o tipo do grupo:</Label>
-            <Picker
-              doneText="Selecionar"
+            <MultipleOptionInput
+              label="Informe o tipo do grupo"
+              onChange={onGroupChange}
+              value={selectedGroup}
               items={[
-                { label: 'Selecionar', value: '' },
                 { label: 'WhatsApp', value: 'whatsapp' },
                 { label: 'Telegram', value: 'telegram' },
                 { label: 'Discord', value: 'discord' },
               ]}
-              onChange={onGroupChange}
-              value={selectedGroup}
-              androidStyle={{ width: '100%' }}
             />
 
-            <Label>Informe a data do lançamento: (Opcional)</Label>
             <Picker
+              label="Informe a data do lançamento (Opcional)"
               doneText="Selecionar"
               items={[
                 { label: 'Selecionar', value: '' },

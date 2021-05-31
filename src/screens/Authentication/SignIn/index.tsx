@@ -119,6 +119,7 @@ export function SignIn(): JSX.Element {
               name="email"
               returnKeyType="next"
               placeholder="E-mail"
+              darkMode
               onSubmitEditing={() => passwordInputRef.current?.focus()}
             />
 
@@ -128,6 +129,7 @@ export function SignIn(): JSX.Element {
               name="password"
               returnKeyType="send"
               placeholder="Senha"
+              darkMode
               onSubmitEditing={() => formRef.current?.submitForm()}
             />
 

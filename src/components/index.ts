@@ -8,6 +8,7 @@ export * from './Input';
 export * from './ListHeader';
 export * from './Logo';
 export * from './OptionItem';
+export * from './MultiOptionsInput';
 export * from './Picker';
 export * from './Screen';
 export * from './Section';

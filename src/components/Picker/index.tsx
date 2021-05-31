@@ -1,5 +1,5 @@
 import React from 'react';
-import { TextStyle, View, ViewStyle } from 'react-native';
+import { Text, TextStyle, View, ViewStyle } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
 
 import { styles } from './styles';
@@ -11,6 +11,7 @@ interface PickerProps {
   doneText: string;
   containerStyle?: ViewStyle;
   androidStyle?: TextStyle;
+  label?: string;
 }
 
 export function Picker({
@@ -20,26 +21,30 @@ export function Picker({
   doneText,
   containerStyle,
   androidStyle,
+  label,
 }: PickerProps): JSX.Element {
   return (
-    <View>
-      <RNPickerSelect
-        placeholder={{}}
-        items={items}
-        value={value}
-        doneText={doneText}
-        onValueChange={onChange}
-        style={{
-          chevron: {
-            display: 'none',
-          },
-          inputAndroid: { ...styles.selectAndroid, ...androidStyle },
-          inputIOS: { ...styles.selectIOS },
-          viewContainer: {
-            ...containerStyle,
-          },
-        }}
-      />
-    </View>
+    <>
+      {label && <Text style={styles.label}>{label}</Text>}
+      <View style={styles.container}>
+        <RNPickerSelect
+          placeholder={{}}
+          items={items}
+          value={value}
+          doneText={doneText}
+          onValueChange={onChange}
+          style={{
+            chevron: {
+              display: 'none',
+            },
+            inputAndroid: { ...styles.selectAndroid, ...androidStyle },
+            inputIOS: { ...styles.selectIOS },
+            viewContainer: {
+              ...containerStyle,
+            },
+          }}
+        />
+      </View>
+    </>
   );
 }

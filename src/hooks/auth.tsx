@@ -6,13 +6,13 @@ import React, {
   useEffect,
   ReactNode,
 } from 'react';
+import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import OneSignal from 'react-native-onesignal';
 
 import { User, Auth } from 'types';
 
 import { api, getRealm } from 'services';
-import { Platform } from 'react-native';
 
 interface AuthState {
   token: string;

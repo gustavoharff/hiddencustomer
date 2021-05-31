@@ -3,24 +3,18 @@ import React, { ReactNode } from 'react';
 import { Container } from './styles';
 
 interface SectionProps {
-  children: ReactNode;
-  flex?: boolean;
+  children?: ReactNode;
   alignCenter?: boolean;
   justifyCenter?: boolean;
 }
 
 export function Section({
   children,
-  flex,
   alignCenter,
   justifyCenter,
 }: SectionProps): JSX.Element {
   return (
-    <Container
-      flex={flex}
-      alignCenter={alignCenter}
-      justifyCenter={justifyCenter}
-    >
+    <Container alignCenter={alignCenter} justifyCenter={justifyCenter}>
       {children}
     </Container>
   );

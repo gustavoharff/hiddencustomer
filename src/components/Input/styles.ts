@@ -9,10 +9,8 @@ export const Container = styled.View`
 
   border: 1px solid ${colors.gray[400]};
 
-  margin-top: ${SPACING.L}px;
+  margin-top: ${SPACING.S}px;
   margin-bottom: ${SPACING.L}px;
-
-  background: ${colors.gray[50]};
 `;
 
 export const Label = styled.Text`
@@ -26,7 +24,7 @@ export const Label = styled.Text`
 
   font-weight: 600;
 
-  padding: ${SPACING.L}px ${SPACING.L}px 0 ${SPACING.L}px;
+  padding: ${SPACING.L}px ${SPACING.L}px 0 ${SPACING.XL}px;
 `;
 
 export const styles = StyleSheet.create({
@@ -34,7 +32,7 @@ export const styles = StyleSheet.create({
     flex: 1,
     fontSize: 15,
     borderWidth: 0,
-    borderColor: COLORS.BACKGROUND_DARK,
+    borderColor: COLORS.FONT_SECONDARY,
     paddingVertical: 5,
     paddingHorizontal: 15,
     color: '#3d3d4d',

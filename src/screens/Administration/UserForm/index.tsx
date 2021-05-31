@@ -5,7 +5,7 @@ import { StackScreenProps } from '@react-navigation/stack';
 import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
 
-import { Input, Button, Picker, Screen } from 'components';
+import { Input, Button, Picker, Screen, MultipleOptionInput } from 'components';
 
 import { SPACING } from 'styles';
 
@@ -13,7 +13,7 @@ import { Company, User } from 'types';
 
 import { api } from 'services';
 
-import { Container, Label, Unform } from './styles';
+import { Container, Unform } from './styles';
 
 type Props = {
   UserForm: {
@@ -179,8 +179,8 @@ export function UserForm({ route }: UserFormProps): JSX.Element {
               />
             </Unform>
 
-            <Label>Relacione a empresa:</Label>
             <Picker
+              label="Relacione a empresa"
               doneText="Selecionar"
               items={[
                 { label: 'Selecionar', value: '' },
@@ -194,17 +194,15 @@ export function UserForm({ route }: UserFormProps): JSX.Element {
               androidStyle={{ width: '100%' }}
             />
 
-            <Label>Permissão:</Label>
-            <Picker
-              doneText="Selecionar"
+            <MultipleOptionInput
+              label="Permissão"
+              onChange={onPermissionChange}
+              value={selectedPermission}
               items={[
                 { label: 'Usuário', value: 'user' },
                 { label: 'Cliente', value: 'client' },
-                { label: 'Administrador', value: 'admin' },
+                { label: 'Admin', value: 'admin' },
               ]}
-              onChange={onPermissionChange}
-              value={selectedPermission}
-              androidStyle={{ width: '100%' }}
             />
           </View>
         </Container>

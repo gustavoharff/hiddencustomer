@@ -17,6 +17,7 @@ interface InputProps extends TextInputProps {
   name: string;
   label?: string;
   containerStyle?: object;
+  darkMode?: boolean;
 }
 
 type InputValueRef = {
@@ -28,7 +29,7 @@ type InputRef = {
 };
 
 const ForwardInput: React.ForwardRefRenderFunction<InputRef, InputProps> = (
-  { name, containerStyle, label, ...rest },
+  { name, containerStyle, label, darkMode = false, ...rest },
   ref,
 ) => {
   const inputElementRef = useRef<any>(null);
@@ -83,6 +84,7 @@ const ForwardInput: React.ForwardRefRenderFunction<InputRef, InputProps> = (
           }}
           style={[
             styles.input,
+            darkMode && { backgroundColor: colors.white },
             isFocused ? { borderWidth: 1 } : { borderWidth: 0 },
           ]}
           placeholderTextColor={colors.gray[500]}
