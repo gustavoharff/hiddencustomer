@@ -4,190 +4,328 @@ import React, {
   useContext,
   useCallback,
   ReactNode,
+  useEffect,
 } from 'react';
-import { Alert } from 'react-native';
+import produce from 'immer';
+import moment from 'moment';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useQuery } from 'react-query';
 
-import { api, getRealm } from 'services';
+import { api } from 'services';
 
-import { Release } from 'types';
+import { Release, ReleaseDate, ReleaseGroup } from 'types';
 
 import { useAuth } from 'hooks';
 
-type CreateReleaseData = {
+interface CreateReleaseData {
   name: string;
   customer_id: string;
-};
+}
 
-type UpdateReleaseData = {
+interface UpdateReleaseData {
   release_id: string;
+  name?: string;
+  paid?: boolean;
+  customer_id?: string;
+  annotations?: string;
+}
+
+interface CreateReleaseGroupData {
   name: string;
-  paid: boolean;
-  customer_id: string;
-};
-type UpdateReleaseAnnotationsData = {
+  type: string;
   release_id: string;
-  annotations: string;
-};
+  release_date_id?: string;
+}
+interface UpdateReleaseGroupData {
+  groupId: string;
+  name: string;
+  type: string;
+  release_date_id?: string;
+}
 
-type ReleasesContextData = {
+interface CreateReleaseDateData {
+  date: Date;
+  release_id: string;
+}
+
+interface ReleasesContextData {
   releases: Release[];
-  loadApiReleases: () => Promise<void>;
-  loadLocalReleases: () => Promise<void>;
+  activeReleasesFilter: boolean;
+  setActiveReleasesFilter: React.Dispatch<React.SetStateAction<boolean>>;
+  customerReleasesFilter: string;
+  setCustomerReleasesFilter: React.Dispatch<React.SetStateAction<string>>;
+  releasesDates: ReleaseDate[];
+  loadReleases: () => Promise<void>;
+  loadReleaseDates: (releaseId: string) => Promise<void>;
+  loadReleaseGroups: (releaseId: string) => Promise<void>;
   createRelease: (data: CreateReleaseData) => Promise<void>;
+  createReleaseGroup: (data: CreateReleaseGroupData) => Promise<void>;
+  createReleaseDate: (data: CreateReleaseDateData) => Promise<void>;
   updateRelease: (data: UpdateReleaseData) => Promise<void>;
+  updateReleaseGroup: (data: UpdateReleaseGroupData) => Promise<void>;
   deleteRelease: (releaseId: string) => Promise<void>;
-  updateReleaseAnnotations: (
-    data: UpdateReleaseAnnotationsData,
-  ) => Promise<void>;
-};
+  deleteReleaseGroup: (groupId: string) => Promise<void>;
+  deleteReleaseDate: (dateId: string) => Promise<void>;
+}
 
-type ReleasesProviderProps = {
+interface ReleasesProviderProps {
   children: ReactNode;
-};
+}
 
 const ReleasesContext = createContext<ReleasesContextData>(
   {} as ReleasesContextData,
 );
 
-export function ReleasesProvider({ children }: ReleasesProviderProps) {
+export function ReleasesProvider({
+  children,
+}: ReleasesProviderProps): JSX.Element {
   const [releases, setReleases] = useState<Release[]>([]);
+  const [activeReleasesFilter, setActiveReleasesFilter] = useState(false);
+  const [customerReleasesFilter, setCustomerReleasesFilter] = useState('all');
 
-  const { signOut } = useAuth();
+  const [releasesDates, setReleasesDates] = useState<ReleaseDate[]>([]);
 
-  const loadApiReleases = useCallback(async () => {
-    try {
-      const response = await api.get('/releases');
-      setReleases(response.data);
+  const { user } = useAuth();
 
-      const realm = await getRealm();
+  useEffect(() => {
+    async function loadLocalFilters() {
+      const localActiveReleasesFilter = await AsyncStorage.getItem(
+        'ReleaseActiveFilter',
+      );
 
-      realm.write(() => {
-        const data = realm.objects('Release');
-        realm.delete(data);
+      const localCustomerReleasesFilter = await AsyncStorage.getItem(
+        'CustomerReleasesFilter',
+      );
 
-        response.data.map((release: Release) =>
-          realm.create('Release', release),
-        );
-      });
-    } catch (err) {
-      if (err.response.status === 440) {
-        Alert.alert('Sessão expirada', 'Realize o login novamente!');
-        signOut();
+      if (localActiveReleasesFilter) {
+        setActiveReleasesFilter(localActiveReleasesFilter === '1');
+      }
+
+      if (localCustomerReleasesFilter) {
+        setCustomerReleasesFilter(localCustomerReleasesFilter);
       }
     }
-  }, [setReleases, signOut]);
 
-  const loadLocalReleases = useCallback(async () => {
-    const realm = await getRealm();
+    loadLocalFilters();
+  }, []);
 
-    const data = realm.objects<Release>('Release').sorted('name', true);
+  const loadReleases = useCallback(async () => {
+    if (!user?.id) {
+      return;
+    }
 
-    const formattedReleases = data.map(release => ({
-      id: release.id,
-      name: release.name,
-      customer_id: release.customer_id,
-      company_id: release.company_id,
-      paid: release.paid,
-      annotations: release.annotations,
-      created_at: release.created_at,
-      updated_at: release.updated_at,
-    }));
+    const response = await api.get<Release[]>('/releases');
+    let { data } = response;
 
-    setReleases(formattedReleases);
-  }, [setReleases]);
+    if (customerReleasesFilter !== '' && customerReleasesFilter !== 'all') {
+      data = data.filter(
+        release => release.customer_id === customerReleasesFilter,
+      );
+    }
+
+    if (activeReleasesFilter) {
+      data = data.filter(release => {
+        if (release.dates.length >= 1) {
+          if (moment(release.dates[0].date).isBefore(new Date())) {
+            return false;
+          }
+        }
+
+        return true;
+      });
+    }
+
+    setReleases(data);
+  }, [activeReleasesFilter, customerReleasesFilter, user]);
+
+  const loadReleaseDates = useCallback(async releaseId => {
+    const response = await api.get(`release/dates/${releaseId}`);
+
+    setReleases(state =>
+      state.map(release => {
+        if (release.id === releaseId) {
+          release.dates = response.data; // eslint-disable-line
+        }
+
+        return release;
+      }),
+    );
+  }, []);
+
+  const loadReleaseGroups = useCallback(async releaseId => {
+    const response = await api.get<ReleaseGroup[]>(
+      `release/groups/${releaseId}`,
+    );
+
+    setReleases(state =>
+      state.map(release => {
+        if (release.id === releaseId) {
+          release.groups = response.data; // eslint-disable-line
+        }
+
+        return release;
+      }),
+    );
+  }, []);
 
   const createRelease = useCallback(
     async ({ name, customer_id }: CreateReleaseData) => {
-      try {
-        const response = await api.post<Release>('/releases', {
-          name,
-          customer_id,
-        });
+      const response = await api.post<Release>('/releases', {
+        name,
+        customer_id,
+      });
 
-        setReleases(state => [response.data, ...state]);
-
-        const realm = await getRealm();
-
-        realm.write(() => {
-          realm.create('Release', response.data);
-        });
-      } catch (err) {
-        if (err.response.status === 440) {
-          Alert.alert('Sessão expirada', 'Realize o login novamente!');
-          signOut();
-        }
-      }
+      setReleases(state => [response.data, ...state]);
     },
-    [signOut],
+    [],
   );
 
   const updateRelease = useCallback(
-    async ({ release_id, name, paid, customer_id }: UpdateReleaseData) => {
-      try {
-        const response = await api.put(`/release/${release_id}`, {
-          name,
-          customer_id,
-          paid,
-        });
+    async ({
+      release_id,
+      name,
+      paid,
+      annotations,
+      customer_id,
+    }: UpdateReleaseData) => {
+      const response = await api.put(`/release/${release_id}`, {
+        name,
+        paid,
+        annotations,
+        customer_id,
+      });
 
-        setReleases(state =>
-          state.map(release =>
-            release.id === release_id ? response.data : release,
-          ),
-        );
-      } catch (err) {
-        if (err.response.status === 440) {
-          Alert.alert('Sessão expirada', 'Realize o login novamente!');
-          signOut();
-        }
-      }
+      setReleases(state =>
+        state.map(release =>
+          release.id === release_id ? response.data : release,
+        ),
+      );
     },
-    [signOut],
-  );
-
-  const updateReleaseAnnotations = useCallback(
-    async ({ release_id, annotations }: UpdateReleaseAnnotationsData) => {
-      try {
-        const response = await api.put(`/release/${release_id}`, {
-          annotations,
-        });
-
-        setReleases(state =>
-          state.map(release =>
-            release.id === release_id ? response.data : release,
-          ),
-        );
-      } catch (err) {
-        if (err.response.status === 440) {
-          Alert.alert('Sessão expirada', 'Realize o login novamente!');
-          signOut();
-        }
-      }
-    },
-    [signOut],
+    [],
   );
 
   const deleteRelease = useCallback(async (releaseId: string) => {
-    await api.delete(`/releases/${releaseId}`);
+    await api.delete(`/release/${releaseId}`);
+
     setReleases(state => state.filter(release => release.id !== releaseId));
+  }, []);
 
-    const realm = await getRealm();
+  const createReleaseGroup = useCallback(
+    async ({
+      name,
+      type,
+      release_id,
+      release_date_id,
+    }: CreateReleaseGroupData) => {
+      const response = await api.post('/release/groups', {
+        name,
+        type,
+        release_id,
+        release_date_id,
+      });
 
-    realm.write(() => {
-      realm.delete(realm.objectForPrimaryKey('Release', releaseId));
-    });
+      setReleases(state =>
+        produce(state, drafts => {
+          drafts.forEach(release => {
+            if (release.id === release_id) {
+              release.groups.push(response.data);
+            }
+          });
+        }),
+      );
+    },
+    [],
+  );
+
+  const updateReleaseGroup = useCallback(
+    async ({
+      groupId,
+      name,
+      type,
+      release_date_id,
+    }: UpdateReleaseGroupData) => {
+      const response = await api.put(`/release/groups/${groupId}`, {
+        name,
+        type,
+        release_date_id,
+      });
+
+      setReleases(state =>
+        state.map(rls => ({
+          ...rls,
+          groups: rls.groups.map(group =>
+            group.id === groupId ? response.data : group,
+          ),
+        })),
+      );
+    },
+    [],
+  );
+
+  const deleteReleaseGroup = useCallback(async (groupId: string) => {
+    await api.delete(`/release/groups/${groupId}`);
+
+    setReleases(state =>
+      state.map(rls => ({
+        ...rls,
+        groups: rls.groups.filter(group => group.id !== groupId),
+      })),
+    );
+  }, []);
+
+  const createReleaseDate = useCallback(
+    async ({ date, release_id }: CreateReleaseDateData) => {
+      const response = await api.post('/release/dates', {
+        release_id,
+        date: date.toISOString(),
+      });
+
+      setReleases(state =>
+        state.map(release => {
+          if (release.id === release_id) {
+            return {
+              ...release,
+              dates: [...release.dates, response.data],
+            };
+          }
+          return release;
+        }),
+      );
+    },
+    [],
+  );
+
+  const deleteReleaseDate = useCallback(async (dateId: string) => {
+    await api.delete(`/release/dates/${dateId}`);
+
+    setReleases(state =>
+      state.map(rls => ({
+        ...rls,
+        dates: rls.dates.filter(date => date.id !== dateId),
+      })),
+    );
   }, []);
 
   return (
     <ReleasesContext.Provider
       value={{
         releases,
-        loadApiReleases,
-        loadLocalReleases,
+        activeReleasesFilter,
+        setActiveReleasesFilter,
+        customerReleasesFilter,
+        setCustomerReleasesFilter,
+        releasesDates,
+        loadReleases,
+        loadReleaseDates,
+        loadReleaseGroups,
         createRelease,
+        createReleaseGroup,
+        createReleaseDate,
         updateRelease,
+        updateReleaseGroup,
         deleteRelease,
-        updateReleaseAnnotations,
+        deleteReleaseGroup,
+        deleteReleaseDate,
       }}
     >
       {children}
@@ -197,10 +335,6 @@ export function ReleasesProvider({ children }: ReleasesProviderProps) {
 
 export function useReleases(): ReleasesContextData {
   const context = useContext(ReleasesContext);
-
-  if (!context) {
-    throw new Error('useReleases must be used within an ReleasesProvider');
-  }
 
   return context;
 }

@@ -4,9 +4,9 @@ import { ActivityIndicator, View } from 'react-native';
 import { useAuth } from 'hooks';
 
 import { AuthRoutes } from './auth.routes';
-import { TabRoutes } from './app.routes';
+import { AppStack } from './app.routes';
 
-const Routes: React.FC = () => {
+export function Routes(): JSX.Element {
   const { user, loading } = useAuth();
 
   if (loading) {
@@ -17,7 +17,5 @@ const Routes: React.FC = () => {
     );
   }
 
-  return user ? <TabRoutes /> : <AuthRoutes />;
-};
-
-export default Routes;
+  return user ? <AppStack /> : <AuthRoutes />;
+}

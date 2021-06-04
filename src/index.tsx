@@ -1,19 +1,43 @@
 import 'react-native-gesture-handler';
 
-import React from 'react';
-import { StatusBar } from 'react-native';
+import React, { useEffect } from 'react';
+import { StatusBar, LogBox, Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import Routes from './navigation';
+import { QueryClientProvider, QueryClient } from 'react-query';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import OneSignal from 'react-native-onesignal';
 
-import { AppProvider } from './hooks';
+import { colors } from 'styles';
 
-const App: React.FC = () => (
-  <NavigationContainer>
-    <StatusBar barStyle="light-content" backgroundColor="#1B1B1F" />
-    <AppProvider>
-      <Routes />
-    </AppProvider>
-  </NavigationContainer>
-);
+import { AppProvider } from 'hooks';
+import { navigationRef } from './navigation/navigate';
 
-export default App;
+import { Routes } from './navigation';
+
+LogBox.ignoreLogs(['Remote debugger is in']);
+
+export default function App(): JSX.Element {
+  const queryClient = new QueryClient();
+
+  useEffect(() => {
+    if (Platform.OS === 'android') {
+      OneSignal.setAppId('e49de3b9-9f90-4a03-a503-fe45126e8ba0');
+    }
+  }, []);
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <NavigationContainer ref={navigationRef}>
+        <AppProvider>
+          <SafeAreaView style={{ flex: 1, backgroundColor: colors.gray[900] }}>
+            <StatusBar
+              barStyle="light-content"
+              backgroundColor={colors.gray[900]}
+            />
+            <Routes />
+          </SafeAreaView>
+        </AppProvider>
+      </NavigationContainer>
+    </QueryClientProvider>
+  );
+}

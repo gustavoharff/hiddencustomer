@@ -1,157 +1,189 @@
 import React from 'react';
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import {
+  CardStyleInterpolators,
+  createStackNavigator,
+} from '@react-navigation/stack';
 
-import { ScreenIndicator } from 'components';
+import {
+  HeaderIcon,
+  TabBarIcon,
+  Calendar,
+  CustomerForm,
+  Customers,
+  Loggout,
+  ReleaseAnnotationsForm,
+  ReleaseDateForm,
+  ReleaseDateGroups,
+  ReleaseDetails,
+  ReleaseForm,
+  ReleaseGroupForm,
+  Releases,
+  ReleasesFilter,
+} from 'components';
+
 import { useAuth } from 'hooks';
-import { ReleasesRoutes } from './releases.routes';
-import { CustomersRoutes } from './customers.routes';
-import { ProfileRoutes } from './profile.routes';
-import { AdministrationRoutes } from './administration.routes';
 
-const { Navigator, Screen } = createBottomTabNavigator();
+import { SPACING } from 'styles';
 
-const TabRoutes: React.FC = () => {
+import { ProfileScreen, ProfileStack } from './profile-routes';
+import {
+  AdministrationScreen,
+  AdministrationStack,
+} from './administration-routes';
+
+import { DEFAULT, NO_HEADER } from './helper';
+import { ReleasesScreen, ReleasesStack } from './releases-routes';
+
+const Tab = createBottomTabNavigator();
+
+const Stack = createStackNavigator();
+
+function CustomersStack() {
+  return (
+    <Stack.Navigator screenOptions={DEFAULT}>
+      <Stack.Screen
+        name="Customers"
+        component={Customers}
+        options={{
+          headerTitle: 'Clientes',
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+
+function CalendarStack() {
+  return (
+    <Stack.Navigator screenOptions={DEFAULT}>
+      <Stack.Screen
+        name="Calendar"
+        component={Calendar}
+        options={{
+          headerTitle: 'Calendário',
+        }}
+      />
+    </Stack.Navigator>
+  );
+}
+
+export function TabStack(): JSX.Element {
   const { user } = useAuth();
 
   return (
-    <Navigator>
-      <Screen
+    <Tab.Navigator
+      screenOptions={{ tabBarLabel: () => null }}
+      initialRouteName="Releases"
+    >
+      <Tab.Screen
         name="Releases"
-        component={ReleasesRoutes}
-        options={({ navigation }) => {
-          const { routes, index } = navigation.dangerouslyGetState();
-          const { state: exploreState } = routes[index];
-          let tabBarVisible = true;
-          if (exploreState) {
-            const { routes: exploreRoutes, index: exploreIndex } = exploreState;
-            const exploreActiveRoute = exploreRoutes[exploreIndex];
-            if (
-              exploreActiveRoute.name === 'ReleaseForm' ||
-              exploreActiveRoute.name === 'ReleaseAnnotationsForm'
-            ) {
-              tabBarVisible = false;
-            }
-          }
-          return {
-            tabBarLabel: () => null,
-            tabBarVisible,
-            tabBarIcon: ({ size, focused }) => (
-              <>
-                <Icon
-                  name="rocket-launch-outline"
-                  size={size}
-                  color={focused ? '#DC1637' : '#A8A8B3'}
-                />
-                {focused && (
-                  <ScreenIndicator
-                    backgroundColor={focused ? '#DC1637' : '#A8A8B3'}
-                  />
-                )}
-              </>
-            ),
-          };
+        component={ReleasesScreen}
+        options={{
+          tabBarIcon: ({ size, focused }) => (
+            <TabBarIcon
+              name="rocket-launch-outline"
+              size={size}
+              focused={focused}
+            />
+          ),
         }}
       />
 
-      <Screen
+      <Tab.Screen
         name="Customers"
-        component={CustomersRoutes}
-        options={({ navigation }) => {
-          const { routes, index } = navigation.dangerouslyGetState();
-          const { state: exploreState } = routes[index];
-          let tabBarVisible = true;
-          if (exploreState) {
-            const { routes: exploreRoutes, index: exploreIndex } = exploreState;
-            const exploreActiveRoute = exploreRoutes[exploreIndex];
-            if (exploreActiveRoute.name === 'CustomerForm') {
-              tabBarVisible = false;
-            }
-          }
-          return {
-            tabBarVisible,
-            tabBarLabel: () => null,
-            tabBarIcon: ({ size, focused }) => (
-              <>
-                <Icon
-                  name="account-group-outline"
-                  size={size}
-                  color={focused ? '#DC1637' : '#A8A8B3'}
-                />
-                {focused && (
-                  <ScreenIndicator
-                    backgroundColor={focused ? '#DC1637' : '#A8A8B3'}
-                  />
-                )}
-              </>
-            ),
-          };
+        component={CustomersStack}
+        options={{
+          tabBarIcon: ({ size, focused }) => (
+            <TabBarIcon
+              name="account-group-outline"
+              size={size}
+              focused={focused}
+            />
+          ),
         }}
       />
+
+      <Tab.Screen
+        name="Calendar"
+        component={CalendarStack}
+        options={{
+          tabBarIcon: ({ size, focused }) => (
+            <TabBarIcon
+              name="calendar-multiselect"
+              size={size}
+              focused={focused}
+            />
+          ),
+        }}
+      />
+
       {user.permission === 'admin' && (
-        <Screen
+        <Tab.Screen
           name="Administration"
-          component={AdministrationRoutes}
-          options={({ navigation }) => {
-            const { routes, index } = navigation.dangerouslyGetState();
-            const { state: exploreState } = routes[index];
-            let tabBarVisible = true;
-            if (exploreState) {
-              const {
-                routes: exploreRoutes,
-                index: exploreIndex,
-              } = exploreState;
-              const exploreActiveRoute = exploreRoutes[exploreIndex];
-              if (exploreActiveRoute.name === 'UserForm') {
-                tabBarVisible = false;
-              }
-            }
-            return {
-              tabBarVisible,
-              tabBarLabel: () => null,
-              tabBarIcon: ({ size, focused }) => (
-                <>
-                  <Icon
-                    name="account-cog-outline"
-                    size={size}
-                    color={focused ? '#DC1637' : '#A8A8B3'}
-                  />
-                  {focused && (
-                    <ScreenIndicator
-                      backgroundColor={focused ? '#DC1637' : '#A8A8B3'}
-                    />
-                  )}
-                </>
-              ),
-            };
+          component={AdministrationScreen}
+          options={{
+            tabBarIcon: ({ size, focused }) => (
+              <TabBarIcon
+                name="account-cog-outline"
+                size={size}
+                focused={focused}
+              />
+            ),
           }}
         />
       )}
 
-      <Screen
+      <Tab.Screen
         name="Profile"
-        component={ProfileRoutes}
+        component={ProfileScreen}
         options={{
-          tabBarLabel: () => null,
           tabBarIcon: ({ size, focused }) => (
-            <>
-              <Icon
-                name="account-outline"
-                size={size}
-                color={focused ? '#DC1637' : '#A8A8B3'}
-              />
-              {focused && (
-                <ScreenIndicator
-                  backgroundColor={focused ? '#DC1637' : '#A8A8B3'}
-                />
-              )}
-            </>
+            <TabBarIcon name="account-outline" size={size} focused={focused} />
           ),
         }}
       />
-    </Navigator>
+    </Tab.Navigator>
   );
-};
+}
 
-export { TabRoutes };
+export function AppStack(): JSX.Element {
+  return (
+    <Stack.Navigator
+      mode="modal"
+      screenOptions={{
+        ...DEFAULT,
+        ...NO_HEADER,
+      }}
+    >
+      <Stack.Screen name="Tab" component={TabStack} />
+
+      <Stack.Screen name="ReleasesStack" component={ReleasesStack} />
+
+      {/* Customers Routes */}
+      <Stack.Screen
+        name="CustomerForm"
+        component={CustomerForm}
+        options={({ navigation }) => ({
+          headerShown: true,
+          headerTitle: 'Registrar cliente',
+          headerLeft: () => (
+            <HeaderIcon
+              name="arrow-left"
+              onPress={() => navigation.navigate('Customers')}
+              style={{ marginLeft: SPACING.S }}
+            />
+          ),
+        })}
+      />
+
+      <Stack.Screen
+        name="AdministrationStack"
+        component={AdministrationStack}
+      />
+
+      <Stack.Screen name="ProfileStack" component={ProfileStack} />
+
+      <Stack.Screen name="Loggout" component={Loggout} />
+    </Stack.Navigator>
+  );
+}

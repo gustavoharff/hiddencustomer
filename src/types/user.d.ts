@@ -6,6 +6,7 @@ type User = {
   email: string;
   permission: 'admin' | 'client' | 'user';
   active: boolean;
+  company_id: string;
   company?: Company;
   avatar_url?: string;
   created_at: string;
