@@ -4,11 +4,10 @@ import {
   createStackNavigator,
 } from '@react-navigation/stack';
 
-import { SignIn, ForgotPassword, ResetPassword } from 'screens';
+import { SignIn, ForgotPassword, ResetPassword, HeaderIcon } from 'components';
 
 import { colors, SPACING } from 'styles';
 
-import { HeaderIcon } from 'components';
 import { DEFAULT } from './helper';
 
 const { Navigator, Screen } = createStackNavigator();

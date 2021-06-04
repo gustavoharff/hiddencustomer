@@ -4,6 +4,7 @@ import React, { useEffect } from 'react';
 import { StatusBar, LogBox, Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { QueryClientProvider, QueryClient } from 'react-query';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import OneSignal from 'react-native-onesignal';
 
 import { colors } from 'styles';
@@ -28,11 +29,13 @@ export default function App(): JSX.Element {
     <QueryClientProvider client={queryClient}>
       <NavigationContainer ref={navigationRef}>
         <AppProvider>
-          <StatusBar
-            barStyle="light-content"
-            backgroundColor={colors.gray[900]}
-          />
-          <Routes />
+          <SafeAreaView style={{ flex: 1, backgroundColor: colors.gray[900] }}>
+            <StatusBar
+              barStyle="light-content"
+              backgroundColor={colors.gray[900]}
+            />
+            <Routes />
+          </SafeAreaView>
         </AppProvider>
       </NavigationContainer>
     </QueryClientProvider>

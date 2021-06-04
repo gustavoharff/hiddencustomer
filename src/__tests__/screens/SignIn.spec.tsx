@@ -2,7 +2,7 @@ import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { Alert } from 'react-native';
 
-import { SignIn } from '../../screens/Authentication/SignIn';
+import { SignIn } from '../../components/screens/Authentication/SignIn';
 
 const mockedSignIn = jest.fn();
 

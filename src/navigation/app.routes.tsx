@@ -5,20 +5,13 @@ import {
   createStackNavigator,
 } from '@react-navigation/stack';
 
-import { HeaderIcon, TabBarIcon } from 'components';
-
-import { useAuth } from 'hooks';
-
 import {
-  Administration,
+  HeaderIcon,
+  TabBarIcon,
   Calendar,
-  ChangeUserInfo,
-  ChangeUserPassword,
-  Configuration,
   CustomerForm,
   Customers,
   Loggout,
-  Profile,
   ReleaseAnnotationsForm,
   ReleaseDateForm,
   ReleaseDateGroups,
@@ -27,30 +20,24 @@ import {
   ReleaseGroupForm,
   Releases,
   ReleasesFilter,
-  UserForm,
-} from 'screens';
+} from 'components';
+
+import { useAuth } from 'hooks';
 
 import { SPACING } from 'styles';
 
+import { ProfileScreen, ProfileStack } from './profile-routes';
+import {
+  AdministrationScreen,
+  AdministrationStack,
+} from './administration-routes';
+
 import { DEFAULT, NO_HEADER } from './helper';
+import { ReleasesScreen, ReleasesStack } from './releases-routes';
 
 const Tab = createBottomTabNavigator();
 
 const Stack = createStackNavigator();
-
-function ReleasesStack() {
-  return (
-    <Stack.Navigator screenOptions={DEFAULT}>
-      <Stack.Screen
-        name="Releases"
-        component={Releases}
-        options={{
-          headerTitle: 'Lançamentos',
-        }}
-      />
-    </Stack.Navigator>
-  );
-}
 
 function CustomersStack() {
   return (
@@ -61,43 +48,6 @@ function CustomersStack() {
         options={{
           headerTitle: 'Clientes',
         }}
-      />
-    </Stack.Navigator>
-  );
-}
-
-function AdministrationStack() {
-  return (
-    <Stack.Navigator screenOptions={DEFAULT}>
-      <Stack.Screen
-        name="Administration"
-        component={Administration}
-        options={{
-          headerTitle: 'Administração',
-        }}
-      />
-    </Stack.Navigator>
-  );
-}
-
-function ProfileStack() {
-  return (
-    <Stack.Navigator screenOptions={DEFAULT}>
-      <Stack.Screen
-        name="Profile"
-        component={Profile}
-        options={({ navigation }) => ({
-          headerTitle: 'Meu perfil',
-          headerRight: () => (
-            <HeaderIcon
-              name="cog-outline"
-              onPress={() => {
-                navigation.navigate('Configuration');
-              }}
-              style={{ marginRight: SPACING.L }}
-            />
-          ),
-        })}
       />
     </Stack.Navigator>
   );
@@ -127,7 +77,7 @@ export function TabStack(): JSX.Element {
     >
       <Tab.Screen
         name="Releases"
-        component={ReleasesStack}
+        component={ReleasesScreen}
         options={{
           tabBarIcon: ({ size, focused }) => (
             <TabBarIcon
@@ -170,7 +120,7 @@ export function TabStack(): JSX.Element {
       {user.permission === 'admin' && (
         <Tab.Screen
           name="Administration"
-          component={AdministrationStack}
+          component={AdministrationScreen}
           options={{
             tabBarIcon: ({ size, focused }) => (
               <TabBarIcon
@@ -185,7 +135,7 @@ export function TabStack(): JSX.Element {
 
       <Tab.Screen
         name="Profile"
-        component={ProfileStack}
+        component={ProfileScreen}
         options={{
           tabBarIcon: ({ size, focused }) => (
             <TabBarIcon name="account-outline" size={size} focused={focused} />
@@ -207,122 +157,7 @@ export function AppStack(): JSX.Element {
     >
       <Stack.Screen name="Tab" component={TabStack} />
 
-      {/* Releases Routes */}
-      <Stack.Screen
-        name="ReleaseDetails"
-        component={ReleaseDetails}
-        options={({ navigation }) => ({
-          headerShown: true,
-          headerTitle: 'Detalhes',
-          headerLeft: () => (
-            <HeaderIcon
-              name="arrow-left"
-              onPress={() => navigation.goBack()}
-              style={{ marginLeft: SPACING.S }}
-            />
-          ),
-        })}
-      />
-
-      <Stack.Screen
-        name="ReleaseForm"
-        component={ReleaseForm}
-        options={({ navigation }) => ({
-          headerShown: true,
-          headerTitle: 'Registrar lançamento',
-          headerLeft: () => (
-            <HeaderIcon
-              name="arrow-left"
-              onPress={() => navigation.navigate('Releases')}
-              style={{ marginLeft: SPACING.S }}
-            />
-          ),
-        })}
-      />
-
-      <Stack.Screen
-        name="ReleaseGroupForm"
-        component={ReleaseGroupForm}
-        options={({ navigation }) => ({
-          headerShown: true,
-          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
-          headerTitle: 'Cadastrar grupo',
-          headerLeft: () => (
-            <HeaderIcon
-              name="close"
-              onPress={() => navigation.goBack()}
-              style={{ marginLeft: SPACING.S }}
-            />
-          ),
-        })}
-      />
-
-      <Stack.Screen
-        name="ReleaseDateForm"
-        component={ReleaseDateForm}
-        options={({ navigation }) => ({
-          headerShown: true,
-          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
-          headerTitle: 'Cadastrar data',
-          headerLeft: () => (
-            <HeaderIcon
-              name="close"
-              onPress={() => navigation.navigate('ReleaseDetails')}
-              style={{ marginLeft: SPACING.S }}
-            />
-          ),
-        })}
-      />
-
-      <Stack.Screen
-        name="ReleaseDateGroups"
-        component={ReleaseDateGroups}
-        options={({ navigation }) => ({
-          headerShown: true,
-          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
-          headerTitle: 'Grupos da data',
-          headerLeft: () => (
-            <HeaderIcon
-              name="close"
-              onPress={() => navigation.navigate('ReleaseDetails')}
-              style={{ marginLeft: SPACING.S }}
-            />
-          ),
-        })}
-      />
-
-      <Stack.Screen
-        name="ReleaseAnnotationsForm"
-        component={ReleaseAnnotationsForm}
-        options={({ navigation }) => ({
-          headerShown: true,
-          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
-          headerTitle: 'Editar anotação',
-          headerLeft: () => (
-            <HeaderIcon
-              name="close"
-              onPress={() => navigation.goBack()}
-              style={{ marginLeft: SPACING.S }}
-            />
-          ),
-        })}
-      />
-
-      <Stack.Screen
-        name="ReleasesFilter"
-        component={ReleasesFilter}
-        options={({ navigation }) => ({
-          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
-          headerTitle: 'Filtrar lançamentos',
-          headerLeft: () => (
-            <HeaderIcon
-              name="close"
-              onPress={() => navigation.goBack()}
-              style={{ marginLeft: SPACING.S }}
-            />
-          ),
-        })}
-      />
+      <Stack.Screen name="ReleasesStack" component={ReleasesStack} />
 
       {/* Customers Routes */}
       <Stack.Screen
@@ -341,71 +176,12 @@ export function AppStack(): JSX.Element {
         })}
       />
 
-      {/* Administration Routes */}
       <Stack.Screen
-        name="UserForm"
-        component={UserForm}
-        options={({ navigation }) => ({
-          headerShown: true,
-          headerTitle: 'Cadastrar usuário',
-          headerLeft: () => (
-            <HeaderIcon
-              name="arrow-left"
-              onPress={() => navigation.goBack()}
-              style={{ marginLeft: SPACING.S }}
-            />
-          ),
-        })}
+        name="AdministrationStack"
+        component={AdministrationStack}
       />
 
-      {/* Profile Routes */}
-      <Stack.Screen
-        name="Configuration"
-        component={Configuration}
-        options={({ navigation }) => ({
-          headerShown: true,
-          headerTitle: 'Configurações',
-          headerLeft: () => (
-            <HeaderIcon
-              name="arrow-left"
-              onPress={() => navigation.goBack()}
-              style={{ marginLeft: SPACING.S }}
-            />
-          ),
-        })}
-      />
-
-      <Stack.Screen
-        name="ChangeUserInfo"
-        component={ChangeUserInfo}
-        options={({ navigation }) => ({
-          headerShown: true,
-          headerTitle: 'Alterar dados do perfil',
-          headerLeft: () => (
-            <HeaderIcon
-              name="arrow-left"
-              onPress={() => navigation.goBack()}
-              style={{ marginLeft: SPACING.S }}
-            />
-          ),
-        })}
-      />
-
-      <Stack.Screen
-        name="ChangeUserPassword"
-        component={ChangeUserPassword}
-        options={({ navigation }) => ({
-          headerShown: true,
-          headerTitle: 'Alterar senha',
-          headerLeft: () => (
-            <HeaderIcon
-              name="arrow-left"
-              onPress={() => navigation.goBack()}
-              style={{ marginLeft: SPACING.S }}
-            />
-          ),
-        })}
-      />
+      <Stack.Screen name="ProfileStack" component={ProfileStack} />
 
       <Stack.Screen name="Loggout" component={Loggout} />
     </Stack.Navigator>
