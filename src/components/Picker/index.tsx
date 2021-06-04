@@ -29,6 +29,7 @@ export function Picker({
         value={value}
         doneText={doneText}
         onValueChange={onChange}
+        useNativeAndroidPickerStyle
         style={{
           chevron: {
             display: 'none',

@@ -66,6 +66,7 @@ export function SignIn(): JSX.Element {
           password: data.password,
         });
       } catch (err) {
+        console.log(err);
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
 
