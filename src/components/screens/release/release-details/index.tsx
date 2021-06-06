@@ -47,7 +47,7 @@ export function ReleaseDetails({ route }: Props): JSX.Element {
         case 'groups':
           return <ReleaseGroups release={release} />;
         case 'annotations':
-          return <ReleaseAnnotations release={release} />;
+          return <ReleaseAnnotations releaseId={release.id} />;
         default:
           return null;
       }

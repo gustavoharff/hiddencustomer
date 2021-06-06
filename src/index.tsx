@@ -14,7 +14,10 @@ import { navigationRef } from './navigation/navigate';
 
 import { Routes } from './navigation';
 
-LogBox.ignoreLogs(['Remote debugger is in']);
+LogBox.ignoreLogs([
+  'Remote debugger is in',
+  'Non-serializable values were found in the navigation state',
+]);
 
 export default function App(): JSX.Element {
   const queryClient = new QueryClient();

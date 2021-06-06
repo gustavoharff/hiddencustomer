@@ -1,4 +1,4 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useContext, useRef, useState } from 'react';
 import { ScrollView } from 'react-native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { FormHandles } from '@unform/core';
@@ -8,14 +8,14 @@ import { TextArea, Button, Screen } from 'components';
 
 import { SPACING } from 'styles';
 
-import { api } from 'services';
+import { ReleasesContext } from 'hooks';
+
 import { Unform } from './styles';
 
 type Params = {
   ReleaseAnnotationsForm: {
     release_id: string;
     annotations: string;
-    setAnnotations: React.Dispatch<React.SetStateAction<string>>;
   };
 };
 
@@ -27,27 +27,28 @@ type ReleaseAnnotationsFormProps = StackScreenProps<
 export function ReleaseAnnotationsForm({
   route,
 }: ReleaseAnnotationsFormProps): JSX.Element {
-  const { setAnnotations } = route.params;
   const formRef = useRef<FormHandles>(null);
   const navigation = useNavigation();
   const [loading, setLoading] = useState(false);
 
+  const { updateRelease } = useContext(ReleasesContext);
+
   const handleSubmit = useCallback(
     async data => {
+      setLoading(true);
       try {
-        setLoading(true);
-        const response = await api.put(`/release/${route.params.release_id}`, {
+        await updateRelease({
+          release_id: route.params.release_id,
           annotations: data.annotations,
         });
 
-        setAnnotations(response.data.annotations);
-
         navigation.goBack();
-      } catch {
-        setLoading(false);
+      } catch (err) {
+        console.log(err);
       }
+      setLoading(false);
     },
-    [route.params.release_id, setAnnotations, navigation],
+    [updateRelease, route.params.release_id, navigation],
   );
 
   return (

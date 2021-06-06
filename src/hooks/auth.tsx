@@ -37,7 +37,9 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-const AuthContext = createContext<AuthContextData>({} as AuthContextData);
+export const AuthContext = createContext<AuthContextData>(
+  {} as AuthContextData,
+);
 
 export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
   const [data, setData] = useState<AuthState>({} as AuthState);
@@ -76,12 +78,10 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
   }, []);
 
   const signIn = useCallback(async ({ email, password }) => {
-    console.log('teste');
     const response = await api.post('auth', {
       email,
       password,
     });
-    console.log(response);
     const { token, user } = response.data;
 
     const realm = await getRealm();

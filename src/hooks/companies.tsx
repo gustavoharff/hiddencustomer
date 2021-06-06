@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  useState,
-  useContext,
-  ReactNode,
-  useEffect,
-} from 'react';
+import React, { createContext, useState, ReactNode, useCallback } from 'react';
 
 import { api, getRealm } from 'services';
 
@@ -12,15 +6,14 @@ import { Company } from 'types';
 
 interface CompaniesContextData {
   companies: Company[];
-  loadLocalCompanies: () => Promise<void>;
-  loadApiCompanies: () => Promise<void>;
+  refresh: () => Promise<void>;
 }
 
 interface CompaniesProviderProps {
   children: ReactNode;
 }
 
-const CompanyContext = createContext<CompaniesContextData>(
+export const CompanyContext = createContext<CompaniesContextData>(
   {} as CompaniesContextData,
 );
 
@@ -29,60 +22,45 @@ export function CompaniesProvider({
 }: CompaniesProviderProps): JSX.Element {
   const [companies, setCompanies] = useState<Company[]>([]);
 
-  async function loadLocalCompanies() {
+  const refresh = useCallback(async () => {
     const realm = await getRealm();
 
-    realm.write(() => {
-      const data = realm.objects<Company>('Company');
+    try {
+      const response = await api.get<Company[]>('/companies');
 
-      const formatedCompanies = data.map(cmpny => {
-        return {
-          id: cmpny.id,
-          name: cmpny.name,
-          created_at: cmpny.created_at,
-          updated_at: cmpny.updated_at,
-        };
+      setCompanies(response.data);
+
+      realm.write(() => {
+        const data = realm.objects('Company');
+
+        realm.delete(data);
+
+        response.data.forEach(company => realm.create('Company', company));
       });
+    } catch {
+      realm.write(() => {
+        const data = realm.objects<Company>('Company');
 
-      setCompanies(formatedCompanies);
-    });
-  }
-
-  async function loadApiCompanies() {
-    const response = await api.get<Company[]>('/companies');
-
-    setCompanies(response.data);
-
-    const realm = await getRealm();
-
-    realm.write(() => {
-      const data = realm.objects('Company');
-
-      realm.delete(data);
-
-      response.data.forEach(company => realm.create('Company', company));
-    });
-  }
-
-  useEffect(() => {
-    loadApiCompanies().catch(() => loadLocalCompanies());
+        setCompanies(
+          data.map(cmpny => ({
+            id: cmpny.id,
+            name: cmpny.name,
+            created_at: cmpny.created_at,
+            updated_at: cmpny.updated_at,
+          })),
+        );
+      });
+    }
   }, []);
 
   return (
     <CompanyContext.Provider
       value={{
         companies,
-        loadApiCompanies,
-        loadLocalCompanies,
+        refresh,
       }}
     >
       {children}
     </CompanyContext.Provider>
   );
-}
-
-export function useCompanies(): CompaniesContextData {
-  const context = useContext(CompanyContext);
-
-  return context;
 }

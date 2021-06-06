@@ -37,7 +37,7 @@ export function ReleaseDateGroups({
 
   if (loading) {
     return (
-      <Section alignCenter>
+      <Section alignCenter justifyCenter>
         <ActivityIndicator />
       </Section>
     );

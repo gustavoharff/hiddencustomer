@@ -1,29 +1,22 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useContext } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
+import { RectButton } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 import 'moment/locale/pt-br';
 
 import { EmptyList, Swipeable } from 'components';
 
-import { useAuth, useCustomers } from 'hooks';
+import { useAuth, CustomersContext } from 'hooks';
 
-import { RectButton } from 'react-native-gesture-handler';
 import { Container, Description, Content, Title, Item } from './styles';
 
-interface CustomersListProps {
-  onRefresh: () => Promise<void>;
-  emptyListText: string;
-}
-
-export function CustomersList({
-  onRefresh,
-  emptyListText,
-}: CustomersListProps): JSX.Element {
-  const [refreshing, setRefreshing] = useState(false);
-
+export function CustomersList(): JSX.Element {
   const navigation = useNavigation();
 
-  const { customers, deleteCustomer } = useCustomers();
+  const { customers, deleteCustomer, refresh, refreshing } = useContext(
+    CustomersContext,
+  );
+
   const { user } = useAuth();
 
   const onDeleteItem = useCallback(
@@ -50,21 +43,15 @@ export function CustomersList({
     [deleteCustomer],
   );
 
-  const handleRefresh = async () => {
-    setRefreshing(true);
-    await onRefresh();
-    setRefreshing(false);
-  };
-
   return (
     <View style={{ flex: 1 }}>
       <FlatList
-        ListEmptyComponent={<EmptyList text={emptyListText} />}
+        ListEmptyComponent={<EmptyList text="Nenhum cliente cadastrado." />}
         refreshControl={
           <RefreshControl
             tintColor="rgba(0,0,0,0.5)"
             refreshing={refreshing}
-            onRefresh={handleRefresh}
+            onRefresh={refresh}
             colors={['#DC1637']}
           />
         }
@@ -77,8 +64,11 @@ export function CustomersList({
                 user.permission === 'admin' || user.permission === 'client'
               }
               editOnPress={() => {
-                navigation.navigate('CustomerForm', {
-                  customer,
+                navigation.navigate('CustomersStack', {
+                  screen: 'CustomerForm',
+                  params: {
+                    customer,
+                  },
                 });
               }}
               deleteOption={

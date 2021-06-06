@@ -1,18 +1,6 @@
 import { FormHandles } from '@unform/core';
 import React, { useCallback, useRef, useState } from 'react';
-import {
-  Alert,
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  Text,
-  View,
-} from 'react-native';
-import {
-  getBottomSpace,
-  getStatusBarHeight,
-} from 'react-native-iphone-x-helper';
+import { Alert, Keyboard, ScrollView, Text, View } from 'react-native';
 import { RectButton } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
 
@@ -21,6 +9,7 @@ import { Button, Input, ListHeader } from 'components';
 import { SPACING } from 'styles';
 
 import { api } from 'services';
+import { Screen } from 'components/ui';
 import { Unform } from './styles';
 
 export function ForgotPassword(): JSX.Element {
@@ -67,80 +56,66 @@ export function ForgotPassword(): JSX.Element {
   }, []);
 
   return (
-    <>
+    <Screen keyboard>
       <ListHeader
         title="Esqueceu sua senha?"
         description="Preencha o e-mail abaixo e enviaremos um código de recuperação."
         loading={false}
       />
-      <KeyboardAvoidingView
-        style={{ flex: 1 }}
-        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-        keyboardVerticalOffset={
-          getBottomSpace() + getStatusBarHeight(false) + SPACING.L * 5
-        }
-        enabled
-      >
-        <ScrollView keyboardShouldPersistTaps="handled">
-          <Unform ref={formRef} onSubmit={handleSubmit}>
+
+      <ScrollView>
+        <Unform ref={formRef} onSubmit={handleSubmit}>
+          <Input
+            name="email"
+            label="E-mail"
+            placeholder="Seu e-mail"
+            returnKeyType="send"
+            editable={!codingStep}
+            autoCorrect={false}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            containerStyle={{
+              opacity: codingStep ? 0.2 : 1,
+            }}
+            onSubmitEditing={() => formRef.current?.submitForm()}
+          />
+          {codingStep && (
+            <View style={{ width: '100%' }}>
+              <RectButton
+                style={{
+                  marginLeft: 'auto',
+                  marginRight: 20,
+                }}
+                onPress={changeEmail}
+              >
+                <Text style={{ color: '#fff' }}>Alterar e-mail</Text>
+              </RectButton>
+            </View>
+          )}
+
+          {codingStep && (
             <Input
-              name="email"
-              label="E-mail"
-              placeholder="Seu e-mail"
+              name="code"
+              label="Código de recuperação"
+              placeholder="Insira o código aqui"
               returnKeyType="send"
-              editable={!codingStep}
-              autoCorrect={false}
-              autoCapitalize="none"
-              keyboardType="email-address"
-              containerStyle={{
-                opacity: codingStep ? 0.2 : 1,
-              }}
+              keyboardType="numeric"
+              maxLength={5}
               onSubmitEditing={() => formRef.current?.submitForm()}
             />
-            {codingStep && (
-              <View style={{ width: '100%' }}>
-                <RectButton
-                  style={{
-                    marginLeft: 'auto',
-                    marginRight: 20,
-                  }}
-                  onPress={changeEmail}
-                >
-                  <Text style={{ color: '#fff' }}>Alterar e-mail</Text>
-                </RectButton>
-              </View>
-            )}
+          )}
+        </Unform>
+      </ScrollView>
 
-            {codingStep && (
-              <Input
-                name="code"
-                label="Código de recuperação"
-                placeholder="Insira o código aqui"
-                returnKeyType="send"
-                keyboardType="numeric"
-                maxLength={5}
-                onSubmitEditing={() => formRef.current?.submitForm()}
-              />
-            )}
-          </Unform>
-        </ScrollView>
-        <View
-          style={{
-            width: '100%',
-            alignItems: 'center',
-          }}
-        >
-          <Button
-            title="Enviar"
-            loading={loadingButton}
-            onPress={() => {
-              setLoadingButton(true);
-              formRef.current?.submitForm();
-            }}
-            style={{ marginBottom: SPACING.M }}
-          />
-        </View>
-      </KeyboardAvoidingView>
-    </>
+      <Button
+        title="Enviar"
+        loading={loadingButton}
+        onPress={() => {
+          setLoadingButton(true);
+          formRef.current?.submitForm();
+        }}
+        style={{ marginBottom: SPACING.M }}
+      />
+    </Screen>
   );
 }

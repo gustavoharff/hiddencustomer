@@ -1,5 +1,5 @@
-import React, { useCallback, useState } from 'react';
-import { View, FlatList, RefreshControl, Alert } from 'react-native';
+import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { View, FlatList, RefreshControl } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -7,97 +7,28 @@ import { Avatar, EmptyList, Swipeable } from 'components';
 
 import { COLORS, SPACING } from 'styles';
 
-import { useAuth } from 'hooks';
-
-import { api } from 'services';
-
-import { User } from 'types';
+import { UsersContext } from 'hooks/users';
 
 import { Container, Name, Email, UserInfo, Content } from './styles';
 
-interface UsersListProps {
-  users: User[];
-  setUsers: React.Dispatch<React.SetStateAction<User[]>>;
-}
-
-export function UsersList({ setUsers, users }: UsersListProps): JSX.Element {
+export function UsersList(): JSX.Element {
   const navigation = useNavigation();
-  const { user: authenticateUser } = useAuth();
+
+  const { users, refresh } = useContext(UsersContext);
 
   const [refreshing, setRefreshing] = useState(false);
 
-  const handleActiveUser = useCallback(
-    async (userId: string) => {
-      async function active() {
-        const response = await api.put(`/users/${userId}`, {
-          active: true,
-        });
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
 
-        setUsers(state =>
-          state.map(user => (user.id === userId ? response.data : user)),
-        );
-      }
-
-      return new Promise(resolve => {
-        Alert.alert('Atenção!', 'Deseja mesmo ativar este usuário?', [
-          {
-            text: 'Cancelar',
-            onPress: () => resolve(200),
-            style: 'cancel',
-          },
-          {
-            text: 'Sim',
-            onPress: async () => {
-              await active();
-              return resolve(200);
-            },
-          },
-        ]);
-      });
-    },
-    [setUsers],
-  );
-
-  const handleDisableUser = useCallback(
-    async (userId: string) => {
-      async function disable() {
-        const response = await api.put(`/users/${userId}`, {
-          active: false,
-        });
-
-        setUsers(state =>
-          state.map(user => (user.id === userId ? response.data : user)),
-        );
-      }
-
-      return new Promise(resolve => {
-        Alert.alert('Atenção!', 'Deseja mesmo desativar este usuário?', [
-          {
-            text: 'Cancelar',
-            onPress: () => resolve(200),
-            style: 'cancel',
-          },
-          {
-            text: 'Sim',
-            onPress: async () => {
-              await disable();
-              return resolve(200);
-            },
-          },
-        ]);
-      });
-    },
-    [setUsers],
-  );
-
-  const handleRefresh = async () => {
+  const handleRefresh = useCallback(async () => {
     setRefreshing(true);
 
-    const response = await api.get('/users');
-    setUsers(response.data.filter((u: User) => u.id !== authenticateUser.id));
+    await refresh();
 
     setRefreshing(false);
-  };
+  }, [refresh]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -116,21 +47,12 @@ export function UsersList({ setUsers, users }: UsersListProps): JSX.Element {
         renderItem={({ item: user, index }) => (
           <Container style={{ paddingTop: index !== 0 ? 0 : 16 }}>
             <Swipeable
-              activeOption={!user.active}
-              activeOnPress={async () => {
-                await handleActiveUser(user.id);
-              }}
-              disableOption={user.active}
-              disableOnPress={async () => {
-                await handleDisableUser(user.id);
-              }}
               editOption
               editOnPress={() => {
                 navigation.navigate('AdministrationStack', {
                   screen: 'UserForm',
                   params: {
                     user,
-                    setUsers,
                   },
                 });
               }}

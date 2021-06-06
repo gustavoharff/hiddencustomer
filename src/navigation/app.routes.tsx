@@ -1,57 +1,25 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import {
-  CardStyleInterpolators,
-  createStackNavigator,
-} from '@react-navigation/stack';
+import { createStackNavigator } from '@react-navigation/stack';
 
-import {
-  HeaderIcon,
-  TabBarIcon,
-  Calendar,
-  CustomerForm,
-  Customers,
-  Loggout,
-  ReleaseAnnotationsForm,
-  ReleaseDateForm,
-  ReleaseDateGroups,
-  ReleaseDetails,
-  ReleaseForm,
-  ReleaseGroupForm,
-  Releases,
-  ReleasesFilter,
-} from 'components';
+import { TabBarIcon, Calendar, Loggout } from 'components';
 
 import { useAuth } from 'hooks';
 
-import { SPACING } from 'styles';
-
 import { ProfileScreen, ProfileStack } from './profile-routes';
+
+import { ReleasesScreen, ReleasesStack } from './releases-routes';
+import { CustomersScreen, CustomersStack } from './customers-routes';
 import {
   AdministrationScreen,
   AdministrationStack,
 } from './administration-routes';
 
 import { DEFAULT, NO_HEADER } from './helper';
-import { ReleasesScreen, ReleasesStack } from './releases-routes';
 
 const Tab = createBottomTabNavigator();
 
 const Stack = createStackNavigator();
-
-function CustomersStack() {
-  return (
-    <Stack.Navigator screenOptions={DEFAULT}>
-      <Stack.Screen
-        name="Customers"
-        component={Customers}
-        options={{
-          headerTitle: 'Clientes',
-        }}
-      />
-    </Stack.Navigator>
-  );
-}
 
 function CalendarStack() {
   return (
@@ -91,7 +59,7 @@ export function TabStack(): JSX.Element {
 
       <Tab.Screen
         name="Customers"
-        component={CustomersStack}
+        component={CustomersScreen}
         options={{
           tabBarIcon: ({ size, focused }) => (
             <TabBarIcon
@@ -159,22 +127,7 @@ export function AppStack(): JSX.Element {
 
       <Stack.Screen name="ReleasesStack" component={ReleasesStack} />
 
-      {/* Customers Routes */}
-      <Stack.Screen
-        name="CustomerForm"
-        component={CustomerForm}
-        options={({ navigation }) => ({
-          headerShown: true,
-          headerTitle: 'Registrar cliente',
-          headerLeft: () => (
-            <HeaderIcon
-              name="arrow-left"
-              onPress={() => navigation.navigate('Customers')}
-              style={{ marginLeft: SPACING.S }}
-            />
-          ),
-        })}
-      />
+      <Stack.Screen name="CustomersStack" component={CustomersStack} />
 
       <Stack.Screen
         name="AdministrationStack"

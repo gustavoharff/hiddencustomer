@@ -1,20 +1,17 @@
 import React from 'react';
-import { Text } from 'react-native';
-
-import { colors } from 'styles';
 
 import { Container, Item, Label, ItemText } from './styles';
 
 interface Option {
   label: string;
-  value: string;
+  value: string | boolean;
   backgroundColor?: string;
 }
 
 interface MultipleOptionInputProps {
   items: Option[];
   label?: string;
-  value: string;
+  value: string | boolean;
   onChange: (value: any) => void;
 }
 
@@ -30,6 +27,7 @@ export function MultipleOptionInput({
       <Container>
         {items.map((item, index) => (
           <Item
+            key={String(item.value)}
             onPress={() => {
               onChange(item.value);
             }}

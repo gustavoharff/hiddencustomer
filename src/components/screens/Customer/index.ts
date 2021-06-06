@@ -1,2 +1,2 @@
-export * from './CustomerForm';
-export * from './Customers';
+export * from './customer-form';
+export * from './customers';

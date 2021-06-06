@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 
 import { CircularButton } from 'components';
 
-import { Release, ReleaseGroup } from 'types';
+import { Release } from 'types';
 
-import { useAuth } from 'hooks';
-
-import { api } from 'services';
+import { ReleasesGroupsContext, useAuth } from 'hooks';
 
 import { ReleaseGroupsList } from '../../../features/release-groups-list';
 
@@ -18,24 +16,18 @@ interface ReleaseGroupsProps {
 }
 
 export function ReleaseGroups({ release }: ReleaseGroupsProps): JSX.Element {
-  const [groups, setGroups] = useState<ReleaseGroup[]>([]);
   const navigation = useNavigation();
+  const { refresh } = useContext(ReleasesGroupsContext);
 
   const { user } = useAuth();
 
   useEffect(() => {
-    api.get(`/release/groups/${release.id}`).then(response => {
-      setGroups(response.data);
-    });
-  }, [release.id]);
+    refresh(release.id);
+  }, [refresh, release.id]);
 
   return (
     <Container>
-      <ReleaseGroupsList
-        release_id={release.id}
-        groups={groups}
-        setGroups={setGroups}
-      />
+      <ReleaseGroupsList release_id={release.id} />
 
       {(user.permission === 'admin' || user.permission === 'client') && (
         <CircularButton
@@ -44,7 +36,6 @@ export function ReleaseGroups({ release }: ReleaseGroupsProps): JSX.Element {
             navigation.navigate('ReleaseGroupForm', {
               type: 'create',
               release_id: release.id,
-              setGroups,
             })
           }
         />

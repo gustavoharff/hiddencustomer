@@ -1,21 +1,19 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { ActivityIndicator, Platform, Text } from 'react-native';
+import { Text } from 'react-native';
 
 import { CircularButton } from 'components';
 
-import { useCustomers, useAuth } from 'hooks';
+import { CustomersContext, useAuth } from 'hooks';
 
 import { colors } from 'styles';
 
-import { CustomersList } from './CustomersList';
+import { CustomersList } from '../../../features/customers-list';
 
-import { Container, Center } from './styles';
+import { Container } from './styles';
 
 export function Customers(): JSX.Element {
-  const [loading, setLoading] = useState(true);
-
-  const { loadApiCustomers, loadLocalCustomers, customers } = useCustomers();
+  const { refresh, customers } = useContext(CustomersContext);
 
   const navigation = useNavigation();
 
@@ -30,46 +28,25 @@ export function Customers(): JSX.Element {
   }, [customers.length, navigation]);
 
   useEffect(() => {
-    loadApiCustomers()
-      .catch(() => {
-        loadLocalCustomers();
-      })
-      .finally(() => setLoading(false));
-  }, [loadApiCustomers, loadLocalCustomers]);
-
-  const onRefresh = useCallback(async () => {
-    loadApiCustomers().catch(() => {
-      loadLocalCustomers();
-    });
-  }, [loadApiCustomers, loadLocalCustomers]);
+    refresh();
+  }, [refresh]);
 
   const { user } = useAuth();
 
-  if (loading) {
-    return (
-      <Center>
-        <ActivityIndicator
-          color={Platform.OS === 'ios' ? colors.gray[800] : colors.red[500]}
-          size={30}
-        />
-      </Center>
-    );
-  }
-
   return (
-    <>
-      <Container>
-        <CustomersList
-          onRefresh={onRefresh}
-          emptyListText="Nenhum cliente cadastrado."
-        />
-      </Container>
+    <Container>
+      <CustomersList />
+
       {user.permission !== 'user' && (
         <CircularButton
           name="account-plus-outline"
-          onPress={() => navigation.navigate('CustomerForm')}
+          onPress={() =>
+            navigation.navigate('CustomersStack', {
+              screen: 'CustomerForm',
+            })
+          }
         />
       )}
-    </>
+    </Container>
   );
 }

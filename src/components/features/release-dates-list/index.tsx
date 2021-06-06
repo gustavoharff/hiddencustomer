@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useContext } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { RectButton } from 'react-native-gesture-handler';
@@ -7,37 +7,27 @@ import 'moment/locale/pt-br';
 
 import { EmptyList, Swipeable } from 'components';
 
-import { useAuth } from 'hooks';
-
-import { ReleaseDate } from 'types';
-
-import { api } from 'services';
+import { ReleasesDatesContext, useAuth } from 'hooks';
 
 import { Container, Content, Date } from './styles';
 
 type ReleaseDatesListProps = {
   release_id: string;
-  dates: ReleaseDate[];
-  setDates: React.Dispatch<React.SetStateAction<ReleaseDate[]>>;
 };
 
 export function ReleaseDatesList({
   release_id,
-  dates,
-  setDates,
 }: ReleaseDatesListProps): JSX.Element {
   const navigation = useNavigation();
-  const [refreshing, setRefreshing] = useState(false);
 
   const { user } = useAuth();
 
+  const { dates, refresh, refreshing, deleteReleseDate } = useContext(
+    ReleasesDatesContext,
+  );
+
   const onDeleteItem = useCallback(
     async (dateId: string) => {
-      async function remove() {
-        await api.delete(`/release/dates/${dateId}`);
-
-        setDates(state => state.filter(date => date.id !== dateId));
-      }
       return new Promise(resolve => {
         Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
           {
@@ -50,24 +40,19 @@ export function ReleaseDatesList({
           {
             text: 'Sim',
             onPress: async () => {
-              await remove();
+              await deleteReleseDate(dateId);
               return resolve(200);
             },
           },
         ]);
       });
     },
-    [setDates],
+    [deleteReleseDate],
   );
 
   const onRefresh = useCallback(async () => {
-    setRefreshing(true);
-    const response = await api.get(`release/dates/${release_id}`);
-
-    setDates(response.data);
-
-    setRefreshing(false);
-  }, [release_id, setDates]);
+    await refresh(release_id);
+  }, [refresh, release_id]);
 
   return (
     <View style={{ flex: 1, width: '100%' }}>

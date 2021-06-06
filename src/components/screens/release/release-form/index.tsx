@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { ScrollView, Alert, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { FormHandles } from '@unform/core';
@@ -7,13 +13,12 @@ import * as Yup from 'yup';
 
 import { Button, Input, Picker, Screen, MultipleOptionInput } from 'components';
 
-import { useCustomers } from 'hooks';
+import { ReleasesContext, CustomersContext } from 'hooks';
 
 import { SPACING } from 'styles';
 
 import { Release } from 'types';
 
-import { api } from 'services';
 import { Container, Unform } from './styles';
 
 type Params = {
@@ -27,7 +32,7 @@ type Params = {
 type Props = StackScreenProps<Params, 'ReleaseForm'>;
 
 export function ReleaseForm({ route }: Props): JSX.Element {
-  const { setReleases } = route.params;
+  const { createRelease, updateRelease } = useContext(ReleasesContext);
   const formRef = useRef<FormHandles>(null);
 
   const [selectedCustomerId, setSelectedCustomerId] = useState(
@@ -49,7 +54,7 @@ export function ReleaseForm({ route }: Props): JSX.Element {
     }
   }, [navigation, route.params]);
 
-  const { customers, loadApiCustomers, loadLocalCustomers } = useCustomers();
+  const { customers, refresh } = useContext(CustomersContext);
 
   const onCustomerChange = useCallback(value => {
     setSelectedCustomerId(value);
@@ -66,8 +71,8 @@ export function ReleaseForm({ route }: Props): JSX.Element {
   }, []);
 
   useEffect(() => {
-    loadApiCustomers().catch(() => loadLocalCustomers());
-  }, [loadApiCustomers, loadLocalCustomers]);
+    refresh();
+  }, [refresh]);
 
   const handleSubmit = useCallback(
     async data => {
@@ -88,27 +93,18 @@ export function ReleaseForm({ route }: Props): JSX.Element {
         }
 
         if (route.params.type === 'update' && route.params.release) {
-          const response = await api.put(
-            `/release/${route.params.release.id}`,
-            {
-              name: data.name,
-              paid: selectedPayment,
-              customer_id: selectedCustomerId,
-            },
-          );
-
-          setReleases(state =>
-            state.map(release =>
-              release.id === route.params.release?.id ? response.data : release,
-            ),
-          );
-        } else if (route.params.type === 'create') {
-          const response = await api.post<Release>('/releases', {
+          await updateRelease({
+            release_id: route.params.release.id,
             name: data.name,
+            paid: selectedPayment,
             customer_id: selectedCustomerId,
           });
-
-          setReleases(state => [response.data, ...state]);
+        } else if (route.params.type === 'create') {
+          await createRelease({
+            name: data.name,
+            paid: selectedPayment,
+            customer_id: selectedCustomerId,
+          });
         }
 
         navigation.navigate('Releases');
@@ -125,8 +121,9 @@ export function ReleaseForm({ route }: Props): JSX.Element {
       route.params.type,
       route.params.release,
       navigation,
+      updateRelease,
       selectedPayment,
-      setReleases,
+      createRelease,
     ],
   );
 

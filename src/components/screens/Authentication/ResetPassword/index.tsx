@@ -1,16 +1,7 @@
 import { FormHandles } from '@unform/core';
 import React, { useCallback, useRef, useState } from 'react';
-import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  View,
-} from 'react-native';
-import {
-  getBottomSpace,
-  getStatusBarHeight,
-} from 'react-native-iphone-x-helper';
+import { Alert, ScrollView } from 'react-native';
+
 import { StackScreenProps } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import * as Yup from 'yup';
@@ -21,6 +12,7 @@ import { SPACING } from 'styles';
 
 import { api } from 'services';
 
+import { Screen } from 'components/ui';
 import { Unform } from './styles';
 
 type Params = {
@@ -68,15 +60,8 @@ export function ResetPassword({ route }: Props): JSX.Element {
   );
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={
-        getBottomSpace() + getStatusBarHeight(false) + SPACING.L * 5
-      }
-      enabled
-    >
-      <ScrollView keyboardShouldPersistTaps="handled">
+    <Screen keyboard>
+      <ScrollView>
         <Unform ref={formRef} onSubmit={handleSubmit}>
           <Input
             name="password"
@@ -97,22 +82,16 @@ export function ResetPassword({ route }: Props): JSX.Element {
           />
         </Unform>
       </ScrollView>
-      <View
-        style={{
-          width: '100%',
-          alignItems: 'center',
+
+      <Button
+        title="Enviar"
+        loading={loadingButton}
+        onPress={() => {
+          setLoadingButton(true);
+          formRef.current?.submitForm();
         }}
-      >
-        <Button
-          title="Enviar"
-          loading={loadingButton}
-          onPress={() => {
-            setLoadingButton(true);
-            formRef.current?.submitForm();
-          }}
-          style={{ marginBottom: SPACING.M }}
-        />
-      </View>
-    </KeyboardAvoidingView>
+        style={{ marginBottom: SPACING.M }}
+      />
+    </Screen>
   );
 }

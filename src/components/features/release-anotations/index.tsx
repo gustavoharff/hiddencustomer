@@ -1,23 +1,28 @@
-import React, { useState } from 'react';
+import React, { useContext, useMemo } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
 import { CircularButton } from 'components';
 
-import { useAuth } from 'hooks';
+import { ReleasesContext, useAuth } from 'hooks';
 
 import { Release } from 'types';
 
 import { Container, Annotation, Content } from './styles';
 
 interface ReleaseAnnotationsProps {
-  release: Release;
+  releaseId: string;
 }
 
 export function ReleaseAnnotations({
-  release,
+  releaseId,
 }: ReleaseAnnotationsProps): JSX.Element {
-  const [annotations, setAnnotations] = useState(release.annotations);
+  const { releases } = useContext(ReleasesContext);
+
+  const release = useMemo(() => {
+    return releases.find(reles => reles.id === releaseId) || ({} as Release);
+  }, [releaseId, releases]);
+
   const navigation = useNavigation();
 
   const { user } = useAuth();
@@ -25,9 +30,9 @@ export function ReleaseAnnotations({
   return (
     <Container>
       <ScrollView keyboardShouldPersistTaps="never">
-        {annotations ? (
+        {release.annotations ? (
           <Content>
-            <Annotation>{annotations}</Annotation>
+            <Annotation>{release.annotations}</Annotation>
           </Content>
         ) : (
           <View
@@ -54,8 +59,7 @@ export function ReleaseAnnotations({
           onPress={() =>
             navigation.navigate('ReleaseAnnotationsForm', {
               release_id: release.id,
-              annotations,
-              setAnnotations,
+              annotations: release.annotations,
             })
           }
         />

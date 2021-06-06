@@ -6,6 +6,8 @@ export class ReleaseGroupSchema {
       id: { type: 'string', indexed: true },
       name: 'string',
       type: 'string',
+      release_date: 'ReleaseDate?',
+      release_date_id: 'string?',
       release_id: 'string',
       company_id: 'string',
       created_at: 'string',

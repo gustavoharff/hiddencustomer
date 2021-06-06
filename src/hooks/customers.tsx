@@ -1,10 +1,5 @@
-import React, {
-  createContext,
-  useState,
-  useContext,
-  useCallback,
-  ReactNode,
-} from 'react';
+import React, { createContext, useState, useCallback, ReactNode } from 'react';
+import { UpdateMode } from 'realm';
 
 import { api, getRealm } from 'services';
 
@@ -17,8 +12,8 @@ interface UpdateCustomerData {
 
 interface CustomersContextData {
   customers: Customer[];
-  loadLocalCustomers: () => Promise<void>;
-  loadApiCustomers: () => Promise<void>;
+  refresh: () => Promise<void>;
+  refreshing: boolean;
   createCustomer: (name: string) => Promise<void>;
   deleteCustomer: (customerId: string) => Promise<void>;
   updateCustomer: (data: UpdateCustomerData) => Promise<void>;
@@ -28,7 +23,7 @@ interface CustomerProviderProps {
   children: ReactNode;
 }
 
-const CustomersContext = createContext<CustomersContextData>(
+export const CustomersContext = createContext<CustomersContextData>(
   {} as CustomersContextData,
 );
 
@@ -36,37 +31,36 @@ export function CustomerProvider({
   children,
 }: CustomerProviderProps): JSX.Element {
   const [customers, setCustomers] = useState<Customer[]>([]);
+  const [refreshing, setRefreshing] = useState(false);
 
-  const loadApiCustomers = useCallback(async () => {
-    const response = await api.get('/customers/me');
-    setCustomers(response.data);
-
+  const refresh = useCallback(async () => {
+    setRefreshing(true);
     const realm = await getRealm();
-    realm.write(() => {
-      const data = realm.objects('Customer');
+    try {
+      const response = await api.get<Customer[]>('/customers/me');
+      setCustomers(response.data);
 
-      realm.delete(data);
-      response.data.map((customer: Customer) =>
-        realm.create('Customer', customer),
+      realm.write(() => {
+        const data = realm.objects('Customer');
+
+        realm.delete(data);
+        response.data.forEach(customer => realm.create('Customer', customer));
+      });
+    } catch {
+      const data = realm.objects<Customer>('Customer').sorted('name', true);
+
+      setCustomers(
+        data.map(customer => ({
+          id: customer.id,
+          name: customer.name,
+          releases_counter: customer.releases_counter,
+          created_at: customer.created_at,
+          updated_at: customer.updated_at,
+        })),
       );
-    });
-  }, [setCustomers]);
-
-  const loadLocalCustomers = useCallback(async () => {
-    const realm = await getRealm();
-
-    const data = realm.objects<Customer>('Customer').sorted('name', true);
-
-    const formattedCustomers = data.map(customer => ({
-      id: customer.id,
-      name: customer.name,
-      releases_counter: customer.releases_counter,
-      created_at: customer.created_at,
-      updated_at: customer.updated_at,
-    }));
-
-    setCustomers(formattedCustomers);
-  }, [setCustomers]);
+    }
+    setRefreshing(false);
+  }, []);
 
   const createCustomer = useCallback(async (name: string) => {
     const response = await api.post('/customers', {
@@ -78,12 +72,14 @@ export function CustomerProvider({
     const realm = await getRealm();
 
     realm.write(() => {
-      realm.create('Customer', response.data);
+      realm.create('Customer', response.data, UpdateMode.All);
     });
   }, []);
 
   const updateCustomer = useCallback(
     async ({ customer_id, name }: UpdateCustomerData) => {
+      const realm = await getRealm();
+
       const response = await api.put(`/customer/${customer_id}`, {
         name,
       });
@@ -98,6 +94,10 @@ export function CustomerProvider({
             : customer,
         ),
       );
+
+      realm.write(() => {
+        realm.create('Customer', response.data, UpdateMode.Modified);
+      });
     },
     [customers],
   );
@@ -117,8 +117,8 @@ export function CustomerProvider({
     <CustomersContext.Provider
       value={{
         customers,
-        loadApiCustomers,
-        loadLocalCustomers,
+        refresh,
+        refreshing,
         createCustomer,
         updateCustomer,
         deleteCustomer,
@@ -127,10 +127,4 @@ export function CustomerProvider({
       {children}
     </CustomersContext.Provider>
   );
-}
-
-export function useCustomers(): CustomersContextData {
-  const context = useContext(CustomersContext);
-
-  return context;
 }

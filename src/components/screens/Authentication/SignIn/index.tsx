@@ -1,12 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  TextInput,
-  ScrollView,
-  View,
-} from 'react-native';
+import { Alert, TextInput, View } from 'react-native';
 import { hide } from 'react-native-bootsplash';
 import { TouchableOpacity } from 'react-native-gesture-handler';
 import { FormHandles } from '@unform/core';
@@ -19,6 +12,7 @@ import { useAuth } from 'hooks';
 
 import { getValidationErrors } from 'utils';
 
+import { Screen } from 'components/ui';
 import {
   Container,
   HeaderTitle,
@@ -66,7 +60,6 @@ export function SignIn(): JSX.Element {
           password: data.password,
         });
       } catch (err) {
-        console.log(err);
         if (err instanceof Yup.ValidationError) {
           const errors = getValidationErrors(err);
 
@@ -95,60 +88,50 @@ export function SignIn(): JSX.Element {
   );
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-    >
-      <ScrollView
-        contentContainerStyle={{ flex: 1 }}
-        keyboardShouldPersistTaps="handled"
-      >
-        <Container>
-          <Logo size={90} />
-          <View>
-            <HeaderTitle>Cliente Oculto</HeaderTitle>
-          </View>
-          <View>
-            <HeaderContent>Faça seu login</HeaderContent>
-          </View>
+    <Screen keyboard keyboardVerticalOffset={false}>
+      <Container>
+        <Logo size={90} />
+        <View>
+          <HeaderTitle>Cliente Oculto</HeaderTitle>
+        </View>
+        <View>
+          <HeaderContent>Faça seu login</HeaderContent>
+        </View>
 
-          <Unform ref={formRef} onSubmit={handleSubmit}>
-            <Input
-              autoCorrect={false}
-              autoCapitalize="none"
-              keyboardType="email-address"
-              name="email"
-              returnKeyType="next"
-              placeholder="E-mail"
-              darkMode
-              onSubmitEditing={() => passwordInputRef.current?.focus()}
-            />
+        <Unform ref={formRef} onSubmit={handleSubmit}>
+          <Input
+            autoCorrect={false}
+            autoCapitalize="none"
+            keyboardType="email-address"
+            name="email"
+            returnKeyType="next"
+            placeholder="E-mail"
+            darkMode
+            onSubmitEditing={() => passwordInputRef.current?.focus()}
+          />
 
-            <Input
-              ref={passwordInputRef}
-              secureTextEntry
-              name="password"
-              returnKeyType="send"
-              placeholder="Senha"
-              darkMode
-              onSubmitEditing={() => formRef.current?.submitForm()}
-            />
+          <Input
+            ref={passwordInputRef}
+            secureTextEntry
+            name="password"
+            returnKeyType="send"
+            placeholder="Senha"
+            darkMode
+            onSubmitEditing={() => formRef.current?.submitForm()}
+          />
 
-            <Button
-              title="Entrar"
-              onPress={() => {
-                formRef.current?.submitForm();
-              }}
-              loading={loadingButton}
-            />
-          </Unform>
-          <TouchableOpacity
-            onPress={() => navigation.navigate('ForgotPassword')}
-          >
-            <ForgotPassword>Esqueci minha senha</ForgotPassword>
-          </TouchableOpacity>
-        </Container>
-      </ScrollView>
-    </KeyboardAvoidingView>
+          <Button
+            title="Entrar"
+            onPress={() => {
+              formRef.current?.submitForm();
+            }}
+            loading={loadingButton}
+          />
+        </Unform>
+        <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
+          <ForgotPassword>Esqueci minha senha</ForgotPassword>
+        </TouchableOpacity>
+      </Container>
+    </Screen>
   );
 }

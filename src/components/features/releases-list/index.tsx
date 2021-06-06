@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useContext } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
 import { RectButton } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
@@ -7,11 +7,7 @@ import moment from 'moment';
 
 import { EmptyList, Swipeable } from 'components';
 
-import { useAuth } from 'hooks';
-
-import { Release } from 'types';
-
-import { api } from 'services';
+import { useAuth, ReleasesContext } from 'hooks';
 
 import {
   Container,
@@ -26,27 +22,16 @@ import {
   TimeText,
 } from './styles';
 
-interface ReleasesListProps {
-  releases: Release[];
-  setReleases: React.Dispatch<React.SetStateAction<Release[]>>;
-}
-
-export function ReleasesList({
-  releases,
-  setReleases,
-}: ReleasesListProps): JSX.Element {
+export function ReleasesList(): JSX.Element {
   const navigation = useNavigation();
   const { user } = useAuth();
 
-  const [refreshing, setRefreshing] = useState(false);
+  const { releases, deleteRelease, refresh, refreshing } = useContext(
+    ReleasesContext,
+  );
 
   const handleDeleteRelease = useCallback(
     async (releaseId: string) => {
-      async function remove() {
-        await api.delete(`/release/${releaseId}`);
-
-        setReleases(state => state.filter(release => release.id !== releaseId));
-      }
       return new Promise(resolve => {
         Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
           {
@@ -57,23 +42,19 @@ export function ReleasesList({
           {
             text: 'Sim',
             onPress: async () => {
-              await remove();
+              await deleteRelease(releaseId);
               return resolve(200);
             },
           },
         ]);
       });
     },
-    [setReleases],
+    [deleteRelease],
   );
 
   const handleRefresh = useCallback(async () => {
-    setRefreshing(true);
-    const response = await api.get('/releases');
-
-    setReleases(response.data);
-    setRefreshing(false);
-  }, [setReleases]);
+    await refresh();
+  }, [refresh]);
 
   return (
     <View style={{ flex: 1 }}>
@@ -104,10 +85,12 @@ export function ReleasesList({
                   user.permission === 'admin' || user.permission === 'client'
                 }
                 editOnPress={() =>
-                  navigation.navigate('ReleaseForm', {
-                    type: 'update',
-                    release,
-                    setReleases,
+                  navigation.navigate('ReleasesStack', {
+                    screen: 'ReleaseForm',
+                    params: {
+                      type: 'update',
+                      release,
+                    },
                   })
                 }
                 deleteOption={

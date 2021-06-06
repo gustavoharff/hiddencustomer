@@ -1,5 +1,11 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Alert, ScrollView, View } from 'react-native';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import { Alert, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
 import { FormHandles } from '@unform/core';
@@ -9,36 +15,31 @@ import { Input, Button, Picker, Screen, MultipleOptionInput } from 'components';
 
 import { SPACING } from 'styles';
 
-import { Company, User } from 'types';
+import { User } from 'types';
 
-import { api } from 'services';
+import { CompanyContext } from 'hooks';
+
+import { UsersContext } from 'hooks/users';
 
 import { Container, Unform } from './styles';
 
 type Props = {
   UserForm: {
     user?: User;
-    setUsers: React.Dispatch<React.SetStateAction<User[]>>;
   };
 };
 
 type UserFormProps = StackScreenProps<Props, 'UserForm'>;
 
 export function UserForm({ route }: UserFormProps): JSX.Element {
-  const [companies, setCompanies] = useState<Company[]>([]);
+  const { companies, refresh } = useContext(CompanyContext);
+  const { createUser, updateUser } = useContext(UsersContext);
   const [loading, setLoading] = useState(false);
   const formRef = useRef<FormHandles>(null);
 
-  const { setUsers } = route.params;
-
   const [selectedCompanyId, setSelectedCompanyId] = useState('');
   const [selectedPermission, setSelectedPermission] = useState('user');
-
-  useEffect(() => {
-    api.get('/companies').then(response => {
-      setCompanies(response.data);
-    });
-  }, []);
+  const [selectedActivity, setSelectedActivity] = useState(true);
 
   const navigation = useNavigation();
 
@@ -49,22 +50,15 @@ export function UserForm({ route }: UserFormProps): JSX.Element {
       });
       setSelectedCompanyId(route.params?.user.company_id);
       setSelectedPermission(route.params?.user.permission);
+      setSelectedActivity(route.params?.user.active);
       formRef.current?.setFieldValue('name', route.params?.user.name);
       formRef.current?.setFieldValue('email', route.params?.user.email);
     }
   }, [navigation, route.params?.user]);
 
   useEffect(() => {
-    const parent = navigation.dangerouslyGetParent();
-
-    parent?.setOptions({
-      tabBarVisible: false,
-    });
-    return () =>
-      parent?.setOptions({
-        tabBarVisible: true,
-      });
-  }, [navigation]);
+    refresh();
+  }, [refresh]);
 
   const onCompanyChange = useCallback(value => {
     setSelectedCompanyId(value);
@@ -72,6 +66,10 @@ export function UserForm({ route }: UserFormProps): JSX.Element {
 
   const onPermissionChange = useCallback(value => {
     setSelectedPermission(value);
+  }, []);
+
+  const onActivityChange = useCallback(value => {
+    setSelectedActivity(value);
   }, []);
 
   const handleSubmit = useCallback(
@@ -103,29 +101,23 @@ export function UserForm({ route }: UserFormProps): JSX.Element {
         }
 
         if (!route.params?.user) {
-          const response = await api.post('/users', {
+          await createUser({
             name: data.name,
             email: data.email,
             password: data.password,
             company_id: selectedCompanyId,
             permission: selectedPermission,
           });
-
-          setUsers(state => [response.data, ...state]);
         } else {
-          const response = await api.put(`/users/${route.params.user.id}`, {
-            company_id: selectedCompanyId,
-            email: data.email,
+          await updateUser({
+            user_id: route.params.user.id,
             name: data.name,
+            email: data.email,
             password: data.password || null,
             permission: selectedPermission,
+            active: selectedActivity,
+            company_id: selectedCompanyId,
           });
-
-          setUsers(state =>
-            state.map(user =>
-              user.id === route.params.user?.id ? response.data : user,
-            ),
-          );
         }
 
         navigation.navigate('Administration');
@@ -139,72 +131,79 @@ export function UserForm({ route }: UserFormProps): JSX.Element {
       setLoading(false);
     },
     [
-      route.params.user,
+      route.params?.user,
       selectedCompanyId,
       navigation,
+      createUser,
       selectedPermission,
-      setUsers,
+      updateUser,
+      selectedActivity,
     ],
   );
 
   return (
     <Screen keyboard>
-      <ScrollView keyboardShouldPersistTaps="handled">
+      <ScrollView>
         <Container>
-          <View>
-            <Unform ref={formRef} onSubmit={handleSubmit}>
-              <Input
-                name="name"
-                label="Informe o nome do usuário:"
-                placeholder="Nome do usuário"
-                returnKeyType="send"
-                onSubmitEditing={() => formRef.current?.submitForm()}
-              />
-
-              <Input
-                name="email"
-                label="Informe o e-mail:"
-                placeholder="E-mail do usuário"
-                returnKeyType="send"
-                onSubmitEditing={() => formRef.current?.submitForm()}
-              />
-
-              <Input
-                name="password"
-                label="Senha de acesso: (Opcional)"
-                placeholder="Senha"
-                secureTextEntry
-                returnKeyType="send"
-                onSubmitEditing={() => formRef.current?.submitForm()}
-              />
-            </Unform>
-
-            <Picker
-              label="Relacione a empresa"
-              doneText="Selecionar"
-              items={[
-                { label: 'Selecionar', value: '' },
-                ...companies.map(company => ({
-                  label: company.name,
-                  value: company.id,
-                })),
-              ]}
-              onChange={onCompanyChange}
-              value={selectedCompanyId}
-              androidStyle={{ width: '100%' }}
+          <Unform ref={formRef} onSubmit={handleSubmit}>
+            <Input
+              name="name"
+              label="Informe o nome do usuário:"
+              placeholder="Nome do usuário"
+              returnKeyType="send"
             />
 
-            <MultipleOptionInput
-              label="Permissão"
-              onChange={onPermissionChange}
-              value={selectedPermission}
-              items={[
-                { label: 'Usuário', value: 'user' },
-                { label: 'Cliente', value: 'client' },
-                { label: 'Admin', value: 'admin' },
-              ]}
+            <Input
+              name="email"
+              label="Informe o e-mail:"
+              placeholder="E-mail do usuário"
+              returnKeyType="send"
             />
-          </View>
+
+            <Input
+              name="password"
+              label="Senha de acesso: (Opcional)"
+              placeholder="Senha"
+              secureTextEntry
+              returnKeyType="send"
+            />
+          </Unform>
+
+          <Picker
+            label="Relacione a empresa"
+            doneText="Selecionar"
+            items={[
+              { label: 'Selecionar', value: '' },
+              ...companies.map(company => ({
+                label: company.name,
+                value: company.id,
+              })),
+            ]}
+            onChange={onCompanyChange}
+            value={selectedCompanyId}
+            androidStyle={{ width: '100%' }}
+          />
+
+          <MultipleOptionInput
+            label="Permissão"
+            onChange={onPermissionChange}
+            value={selectedPermission}
+            items={[
+              { label: 'Usuário', value: 'user' },
+              { label: 'Cliente', value: 'client' },
+              { label: 'Admin', value: 'admin' },
+            ]}
+          />
+
+          <MultipleOptionInput
+            label="Atividade"
+            onChange={onActivityChange}
+            value={selectedActivity}
+            items={[
+              { label: 'Ativo', value: true },
+              { label: 'Inativo', value: false },
+            ]}
+          />
         </Container>
       </ScrollView>
 

@@ -1,13 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useNavigation } from '@react-navigation/native';
 
 import { CircularButton } from 'components';
 
-import { useAuth } from 'hooks';
+import { useAuth, ReleasesDatesContext } from 'hooks';
 
-import { Release, ReleaseDate } from 'types';
-
-import { api } from 'services';
+import { Release } from 'types';
 
 import { ReleaseDatesList } from '../../../features/release-dates-list';
 
@@ -18,13 +16,11 @@ interface ReleaseDatedProps {
 }
 
 export function ReleaseDates({ release }: ReleaseDatedProps): JSX.Element {
-  const [dates, setDates] = useState<ReleaseDate[]>([]);
+  const { refresh } = useContext(ReleasesDatesContext);
 
   useEffect(() => {
-    api.get(`release/dates/${release.id}`).then(response => {
-      setDates(response.data);
-    });
-  }, [release.id]);
+    refresh(release.id);
+  }, [refresh, release.id]);
 
   const navigation = useNavigation();
 
@@ -32,11 +28,7 @@ export function ReleaseDates({ release }: ReleaseDatedProps): JSX.Element {
 
   return (
     <Container>
-      <ReleaseDatesList
-        dates={dates}
-        setDates={setDates}
-        release_id={release.id}
-      />
+      <ReleaseDatesList release_id={release.id} />
 
       {(user.permission === 'admin' || user.permission === 'client') && (
         <CircularButton
@@ -44,7 +36,6 @@ export function ReleaseDates({ release }: ReleaseDatedProps): JSX.Element {
           onPress={() =>
             navigation.navigate('ReleaseDateForm', {
               release_id: release.id,
-              setDates,
             })
           }
         />

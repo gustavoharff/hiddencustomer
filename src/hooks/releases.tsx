@@ -1,24 +1,13 @@
-import React, {
-  createContext,
-  useState,
-  useContext,
-  useCallback,
-  ReactNode,
-  useEffect,
-} from 'react';
-import produce from 'immer';
-import moment from 'moment';
-import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useQuery } from 'react-query';
+import React, { createContext, useState, ReactNode, useCallback } from 'react';
+import { UpdateMode } from 'realm';
 
-import { api } from 'services';
+import { api, getRealm } from 'services';
 
-import { Release, ReleaseDate, ReleaseGroup } from 'types';
-
-import { useAuth } from 'hooks';
+import { Release } from 'types';
 
 interface CreateReleaseData {
   name: string;
+  paid: boolean;
   customer_id: string;
 }
 
@@ -30,49 +19,21 @@ interface UpdateReleaseData {
   annotations?: string;
 }
 
-interface CreateReleaseGroupData {
-  name: string;
-  type: string;
-  release_id: string;
-  release_date_id?: string;
-}
-interface UpdateReleaseGroupData {
-  groupId: string;
-  name: string;
-  type: string;
-  release_date_id?: string;
-}
-
-interface CreateReleaseDateData {
-  date: Date;
-  release_id: string;
-}
-
 interface ReleasesContextData {
   releases: Release[];
-  activeReleasesFilter: boolean;
-  setActiveReleasesFilter: React.Dispatch<React.SetStateAction<boolean>>;
-  customerReleasesFilter: string;
-  setCustomerReleasesFilter: React.Dispatch<React.SetStateAction<string>>;
-  releasesDates: ReleaseDate[];
-  loadReleases: () => Promise<void>;
-  loadReleaseDates: (releaseId: string) => Promise<void>;
-  loadReleaseGroups: (releaseId: string) => Promise<void>;
+  setReleases: React.Dispatch<React.SetStateAction<Release[]>>;
+  refresh: () => Promise<void>;
+  refreshing: boolean;
   createRelease: (data: CreateReleaseData) => Promise<void>;
-  createReleaseGroup: (data: CreateReleaseGroupData) => Promise<void>;
-  createReleaseDate: (data: CreateReleaseDateData) => Promise<void>;
   updateRelease: (data: UpdateReleaseData) => Promise<void>;
-  updateReleaseGroup: (data: UpdateReleaseGroupData) => Promise<void>;
-  deleteRelease: (releaseId: string) => Promise<void>;
-  deleteReleaseGroup: (groupId: string) => Promise<void>;
-  deleteReleaseDate: (dateId: string) => Promise<void>;
+  deleteRelease: (release_id: string) => Promise<void>;
 }
 
 interface ReleasesProviderProps {
   children: ReactNode;
 }
 
-const ReleasesContext = createContext<ReleasesContextData>(
+export const ReleasesContext = createContext<ReleasesContextData>(
   {} as ReleasesContextData,
 );
 
@@ -80,102 +41,62 @@ export function ReleasesProvider({
   children,
 }: ReleasesProviderProps): JSX.Element {
   const [releases, setReleases] = useState<Release[]>([]);
-  const [activeReleasesFilter, setActiveReleasesFilter] = useState(false);
-  const [customerReleasesFilter, setCustomerReleasesFilter] = useState('all');
+  const [refreshing, setRefreshing] = useState(false);
 
-  const [releasesDates, setReleasesDates] = useState<ReleaseDate[]>([]);
+  const refresh = useCallback(async () => {
+    setRefreshing(true);
+    const realm = await getRealm();
+    try {
+      const response = await api.get<Release[]>('/releases');
+      setReleases(response.data);
 
-  const { user } = useAuth();
+      realm.write(() => {
+        const data = realm.objects('Release');
+        realm.delete(data);
 
-  useEffect(() => {
-    async function loadLocalFilters() {
-      const localActiveReleasesFilter = await AsyncStorage.getItem(
-        'ReleaseActiveFilter',
-      );
-
-      const localCustomerReleasesFilter = await AsyncStorage.getItem(
-        'CustomerReleasesFilter',
-      );
-
-      if (localActiveReleasesFilter) {
-        setActiveReleasesFilter(localActiveReleasesFilter === '1');
-      }
-
-      if (localCustomerReleasesFilter) {
-        setCustomerReleasesFilter(localCustomerReleasesFilter);
-      }
-    }
-
-    loadLocalFilters();
-  }, []);
-
-  const loadReleases = useCallback(async () => {
-    if (!user?.id) {
-      return;
-    }
-
-    const response = await api.get<Release[]>('/releases');
-    let { data } = response;
-
-    if (customerReleasesFilter !== '' && customerReleasesFilter !== 'all') {
-      data = data.filter(
-        release => release.customer_id === customerReleasesFilter,
-      );
-    }
-
-    if (activeReleasesFilter) {
-      data = data.filter(release => {
-        if (release.dates.length >= 1) {
-          if (moment(release.dates[0].date).isBefore(new Date())) {
-            return false;
-          }
-        }
-
-        return true;
+        response.data.forEach(release => {
+          realm.create('Release', release, UpdateMode.Modified);
+        });
+      });
+    } catch {
+      realm.write(() => {
+        const data = realm.objects<Release>('Release');
+        setReleases(
+          data.map(release => ({
+            id: release.id,
+            name: release.name,
+            annotations: release.annotations,
+            paid: release.paid,
+            company_id: release.company_id,
+            customer_id: release.customer_id,
+            dates: release.dates,
+            groups: release.groups,
+            customer: release.customer,
+            created_at: release.created_at,
+            updated_at: release.updated_at,
+          })),
+        );
       });
     }
 
-    setReleases(data);
-  }, [activeReleasesFilter, customerReleasesFilter, user]);
-
-  const loadReleaseDates = useCallback(async releaseId => {
-    const response = await api.get(`release/dates/${releaseId}`);
-
-    setReleases(state =>
-      state.map(release => {
-        if (release.id === releaseId) {
-          release.dates = response.data; // eslint-disable-line
-        }
-
-        return release;
-      }),
-    );
-  }, []);
-
-  const loadReleaseGroups = useCallback(async releaseId => {
-    const response = await api.get<ReleaseGroup[]>(
-      `release/groups/${releaseId}`,
-    );
-
-    setReleases(state =>
-      state.map(release => {
-        if (release.id === releaseId) {
-          release.groups = response.data; // eslint-disable-line
-        }
-
-        return release;
-      }),
-    );
+    setRefreshing(false);
   }, []);
 
   const createRelease = useCallback(
-    async ({ name, customer_id }: CreateReleaseData) => {
+    async ({ name, paid, customer_id }: CreateReleaseData) => {
       const response = await api.post<Release>('/releases', {
         name,
+        paid,
         customer_id,
       });
 
       setReleases(state => [response.data, ...state]);
+
+      const realm = await getRealm();
+
+      realm.write(() => {
+        realm.create('Release', response.data, UpdateMode.All);
+      });
     },
     [],
   );
@@ -185,8 +106,8 @@ export function ReleasesProvider({
       release_id,
       name,
       paid,
-      annotations,
       customer_id,
+      annotations,
     }: UpdateReleaseData) => {
       const response = await api.put(`/release/${release_id}`, {
         name,
@@ -200,141 +121,35 @@ export function ReleasesProvider({
           release.id === release_id ? response.data : release,
         ),
       );
-    },
-    [],
-  );
 
-  const deleteRelease = useCallback(async (releaseId: string) => {
-    await api.delete(`/release/${releaseId}`);
+      const realm = await getRealm();
 
-    setReleases(state => state.filter(release => release.id !== releaseId));
-  }, []);
-
-  const createReleaseGroup = useCallback(
-    async ({
-      name,
-      type,
-      release_id,
-      release_date_id,
-    }: CreateReleaseGroupData) => {
-      const response = await api.post('/release/groups', {
-        name,
-        type,
-        release_id,
-        release_date_id,
+      realm.write(() => {
+        realm.create('Release', response.data, UpdateMode.Modified);
       });
-
-      setReleases(state =>
-        produce(state, drafts => {
-          drafts.forEach(release => {
-            if (release.id === release_id) {
-              release.groups.push(response.data);
-            }
-          });
-        }),
-      );
     },
     [],
   );
 
-  const updateReleaseGroup = useCallback(
-    async ({
-      groupId,
-      name,
-      type,
-      release_date_id,
-    }: UpdateReleaseGroupData) => {
-      const response = await api.put(`/release/groups/${groupId}`, {
-        name,
-        type,
-        release_date_id,
-      });
+  const deleteRelease = useCallback(async (release_id: string) => {
+    await api.delete(`/release/${release_id}`);
 
-      setReleases(state =>
-        state.map(rls => ({
-          ...rls,
-          groups: rls.groups.map(group =>
-            group.id === groupId ? response.data : group,
-          ),
-        })),
-      );
-    },
-    [],
-  );
-
-  const deleteReleaseGroup = useCallback(async (groupId: string) => {
-    await api.delete(`/release/groups/${groupId}`);
-
-    setReleases(state =>
-      state.map(rls => ({
-        ...rls,
-        groups: rls.groups.filter(group => group.id !== groupId),
-      })),
-    );
-  }, []);
-
-  const createReleaseDate = useCallback(
-    async ({ date, release_id }: CreateReleaseDateData) => {
-      const response = await api.post('/release/dates', {
-        release_id,
-        date: date.toISOString(),
-      });
-
-      setReleases(state =>
-        state.map(release => {
-          if (release.id === release_id) {
-            return {
-              ...release,
-              dates: [...release.dates, response.data],
-            };
-          }
-          return release;
-        }),
-      );
-    },
-    [],
-  );
-
-  const deleteReleaseDate = useCallback(async (dateId: string) => {
-    await api.delete(`/release/dates/${dateId}`);
-
-    setReleases(state =>
-      state.map(rls => ({
-        ...rls,
-        dates: rls.dates.filter(date => date.id !== dateId),
-      })),
-    );
+    setReleases(state => state.filter(release => release.id !== release_id));
   }, []);
 
   return (
     <ReleasesContext.Provider
       value={{
         releases,
-        activeReleasesFilter,
-        setActiveReleasesFilter,
-        customerReleasesFilter,
-        setCustomerReleasesFilter,
-        releasesDates,
-        loadReleases,
-        loadReleaseDates,
-        loadReleaseGroups,
+        setReleases,
+        refresh,
+        refreshing,
         createRelease,
-        createReleaseGroup,
-        createReleaseDate,
         updateRelease,
-        updateReleaseGroup,
         deleteRelease,
-        deleteReleaseGroup,
-        deleteReleaseDate,
       }}
     >
       {children}
     </ReleasesContext.Provider>
   );
-}
-
-export function useReleases(): ReleasesContextData {
-  const context = useContext(ReleasesContext);
-
-  return context;
 }

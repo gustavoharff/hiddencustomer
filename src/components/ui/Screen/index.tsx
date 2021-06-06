@@ -1,31 +1,25 @@
 import React, { ReactNode } from 'react';
-import { KeyboardAvoidingView, Platform } from 'react-native';
-import {
-  getBottomSpace,
-  getStatusBarHeight,
-} from 'react-native-iphone-x-helper';
+import { View } from 'react-native';
 
-import { SPACING } from 'styles';
+import { KeyboardAvoiding } from './KeyboardAvoiding';
 
 interface ScreenProps {
   children: ReactNode;
   keyboard?: boolean;
+  keyboardVerticalOffset?: boolean;
 }
 
 export function Screen({
   children,
   keyboard = false,
+  keyboardVerticalOffset = true,
 }: ScreenProps): JSX.Element {
   return (
-    <KeyboardAvoidingView
+    <KeyboardAvoiding
       enabled={keyboard}
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={
-        getBottomSpace() + getStatusBarHeight(true) + SPACING.L * 5
-      }
+      keyboardVerticalOffset={keyboardVerticalOffset}
     >
-      {children}
-    </KeyboardAvoidingView>
+      <View style={{ flex: 1 }}>{children}</View>
+    </KeyboardAvoiding>
   );
 }

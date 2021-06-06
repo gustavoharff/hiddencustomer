@@ -1,34 +1,28 @@
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useContext } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
+import { RectButton } from 'react-native-gesture-handler';
 import moment from 'moment';
 
 import { EmptyList, Swipeable } from 'components';
 
 import { SPACING } from 'styles';
 
-import { useAuth } from 'hooks';
+import { ReleasesGroupsContext, useAuth } from 'hooks';
 
-import { ReleaseGroup } from 'types';
-
-import { api } from 'services';
-
-import { RectButton } from 'react-native-gesture-handler';
 import { Container, Content, Description, Title } from './styles';
 
 interface ReleaseGroupsListProps {
   release_id: string;
-  groups: ReleaseGroup[];
-  setGroups: React.Dispatch<React.SetStateAction<ReleaseGroup[]>>;
 }
 
 export function ReleaseGroupsList({
   release_id,
-  groups,
-  setGroups,
 }: ReleaseGroupsListProps): JSX.Element {
-  const [refreshing, setRefreshing] = useState(false);
+  const { groups, refresh, refreshing, deleteReleseGroup } = useContext(
+    ReleasesGroupsContext,
+  );
 
   const navigation = useNavigation();
 
@@ -36,11 +30,6 @@ export function ReleaseGroupsList({
 
   const onDeleteItem = useCallback(
     async (groupId: string) => {
-      async function remove() {
-        await api.delete(`/release/groups/${groupId}`);
-
-        setGroups(state => state.filter(group => group.id !== groupId));
-      }
       return new Promise(resolve => {
         Alert.alert('Atenção!', 'Deseja mesmo deletar este item?', [
           {
@@ -53,14 +42,14 @@ export function ReleaseGroupsList({
           {
             text: 'Sim',
             onPress: async () => {
-              await remove();
+              await deleteReleseGroup(groupId);
               return resolve(200);
             },
           },
         ]);
       });
     },
-    [setGroups],
+    [deleteReleseGroup],
   );
 
   const renderIcon = useCallback((type: string) => {
@@ -80,12 +69,8 @@ export function ReleaseGroupsList({
   }, []);
 
   const handleRefresh = useCallback(async () => {
-    setRefreshing(true);
-    const response = await api.get(`/release/groups/${release_id}`);
-    setGroups(response.data);
-
-    setRefreshing(false);
-  }, [release_id, setGroups]);
+    await refresh(release_id);
+  }, [refresh, release_id]);
 
   return (
     <View style={{ flex: 1, width: '100%' }}>
@@ -112,7 +97,6 @@ export function ReleaseGroupsList({
                   type: 'update',
                   group,
                   release_id: group.release_id,
-                  setGroups,
                 })
               }
               deleteOption={

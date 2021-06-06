@@ -10,7 +10,7 @@ export * from './Logo';
 export * from './OptionItem';
 export * from './MultiOptionsInput';
 export * from './Picker';
-export * from './Screen';
+export * from './screen';
 export * from './Section';
 export * from './ScreenIndicator';
 export * from './Swipeable';

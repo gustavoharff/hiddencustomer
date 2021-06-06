@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { Alert, ScrollView } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -7,7 +13,7 @@ import * as Yup from 'yup';
 
 import { Input, Button, Screen } from 'components';
 
-import { useCustomers } from 'hooks';
+import { CustomersContext } from 'hooks';
 
 import { SPACING } from 'styles';
 
@@ -27,7 +33,7 @@ export function CustomerForm({ route }: CustomerChangeProps): JSX.Element {
   const [loading, setLoading] = useState(false);
   const formRef = useRef<FormHandles>(null);
 
-  const { createCustomer, updateCustomer } = useCustomers();
+  const { createCustomer, updateCustomer } = useContext(CustomersContext);
 
   const navigation = useNavigation();
 

@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { Alert, ScrollView, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { StackScreenProps } from '@react-navigation/stack';
@@ -13,14 +19,16 @@ import { SPACING } from 'styles';
 import { ReleaseDate, ReleaseGroup } from 'types';
 
 import { api } from 'services';
-import { Container, Unform, Label } from './styles';
+
+import { ReleasesGroupsContext } from 'hooks';
+
+import { Container, Unform } from './styles';
 
 type Params = {
   ReleaseGroupForm: {
     type: 'create' | 'update';
     release_id?: string;
     group?: ReleaseGroup;
-    setGroups: React.Dispatch<React.SetStateAction<ReleaseGroup[]>>;
   };
 };
 
@@ -29,8 +37,11 @@ type ReleaseGroupFormProps = StackScreenProps<Params, 'ReleaseGroupForm'>;
 export function ReleaseGroupForm({
   route,
 }: ReleaseGroupFormProps): JSX.Element {
-  const { setGroups } = route.params;
   const formRef = useRef<FormHandles>(null);
+
+  const { createReleaseGroup, updateReleaseGroup } = useContext(
+    ReleasesGroupsContext,
+  );
 
   const [dates, setDates] = useState<ReleaseDate[]>([]);
 
@@ -84,31 +95,21 @@ export function ReleaseGroupForm({
           return;
         }
 
-        if (route.params.type === 'create') {
-          const response = await api.post('/release/groups', {
+        if (route.params.type === 'create' && route.params.release_id) {
+          await createReleaseGroup({
             name: data.name,
             type: selectedGroup,
             release_id: route.params.release_id,
             release_date_id:
               selectedDateId !== 'null' ? selectedDateId : undefined,
           });
-
-          setGroups(state => [...state, response.data]);
         } else if (route.params.type === 'update' && route.params.group) {
-          const response = await api.put(
-            `/release/groups/${route.params.group.id}`,
-            {
-              name: data.name,
-              type: selectedGroup,
-              release_date_id: selectedDateId || undefined,
-            },
-          );
-
-          setGroups(state =>
-            state.map(group =>
-              group.id === response.data.id ? response.data : group,
-            ),
-          );
+          await updateReleaseGroup({
+            groupId: route.params.group.id,
+            name: data.name,
+            type: selectedGroup,
+            release_date_id: selectedDateId || undefined,
+          });
         }
 
         navigation.goBack();
@@ -123,11 +124,12 @@ export function ReleaseGroupForm({
     [
       selectedGroup,
       route.params.type,
+      route.params?.release_id,
       route.params?.group,
-      route.params.release_id,
       navigation,
+      createReleaseGroup,
       selectedDateId,
-      setGroups,
+      updateReleaseGroup,
     ],
   );
 

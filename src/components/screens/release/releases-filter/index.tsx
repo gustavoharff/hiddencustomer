@@ -1,8 +1,8 @@
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 import { Switch } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 
-import { useCustomers } from 'hooks';
+import { CustomersContext } from 'hooks';
 
 import { HeaderIcon, Picker } from 'components';
 
@@ -13,7 +13,7 @@ import { Container, Item, OptionText } from './styles';
 export function ReleasesFilter(): JSX.Element {
   const navigation = useNavigation();
 
-  const { customers, loadApiCustomers, loadLocalCustomers } = useCustomers();
+  const { customers, refresh } = useContext(CustomersContext);
 
   useEffect(() => {
     navigation.setOptions({
@@ -38,8 +38,8 @@ export function ReleasesFilter(): JSX.Element {
   }, []);
 
   useEffect(() => {
-    loadApiCustomers().catch(() => loadLocalCustomers());
-  }, [loadApiCustomers, loadLocalCustomers]);
+    refresh();
+  }, [refresh]);
 
   useEffect(() => {
     const parent = navigation.dangerouslyGetParent();

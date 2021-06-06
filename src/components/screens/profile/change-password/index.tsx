@@ -1,18 +1,7 @@
 import React, { useCallback, useRef } from 'react';
 import { FormHandles } from '@unform/core';
-import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  TextInput,
-  View,
-} from 'react-native';
+import { Alert, TextInput, View } from 'react-native';
 import * as Yup from 'yup';
-import {
-  getBottomSpace,
-  getStatusBarHeight,
-} from 'react-native-iphone-x-helper';
 
 import { Input, Button } from 'components';
 
@@ -24,6 +13,7 @@ import { useAuth } from 'hooks';
 
 import { SPACING } from 'styles';
 
+import { Screen } from 'components/ui';
 import { Container, Unform } from './styles';
 
 export function ChangePassword(): JSX.Element {
@@ -83,56 +73,47 @@ export function ChangePassword(): JSX.Element {
   );
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={
-        getBottomSpace() + getStatusBarHeight(false) + SPACING.L * 5
-      }
-      enabled
-    >
-      <ScrollView keyboardShouldPersistTaps="handled">
-        <Container>
-          <Unform ref={formRef} onSubmit={handleSubmit}>
-            <Input
-              ref={oldPasswordInputRef}
-              label="Sua senha atual"
-              name="old_password"
-              placeholder="Senha atual"
-              textContentType="newPassword"
-              secureTextEntry
-              returnKeyType="next"
-              onSubmitEditing={() => {
-                passwordInputRef.current?.focus();
-              }}
-            />
+    <Screen keyboard>
+      <Container>
+        <Unform ref={formRef} onSubmit={handleSubmit}>
+          <Input
+            ref={oldPasswordInputRef}
+            label="Sua senha atual"
+            name="old_password"
+            placeholder="Senha atual"
+            textContentType="newPassword"
+            secureTextEntry
+            returnKeyType="next"
+            onSubmitEditing={() => {
+              passwordInputRef.current?.focus();
+            }}
+          />
 
-            <Input
-              ref={passwordInputRef}
-              label="Defina uma nova senha"
-              name="password"
-              placeholder="Nova senha"
-              textContentType="newPassword"
-              secureTextEntry
-              returnKeyType="next"
-              onSubmitEditing={() => {
-                confirmPasswordInputRef.current?.focus();
-              }}
-            />
+          <Input
+            ref={passwordInputRef}
+            label="Defina uma nova senha"
+            name="password"
+            placeholder="Nova senha"
+            textContentType="newPassword"
+            secureTextEntry
+            returnKeyType="next"
+            onSubmitEditing={() => {
+              confirmPasswordInputRef.current?.focus();
+            }}
+          />
 
-            <Input
-              ref={confirmPasswordInputRef}
-              label="Confirme a nova senha"
-              name="password_confirmation"
-              placeholder="Confirmação de senha"
-              textContentType="newPassword"
-              secureTextEntry
-              returnKeyType="send"
-              onSubmitEditing={() => formRef.current?.submitForm()}
-            />
-          </Unform>
-        </Container>
-      </ScrollView>
+          <Input
+            ref={confirmPasswordInputRef}
+            label="Confirme a nova senha"
+            name="password_confirmation"
+            placeholder="Confirmação de senha"
+            textContentType="newPassword"
+            secureTextEntry
+            returnKeyType="send"
+            onSubmitEditing={() => formRef.current?.submitForm()}
+          />
+        </Unform>
+      </Container>
       <View
         style={{
           width: '100%',
@@ -145,6 +126,6 @@ export function ChangePassword(): JSX.Element {
           style={{ marginBottom: SPACING.M }}
         />
       </View>
-    </KeyboardAvoidingView>
+    </Screen>
   );
 }

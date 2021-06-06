@@ -1,18 +1,8 @@
 import React, { useCallback, useRef } from 'react';
 import { FormHandles } from '@unform/core';
-import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
-  TextInput,
-  View,
-} from 'react-native';
+import { Alert, TextInput, View } from 'react-native';
 import * as Yup from 'yup';
-import {
-  getBottomSpace,
-  getStatusBarHeight,
-} from 'react-native-iphone-x-helper';
+
 import { useNavigation } from '@react-navigation/native';
 
 import { Input, Button } from 'components';
@@ -24,6 +14,8 @@ import { api } from 'services';
 import { getValidationErrors } from 'utils';
 
 import { useAuth } from 'hooks';
+
+import { Screen } from 'components/ui';
 
 import { Container, Unform } from './styles';
 
@@ -70,41 +62,32 @@ export function ChangeInfo(): JSX.Element {
   );
 
   return (
-    <KeyboardAvoidingView
-      style={{ flex: 1 }}
-      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      keyboardVerticalOffset={
-        getBottomSpace() + getStatusBarHeight(false) + SPACING.L * 5
-      }
-      enabled
-    >
-      <ScrollView keyboardShouldPersistTaps="handled">
-        <Container>
-          <Unform ref={formRef} onSubmit={handleSubmit} initialData={user}>
-            <Input
-              label="Nome completo"
-              ref={nameInputRef}
-              name="name"
-              placeholder="Nome"
-              textContentType="newPassword"
-              returnKeyType="next"
-              onSubmitEditing={() => {
-                emailInputRef.current?.focus();
-              }}
-            />
+    <Screen keyboard>
+      <Container>
+        <Unform ref={formRef} onSubmit={handleSubmit} initialData={user}>
+          <Input
+            label="Nome completo"
+            ref={nameInputRef}
+            name="name"
+            placeholder="Nome"
+            textContentType="newPassword"
+            returnKeyType="next"
+            onSubmitEditing={() => {
+              emailInputRef.current?.focus();
+            }}
+          />
 
-            <Input
-              label="Endereço de e-mail"
-              ref={emailInputRef}
-              name="email"
-              placeholder="E-mail"
-              textContentType="emailAddress"
-              returnKeyType="send"
-              onSubmitEditing={() => formRef.current?.submitForm()}
-            />
-          </Unform>
-        </Container>
-      </ScrollView>
+          <Input
+            label="Endereço de e-mail"
+            ref={emailInputRef}
+            name="email"
+            placeholder="E-mail"
+            textContentType="emailAddress"
+            returnKeyType="send"
+            onSubmitEditing={() => formRef.current?.submitForm()}
+          />
+        </Unform>
+      </Container>
       <View
         style={{
           width: '100%',
@@ -117,6 +100,6 @@ export function ChangeInfo(): JSX.Element {
           style={{ marginBottom: SPACING.M }}
         />
       </View>
-    </KeyboardAvoidingView>
+    </Screen>
   );
 }
