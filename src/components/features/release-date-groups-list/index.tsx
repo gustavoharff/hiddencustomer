@@ -1,13 +1,14 @@
-import { EmptyList } from 'components';
 import React from 'react';
-import { FlatList, View } from 'react-native';
+import { FlatList } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+
+import { EmptyList, Section } from 'components';
 
 import { SPACING } from 'styles';
 
 import { ReleaseGroup } from 'types';
 
-import { Container, Content, Title } from './styles';
+import { Content, Title } from './styles';
 
 interface ReleseDateGroupsListProps {
   groups: ReleaseGroup[];
@@ -17,7 +18,7 @@ export function ReleaseDateGroupsList({
   groups,
 }: ReleseDateGroupsListProps): JSX.Element {
   return (
-    <View style={{ width: '100%' }}>
+    <Section flex>
       <FlatList
         ListEmptyComponent={
           <EmptyList text="Não há grupos cadastrados para essa data." />
@@ -25,11 +26,13 @@ export function ReleaseDateGroupsList({
         keyExtractor={(item, index) => `${item.id} - ${index}`}
         data={groups}
         renderItem={({ item: group, index }) => (
-          <Container style={{ paddingTop: index !== 0 ? 0 : 16 }}>
+          <Section
+            paddingHorizontal
+            paddingVertical
+            style={{ paddingTop: index !== 0 ? 0 : 16 }}
+          >
             <Content>
-              <View>
-                <Title>{group.name}</Title>
-              </View>
+              <Title>{group.name}</Title>
 
               {group.type === 'discord' && (
                 <Icon name="discord" color="#7289d9" size={SPACING.L * 1.5} />
@@ -41,9 +44,9 @@ export function ReleaseDateGroupsList({
                 <Icon name="telegram" color="#0088cc" size={SPACING.L * 1.5} />
               )}
             </Content>
-          </Container>
+          </Section>
         )}
       />
-    </View>
+    </Section>
   );
 }

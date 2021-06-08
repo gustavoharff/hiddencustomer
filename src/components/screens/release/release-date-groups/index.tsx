@@ -8,6 +8,7 @@ import { api } from 'services';
 
 import { Screen, Section } from 'components';
 
+import { colors } from 'styles';
 import { ReleaseDateGroupsList } from '../../../features/release-date-groups-list';
 
 type Params = {
@@ -37,8 +38,8 @@ export function ReleaseDateGroups({
 
   if (loading) {
     return (
-      <Section alignCenter justifyCenter>
-        <ActivityIndicator />
+      <Section flex alignCenter justifyCenter>
+        <ActivityIndicator color={colors.gray[700]} />
       </Section>
     );
   }

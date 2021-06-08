@@ -7,7 +7,6 @@ import { ReleaseDate } from 'types';
 interface ReleasesDatesContextData {
   dates: ReleaseDate[];
   refresh: (release_id: string) => Promise<void>;
-  refreshing: boolean;
   createReleaseDate: (data: CreateReleaseDateData) => Promise<void>;
   deleteReleseDate: (date_id: string) => Promise<void>;
 }
@@ -29,7 +28,6 @@ export function ReleaseDatesProvider({
   children,
 }: ReleasesDatesProviderProps): JSX.Element {
   const [dates, setDates] = useState<ReleaseDate[]>([]);
-  const [refreshing, setRefreshing] = useState(false);
 
   function sortDates(state: ReleaseDate[]) {
     return state.sort((a, b) => {
@@ -47,7 +45,6 @@ export function ReleaseDatesProvider({
 
   const refresh = useCallback(async (release_id: string) => {
     const realm = await getRealm();
-    setRefreshing(true);
     try {
       const response = await api.get<ReleaseDate[]>(
         `/release/dates/${release_id}`,
@@ -85,7 +82,6 @@ export function ReleaseDatesProvider({
         );
       });
     }
-    setRefreshing(false);
   }, []);
 
   const createReleaseDate = useCallback(
@@ -122,7 +118,6 @@ export function ReleaseDatesProvider({
       value={{
         dates,
         refresh,
-        refreshing,
         createReleaseDate,
         deleteReleseDate,
       }}

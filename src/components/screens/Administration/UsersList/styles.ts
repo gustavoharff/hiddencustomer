@@ -7,10 +7,6 @@ export const UserInfo = styled.View`
   justify-content: center;
 `;
 
-export const Container = styled.View`
-  padding: 16px;
-`;
-
 export const Content = styled.View`
   flex-direction: row;
   align-items: center;

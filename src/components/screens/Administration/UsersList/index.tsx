@@ -1,15 +1,15 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
-import { View, FlatList, RefreshControl } from 'react-native';
+import React, { useCallback, useContext, useState } from 'react';
+import { FlatList, RefreshControl } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import { Avatar, EmptyList, Swipeable } from 'components';
+import { Avatar, EmptyList, Swipeable, Section } from 'components';
 
 import { COLORS, SPACING } from 'styles';
 
 import { UsersContext } from 'hooks/users';
 
-import { Container, Name, Email, UserInfo, Content } from './styles';
+import { Name, Email, UserInfo, Content } from './styles';
 
 export function UsersList(): JSX.Element {
   const navigation = useNavigation();
@@ -17,10 +17,6 @@ export function UsersList(): JSX.Element {
   const { users, refresh } = useContext(UsersContext);
 
   const [refreshing, setRefreshing] = useState(false);
-
-  useEffect(() => {
-    refresh();
-  }, [refresh]);
 
   const handleRefresh = useCallback(async () => {
     setRefreshing(true);
@@ -31,7 +27,7 @@ export function UsersList(): JSX.Element {
   }, [refresh]);
 
   return (
-    <View style={{ flex: 1 }}>
+    <Section flex>
       <FlatList
         ListEmptyComponent={<EmptyList text="Nenhum usuário cadastrado." />}
         refreshControl={
@@ -45,7 +41,11 @@ export function UsersList(): JSX.Element {
         keyExtractor={(item, index) => `${item.id} - ${index}`}
         data={users}
         renderItem={({ item: user, index }) => (
-          <Container style={{ paddingTop: index !== 0 ? 0 : 16 }}>
+          <Section
+            paddingHorizontal
+            paddingVertical
+            style={{ paddingTop: index !== 0 ? 0 : 16 }}
+          >
             <Swipeable
               editOption
               editOnPress={() => {
@@ -78,9 +78,9 @@ export function UsersList(): JSX.Element {
                 />
               </Content>
             </Swipeable>
-          </Container>
+          </Section>
         )}
       />
-    </View>
+    </Section>
   );
 }

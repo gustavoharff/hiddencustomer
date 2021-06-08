@@ -1,9 +1,5 @@
 import styled from 'styled-components/native';
 
-export const Container = styled.View`
-  padding: 16px;
-`;
-
 export const Content = styled.View`
   padding: 15px;
   background: #f4f5f6;

@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
 import { RectButton } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
@@ -11,11 +11,10 @@ import { useAuth, CustomersContext } from 'hooks';
 import { Container, Description, Content, Title, Item } from './styles';
 
 export function CustomersList(): JSX.Element {
+  const [refreshing, setRefreshing] = useState(false);
   const navigation = useNavigation();
 
-  const { customers, deleteCustomer, refresh, refreshing } = useContext(
-    CustomersContext,
-  );
+  const { customers, deleteCustomer, refresh } = useContext(CustomersContext);
 
   const { user } = useAuth();
 
@@ -43,6 +42,14 @@ export function CustomersList(): JSX.Element {
     [deleteCustomer],
   );
 
+  const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+
+    await refresh();
+
+    setRefreshing(false);
+  }, [refresh]);
+
   return (
     <View style={{ flex: 1 }}>
       <FlatList
@@ -51,7 +58,7 @@ export function CustomersList(): JSX.Element {
           <RefreshControl
             tintColor="rgba(0,0,0,0.5)"
             refreshing={refreshing}
-            onRefresh={refresh}
+            onRefresh={handleRefresh}
             colors={['#DC1637']}
           />
         }

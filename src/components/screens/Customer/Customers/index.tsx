@@ -1,8 +1,8 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { Text } from 'react-native';
+import { ActivityIndicator, Text } from 'react-native';
 
-import { CircularButton } from 'components';
+import { CircularButton, Section } from 'components';
 
 import { CustomersContext, useAuth } from 'hooks';
 
@@ -13,6 +13,8 @@ import { CustomersList } from '../../../features/customers-list';
 import { Container } from './styles';
 
 export function Customers(): JSX.Element {
+  const [loading, setLoading] = useState(true);
+
   const { refresh, customers } = useContext(CustomersContext);
 
   const navigation = useNavigation();
@@ -28,10 +30,18 @@ export function Customers(): JSX.Element {
   }, [customers.length, navigation]);
 
   useEffect(() => {
-    refresh();
+    refresh().finally(() => setLoading(false));
   }, [refresh]);
 
   const { user } = useAuth();
+
+  if (loading) {
+    return (
+      <Section flex alignCenter justifyCenter>
+        <ActivityIndicator color={colors.gray[700]} />
+      </Section>
+    );
+  }
 
   return (
     <Container>

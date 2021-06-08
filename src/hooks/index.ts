@@ -5,3 +5,4 @@ export * from './customers';
 export * from './releases';
 export * from './releases-groups';
 export * from './releases-dates';
+export * from './users';

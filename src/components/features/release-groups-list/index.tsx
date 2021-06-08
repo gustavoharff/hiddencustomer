@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { useNavigation } from '@react-navigation/native';
@@ -20,9 +20,11 @@ interface ReleaseGroupsListProps {
 export function ReleaseGroupsList({
   release_id,
 }: ReleaseGroupsListProps): JSX.Element {
-  const { groups, refresh, refreshing, deleteReleseGroup } = useContext(
+  const { groups, refresh, deleteReleseGroup } = useContext(
     ReleasesGroupsContext,
   );
+
+  const [refreshing, setRefreshing] = useState(false);
 
   const navigation = useNavigation();
 
@@ -69,7 +71,11 @@ export function ReleaseGroupsList({
   }, []);
 
   const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+
     await refresh(release_id);
+
+    setRefreshing(false);
   }, [refresh, release_id]);
 
   return (

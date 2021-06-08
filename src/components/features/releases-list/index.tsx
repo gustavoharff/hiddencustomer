@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
 import { RectButton } from 'react-native-gesture-handler';
 import { useNavigation } from '@react-navigation/native';
@@ -25,10 +25,9 @@ import {
 export function ReleasesList(): JSX.Element {
   const navigation = useNavigation();
   const { user } = useAuth();
+  const [refreshing, setRefreshing] = useState(false);
 
-  const { releases, deleteRelease, refresh, refreshing } = useContext(
-    ReleasesContext,
-  );
+  const { releases, deleteRelease, refresh } = useContext(ReleasesContext);
 
   const handleDeleteRelease = useCallback(
     async (releaseId: string) => {
@@ -53,7 +52,11 @@ export function ReleasesList(): JSX.Element {
   );
 
   const handleRefresh = useCallback(async () => {
+    setRefreshing(true);
+
     await refresh();
+
+    setRefreshing(false);
   }, [refresh]);
 
   return (

@@ -1,7 +1,7 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import RNBootSplash from 'react-native-bootsplash';
-import { Image } from 'react-native';
+import { Image, ActivityIndicator } from 'react-native';
 
 import { CircularButton } from 'components';
 
@@ -9,17 +9,24 @@ import { useAuth, ReleasesContext } from 'hooks';
 
 import rocketPlusImg from 'assets/icons/rocket-plus-outline.png';
 
+import { colors } from 'styles';
+
+import { Section } from 'components/ui';
+
 import { ReleasesList } from '../../../features/releases-list';
 
-import { Container, Center } from './styles';
+import { Container } from './styles';
 
 export function Releases(): JSX.Element {
   const { refresh, setReleases } = useContext(ReleasesContext);
+  const [loading, setLoading] = useState(true);
 
   const { user } = useAuth();
 
   useEffect(() => {
-    refresh();
+    refresh().finally(() => {
+      setLoading(false);
+    });
   }, [refresh]);
 
   const navigation = useNavigation();
@@ -43,6 +50,14 @@ export function Releases(): JSX.Element {
       RNBootSplash.hide({ fade: true });
     }, 300);
   }, []);
+
+  if (loading) {
+    return (
+      <Section flex alignCenter justifyCenter>
+        <ActivityIndicator color={colors.gray[700]} />
+      </Section>
+    );
+  }
 
   return (
     <Container>

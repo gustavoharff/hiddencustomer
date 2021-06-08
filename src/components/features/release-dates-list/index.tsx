@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from 'react';
+import React, { useCallback, useContext, useState } from 'react';
 import { View, FlatList, RefreshControl, Alert } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import { RectButton } from 'react-native-gesture-handler';
@@ -19,12 +19,11 @@ export function ReleaseDatesList({
   release_id,
 }: ReleaseDatesListProps): JSX.Element {
   const navigation = useNavigation();
+  const [refreshing, setRefreshing] = useState(false);
 
   const { user } = useAuth();
 
-  const { dates, refresh, refreshing, deleteReleseDate } = useContext(
-    ReleasesDatesContext,
-  );
+  const { dates, refresh, deleteReleseDate } = useContext(ReleasesDatesContext);
 
   const onDeleteItem = useCallback(
     async (dateId: string) => {
@@ -51,7 +50,11 @@ export function ReleaseDatesList({
   );
 
   const onRefresh = useCallback(async () => {
+    setRefreshing(true);
+
     await refresh(release_id);
+
+    setRefreshing(false);
   }, [refresh, release_id]);
 
   return (

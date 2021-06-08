@@ -23,7 +23,6 @@ interface ReleasesContextData {
   releases: Release[];
   setReleases: React.Dispatch<React.SetStateAction<Release[]>>;
   refresh: () => Promise<void>;
-  refreshing: boolean;
   createRelease: (data: CreateReleaseData) => Promise<void>;
   updateRelease: (data: UpdateReleaseData) => Promise<void>;
   deleteRelease: (release_id: string) => Promise<void>;
@@ -41,11 +40,10 @@ export function ReleasesProvider({
   children,
 }: ReleasesProviderProps): JSX.Element {
   const [releases, setReleases] = useState<Release[]>([]);
-  const [refreshing, setRefreshing] = useState(false);
 
   const refresh = useCallback(async () => {
-    setRefreshing(true);
     const realm = await getRealm();
+
     try {
       const response = await api.get<Release[]>('/releases');
       setReleases(response.data);
@@ -78,8 +76,6 @@ export function ReleasesProvider({
         );
       });
     }
-
-    setRefreshing(false);
   }, []);
 
   const createRelease = useCallback(
@@ -143,7 +139,6 @@ export function ReleasesProvider({
         releases,
         setReleases,
         refresh,
-        refreshing,
         createRelease,
         updateRelease,
         deleteRelease,
