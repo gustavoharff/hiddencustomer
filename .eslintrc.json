@@ -26,6 +26,7 @@
     "@typescript-eslint/ban-ts-comment": "off",
     "camelcase": "off",
     "no-nested-ternary": "off",
+    "@typescript-eslint/no-use-before-define": "off",
     "@typescript-eslint/ban-types": "off",
     "react/require-default-props": "off",
     "react/jsx-props-no-spreading": "off",
@@ -40,7 +41,6 @@
       }
     ],
     "no-use-before-define": "off",
-    "@typescript-eslint/no-use-before-define": ["error"],
     "react/react-in-jsx-scope": "off",
     "import/extensions": [
       "error",
