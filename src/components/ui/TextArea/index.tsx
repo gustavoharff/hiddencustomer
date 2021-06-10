@@ -6,10 +6,11 @@ import React, {
   useState,
   useCallback,
 } from 'react';
-import { TextInputProps, TextInput, Text } from 'react-native';
+import { TextInputProps, TextInput } from 'react-native';
 import { useField } from '@unform/core';
 
 import { colors } from 'styles';
+
 import { Container, Label, styles } from './styles';
 
 interface InputProps extends TextInputProps {
@@ -30,7 +31,7 @@ const ForwardInput: React.ForwardRefRenderFunction<InputRef, InputProps> = (
   { name, containerStyle, style, label, ...rest },
   ref,
 ) => {
-  const inputElementRef = useRef<any>(null);
+  const inputElementRef = useRef<TextInput | null>(null);
 
   const { registerField, defaultValue = '', fieldName, error } = useField(name); //eslint-disable-line
   const inputValueRef = useRef<InputValueRef>({ value: defaultValue });
@@ -47,7 +48,7 @@ const ForwardInput: React.ForwardRefRenderFunction<InputRef, InputProps> = (
 
   useImperativeHandle(ref, () => ({
     focus() {
-      inputElementRef.current.focus();
+      inputElementRef.current?.focus();
     },
   }));
 
@@ -58,11 +59,11 @@ const ForwardInput: React.ForwardRefRenderFunction<InputRef, InputProps> = (
       path: 'value',
       setValue(_, value: string) {
         inputValueRef.current.value = value;
-        inputElementRef.current.setNativeProps({ text: value });
+        inputElementRef.current?.setNativeProps({ text: value });
       },
       clearValue() {
         inputValueRef.current.value = '';
-        inputElementRef.current.clear();
+        inputElementRef.current?.clear();
       },
     });
   }, [fieldName, registerField]);

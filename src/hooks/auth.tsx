@@ -108,7 +108,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
     try {
       await AsyncStorage.clear();
     } catch (e) {
-      console.error(e);
+      //
     }
     const realm = await getRealm();
 
