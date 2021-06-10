@@ -32,13 +32,15 @@ export function ChangePassword(): JSX.Element {
         const schema = Yup.object().shape({
           old_password: Yup.string().required(),
           password: Yup.string().when('old_password', {
-            is: (val: any[]) => !!val.length,
+            is: (val: string) => !!val.length,
             then: Yup.string().required('Required field'),
             otherwise: Yup.string(),
           }),
           password_confirmation: Yup.string()
             .when('old_password', {
-              is: (val: any[]) => !!val.length,
+              is: (val: string) => {
+                return !!val.length;
+              },
               then: Yup.string().required('Required field'),
               otherwise: Yup.string(),
             })

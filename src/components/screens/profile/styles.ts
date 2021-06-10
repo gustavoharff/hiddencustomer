@@ -1,12 +1,6 @@
 import styled from 'styled-components/native';
 import { colors, SPACING } from 'styles';
 
-export const Container = styled.View`
-  flex: 1;
-  width: 100%;
-  justify-content: space-between;
-`;
-
 export const AvatarContainer = styled.View`
   width: 100%;
   align-items: center;

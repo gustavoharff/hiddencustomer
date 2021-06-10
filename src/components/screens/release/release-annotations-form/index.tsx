@@ -43,10 +43,9 @@ export function ReleaseAnnotationsForm({
         });
 
         navigation.goBack();
-      } catch (err) {
-        console.log(err);
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     },
     [updateRelease, route.params.release_id, navigation],
   );

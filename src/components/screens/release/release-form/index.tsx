@@ -161,11 +161,10 @@ export function ReleaseForm({ route }: Props): JSX.Element {
               value={selectedPayment ? '1' : '0'}
               onChange={onPaymentChange}
               items={[
-                { label: 'Realizado', value: '1', backgroundColor: '#03B252' },
+                { label: 'Realizado', value: '1' },
                 {
                   label: 'Não realizado',
                   value: '0',
-                  backgroundColor: '#DC1637',
                 },
               ]}
             />

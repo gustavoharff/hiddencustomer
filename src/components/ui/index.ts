@@ -16,3 +16,4 @@ export * from './ScreenIndicator';
 export * from './Swipeable';
 export * from './TabBarIcon';
 export * from './TextArea';
+export * from './types';

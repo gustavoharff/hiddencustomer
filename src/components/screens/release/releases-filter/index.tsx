@@ -21,7 +21,7 @@ export function ReleasesFilter(): JSX.Element {
         <HeaderIcon
           name="filter-remove-outline"
           onPress={() => {
-            console.log();
+            // console.log();
           }}
           style={{ marginRight: SPACING.S }}
         />
@@ -29,12 +29,12 @@ export function ReleasesFilter(): JSX.Element {
     });
   }, [navigation]);
 
-  const onChange = useCallback(async value => {
-    console.log(value);
+  const onChange = useCallback(async () => {
+    // console.log(value);
   }, []);
 
-  const onCustomerChange = useCallback(async value => {
-    console.log(value);
+  const onCustomerChange = useCallback(async () => {
+    // console.log(value);
   }, []);
 
   useEffect(() => {

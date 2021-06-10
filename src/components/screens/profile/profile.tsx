@@ -1,59 +1,72 @@
-import React, { useEffect, useState } from 'react';
-import { View } from 'react-native';
-import DeviceInfo from 'react-native-device-info';
+import React, { useCallback, useState } from 'react';
+import { Dimensions } from 'react-native';
+import { TabBar, TabView } from 'react-native-tab-view';
 
-import { Avatar } from 'components';
+import { Avatar, Section, H1 } from 'components';
 
-import { SPACING } from 'styles';
+import { colors, SPACING } from 'styles';
 
-import { useAuth } from 'hooks';
+import { AvatarContainer } from './styles';
 
-import { Company } from 'types';
-
-import { api } from 'services';
-
-import {
-  AvatarContainer,
-  Container,
-  FieldDescription,
-  Text,
-  Title,
-} from './styles';
+import { MyInfos } from './my-infos';
 
 export function Profile(): JSX.Element {
-  const { user } = useAuth();
-  const [company, setCompany] = useState({} as Company);
-  const [version, setVersion] = useState(DeviceInfo.getReadableVersion());
+  const [tabIndex, setTabIndex] = useState(0);
 
-  useEffect(() => {
-    api.get('/companies/me').then(response => {
-      setCompany(response.data);
-    });
+  const tabRoutes = [{ key: 'info', title: 'Informações' }];
+
+  const renderScene = useCallback(({ route: tabRoute }) => {
+    switch (tabRoute.key) {
+      case 'info':
+        return <MyInfos />;
+      case 'telephones':
+        return (
+          <Section>
+            <H1>Teste 2</H1>
+          </Section>
+        );
+      default:
+        return null;
+    }
   }, []);
 
   return (
-    <Container>
-      <View style={{ flex: 1, width: '100%' }}>
-        <AvatarContainer>
-          <Avatar
-            url="https://iupac.org/wp-content/uploads/2018/05/default-avatar.png"
-            size={SPACING.XL * 6}
+    <Section flex>
+      <AvatarContainer>
+        <Avatar
+          url="https://iupac.org/wp-content/uploads/2018/05/default-avatar.png"
+          size={SPACING.XL * 6}
+        />
+      </AvatarContainer>
+
+      <TabView
+        navigationState={{ routes: tabRoutes, index: tabIndex }}
+        renderScene={renderScene}
+        onIndexChange={setTabIndex}
+        initialLayout={{ width: Dimensions.get('window').width }}
+        renderTabBar={props => (
+          <TabBar
+            indicatorStyle={{ backgroundColor: colors.gray[900] }}
+            activeColor={colors.white}
+            inactiveColor={colors.white}
+            style={{ backgroundColor: colors.gray[900] }}
+            {...props}
           />
-        </AvatarContainer>
+        )}
+      />
 
-        <Title>Suas informações</Title>
-        <FieldDescription>Nome completo</FieldDescription>
-        <Text>{user.name}</Text>
+      {/* <Title>Suas informações</Title>
+      <FieldDescription>Nome completo</FieldDescription>
+      <Text>{user.name}</Text>
 
-        <FieldDescription>Email</FieldDescription>
-        <Text>{user.email}</Text>
+      <FieldDescription>Email</FieldDescription>
+      <Text>{user.email}</Text>
 
-        <FieldDescription>Empresa</FieldDescription>
-        <Text>{company.name}</Text>
+      <FieldDescription>Empresa</FieldDescription>
+      <Text>{company.name}</Text>
 
-        <FieldDescription>Versão do aplicativo</FieldDescription>
-        <Text>{version}</Text>
-      </View>
-    </Container>
+      <FieldDescription>Versão do aplicativo</FieldDescription>
+      <Text>{version}</Text> */}
+    </Section>
   );
 }
