@@ -10,6 +10,11 @@ interface SectionProps extends ViewProps {
   justifyCenter?: boolean;
   paddingHorizontal?: boolean;
   paddingVertical?: boolean;
+  background?: boolean;
+  marginVertical?: boolean;
+  marginHorizontal?: boolean;
+  marginBottom?: boolean;
+  marginTop?: boolean;
 }
 
 export function Section({
@@ -19,6 +24,11 @@ export function Section({
   justifyCenter,
   paddingHorizontal,
   paddingVertical,
+  background,
+  marginVertical,
+  marginHorizontal,
+  marginBottom,
+  marginTop,
   style,
 }: SectionProps): JSX.Element {
   const stylesList = [
@@ -27,6 +37,11 @@ export function Section({
     alignCenter && { alignItems: 'center' },
     justifyCenter && { justifyContent: 'center' },
     flex && { flex: 1 },
+    background && { backgroundColor: '#f4f5f6' },
+    marginVertical && { marginVertical: SPACING.L },
+    marginHorizontal && { marginHorizontal: SPACING.L },
+    marginBottom && { marginBottom: SPACING.L },
+    marginTop && { marginTop: SPACING.L },
     style,
   ] as StyleProp<ViewStyle>;
 
