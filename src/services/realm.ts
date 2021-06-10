@@ -21,8 +21,7 @@ export async function getRealm(): Promise<Realm> {
       ReleaseGroupSchema,
       UserSchema,
     ],
-    schemaVersion: 0,
-    deleteRealmIfMigrationNeeded: true,
+    schemaVersion: 30,
   });
 
   console.log(realm.path);
