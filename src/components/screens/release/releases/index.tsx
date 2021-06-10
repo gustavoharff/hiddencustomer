@@ -1,7 +1,7 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useMemo } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import RNBootSplash from 'react-native-bootsplash';
-import { Image, ActivityIndicator } from 'react-native';
+import { Image, ActivityIndicator, View } from 'react-native';
 
 import { CircularButton } from 'components';
 
@@ -9,17 +9,32 @@ import { useAuth, ReleasesContext } from 'hooks';
 
 import rocketPlusImg from 'assets/icons/rocket-plus-outline.png';
 
-import { colors } from 'styles';
+import { colors, SPACING } from 'styles';
 
-import { Section } from 'components/ui';
+import { HeaderIcon, Section, Small } from 'components/ui';
 
 import { ReleasesList } from '../../../features/releases-list';
 
 import { Container } from './styles';
 
 export function Releases(): JSX.Element {
-  const { refresh, setReleases } = useContext(ReleasesContext);
+  const { refresh, setReleases, activeFilter, customerFilter } = useContext(
+    ReleasesContext,
+  );
   const [loading, setLoading] = useState(true);
+
+  const filters = useMemo(() => {
+    let counter = 0;
+    if (activeFilter) {
+      counter += 1;
+    }
+
+    if (customerFilter !== '') {
+      counter += 1;
+    }
+
+    return counter;
+  }, [activeFilter, customerFilter]);
 
   const { user } = useAuth();
 
@@ -31,19 +46,26 @@ export function Releases(): JSX.Element {
 
   const navigation = useNavigation();
 
-  // useEffect(() => {
-  //   navigation.setOptions({
-  //     headerRight: () => (
-  //       <View style={{ flexDirection: 'row' }}>
-  //         {/* <HeaderIcon
-  //           name="filter-outline"
-  //           onPress={() => navigation.navigate('ReleasesFilter')}
-  //           style={{ marginRight: SPACING.S }}
-  //         /> */}
-  //       </View>
-  //     ),
-  //   });
-  // }, [navigation]);
+  useEffect(() => {
+    navigation.setOptions({
+      headerRight: () => (
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+          <Small style={{ marginRight: SPACING.S }}>
+            {filters} filtro(s) aplicados
+          </Small>
+          <HeaderIcon
+            name="filter-outline"
+            onPress={() =>
+              navigation.navigate('ReleasesStack', {
+                screen: 'ReleasesFilter',
+              })
+            }
+            style={{ marginRight: SPACING.S }}
+          />
+        </View>
+      ),
+    });
+  }, [filters, navigation]);
 
   useEffect(() => {
     setTimeout(() => {

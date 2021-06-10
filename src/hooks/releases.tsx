@@ -1,4 +1,13 @@
-import React, { createContext, useState, ReactNode, useCallback } from 'react';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import moment from 'moment';
+import React, {
+  createContext,
+  useState,
+  ReactNode,
+  useCallback,
+  useEffect,
+} from 'react';
+
 import { UpdateMode } from 'realm';
 
 import { api, getRealm } from 'services';
@@ -26,6 +35,10 @@ interface ReleasesContextData {
   createRelease: (data: CreateReleaseData) => Promise<void>;
   updateRelease: (data: UpdateReleaseData) => Promise<void>;
   deleteRelease: (release_id: string) => Promise<void>;
+  activeFilter: boolean;
+  setActiveFilter: React.Dispatch<React.SetStateAction<boolean>>;
+  customerFilter: string;
+  setCustomerFilter: React.Dispatch<React.SetStateAction<string>>;
 }
 
 interface ReleasesProviderProps {
@@ -40,13 +53,49 @@ export function ReleasesProvider({
   children,
 }: ReleasesProviderProps): JSX.Element {
   const [releases, setReleases] = useState<Release[]>([]);
+  const [activeFilter, setActiveFilter] = useState(false);
+  const [customerFilter, setCustomerFilter] = useState('');
+
+  useEffect(() => {
+    async function loadStorageFilters() {
+      const active = await AsyncStorage.getItem('activeFilter');
+      setActiveFilter(active === 'true');
+      const customer = await AsyncStorage.getItem('customerFilter');
+      setCustomerFilter(customer !== '' && customer !== null ? customer : '');
+    }
+
+    loadStorageFilters();
+  }, []);
+
+  const applyFilters = useCallback(
+    (state: Release[]): Release[] => {
+      let filtered = state;
+
+      if (activeFilter) {
+        filtered = filtered.filter(
+          release =>
+            release.dates.length === 0 ||
+            !moment(release?.dates[0].date).isBefore(new Date()),
+        );
+      }
+
+      if (customerFilter !== '') {
+        filtered = filtered.filter(
+          release => release.customer_id === customerFilter,
+        );
+      }
+
+      return filtered;
+    },
+    [activeFilter, customerFilter],
+  );
 
   const refresh = useCallback(async () => {
     const realm = await getRealm();
 
     try {
       const response = await api.get<Release[]>('/releases');
-      setReleases(response.data);
+      setReleases(applyFilters(response.data));
 
       realm.write(() => {
         const data = realm.objects('Release');
@@ -60,23 +109,25 @@ export function ReleasesProvider({
       realm.write(() => {
         const data = realm.objects<Release>('Release');
         setReleases(
-          data.map(release => ({
-            id: release.id,
-            name: release.name,
-            annotations: release.annotations,
-            paid: release.paid,
-            company_id: release.company_id,
-            customer_id: release.customer_id,
-            dates: release.dates,
-            groups: release.groups,
-            customer: release.customer,
-            created_at: release.created_at,
-            updated_at: release.updated_at,
-          })),
+          applyFilters(
+            data.map(release => ({
+              id: release.id,
+              name: release.name,
+              annotations: release.annotations,
+              paid: release.paid,
+              company_id: release.company_id,
+              customer_id: release.customer_id,
+              dates: release.dates,
+              groups: release.groups,
+              customer: release.customer,
+              created_at: release.created_at,
+              updated_at: release.updated_at,
+            })),
+          ),
         );
       });
     }
-  }, []);
+  }, [applyFilters]);
 
   const createRelease = useCallback(
     async ({ name, paid, customer_id }: CreateReleaseData) => {
@@ -142,6 +193,10 @@ export function ReleasesProvider({
         createRelease,
         updateRelease,
         deleteRelease,
+        activeFilter,
+        setActiveFilter,
+        customerFilter,
+        setCustomerFilter,
       }}
     >
       {children}

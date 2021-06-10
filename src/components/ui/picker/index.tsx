@@ -1,6 +1,7 @@
 import React from 'react';
 import { Text, TextStyle, View, ViewStyle } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select';
+import { colors, SPACING } from 'styles';
 
 import { styles } from './styles';
 
@@ -17,6 +18,7 @@ interface PickerProps {
   containerStyle?: ViewStyle;
   androidStyle?: TextStyle;
   label?: string;
+  inputMode?: boolean;
 }
 
 export function Picker({
@@ -27,11 +29,19 @@ export function Picker({
   containerStyle,
   androidStyle,
   label,
+  inputMode = true,
 }: PickerProps): JSX.Element {
+  const inputStyle = {
+    borderWidth: 1,
+    borderColor: colors.gray[400],
+    width: '90%',
+    marginBottom: SPACING.L,
+  } as TextStyle;
+
   return (
     <>
       {label && <Text style={styles.label}>{label}</Text>}
-      <View style={styles.container}>
+      <View style={[styles.container, inputMode && inputStyle]}>
         <RNPickerSelect
           placeholder={{}}
           items={items}

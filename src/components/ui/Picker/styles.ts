@@ -3,11 +3,7 @@ import { BODY, colors, SPACING } from 'styles';
 
 export const styles = StyleSheet.create({
   container: {
-    borderWidth: 1,
-    borderColor: colors.gray[400],
-    width: '90%',
     marginHorizontal: 20,
-    marginBottom: SPACING.L,
   },
   label: {
     width: '100%',
