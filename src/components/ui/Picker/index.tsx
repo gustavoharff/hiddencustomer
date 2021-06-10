@@ -4,10 +4,15 @@ import RNPickerSelect from 'react-native-picker-select';
 
 import { styles } from './styles';
 
+interface Option {
+  label: string;
+  value: string;
+}
+
 interface PickerProps {
-  items: any[];
-  onChange: (value: any) => void | Promise<void>;
-  value: any;
+  items: Option[];
+  onChange: (value: string | number) => void | Promise<void>;
+  value: string | number;
   doneText: string;
   containerStyle?: ViewStyle;
   androidStyle?: TextStyle;

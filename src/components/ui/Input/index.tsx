@@ -32,7 +32,7 @@ const ForwardInput: React.ForwardRefRenderFunction<InputRef, InputProps> = (
   { name, containerStyle, label, darkMode = false, ...rest },
   ref,
 ) => {
-  const inputElementRef = useRef<any>(null);
+  const inputElementRef = useRef<TextInput | null>(null);
 
   const { registerField, defaultValue = '', fieldName } = useField(name);
   const inputValueRef = useRef<InputValueRef>({ value: defaultValue });
@@ -49,7 +49,7 @@ const ForwardInput: React.ForwardRefRenderFunction<InputRef, InputProps> = (
 
   useImperativeHandle(ref, () => ({
     focus() {
-      inputElementRef.current.focus();
+      inputElementRef.current?.focus();
     },
   }));
 
@@ -60,11 +60,11 @@ const ForwardInput: React.ForwardRefRenderFunction<InputRef, InputProps> = (
       path: 'value',
       setValue(_, value: string) {
         inputValueRef.current.value = value;
-        inputElementRef.current.setNativeProps({ text: value });
+        inputElementRef.current?.setNativeProps({ text: value });
       },
       clearValue() {
         inputValueRef.current.value = '';
-        inputElementRef.current.clear();
+        inputElementRef.current?.clear();
       },
     });
   }, [fieldName, registerField]);

@@ -4,15 +4,14 @@ import { Container, Item, Label, ItemText } from './styles';
 
 interface Option {
   label: string;
-  value: string | boolean;
-  backgroundColor?: string;
+  value: string | boolean | number;
 }
 
 interface MultipleOptionInputProps {
   items: Option[];
   label?: string;
-  value: string | boolean;
-  onChange: (value: any) => void;
+  value: string | boolean | number;
+  onChange: (value: string | number | boolean) => void;
 }
 
 export function MultipleOptionInput({
