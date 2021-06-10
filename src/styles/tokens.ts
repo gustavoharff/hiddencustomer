@@ -48,6 +48,41 @@ const BODY = {
   },
 };
 
+export const TITLE = {
+  XS: {
+    SIZE: 12 * reducer,
+    HEIGHT: 16 * reducer,
+  },
+  S: {
+    SIZE: 18 * reducer,
+    HEIGHT: 24 * reducer,
+  },
+  M: {
+    SIZE: 22 * reducer,
+    HEIGHT: 28 * reducer,
+  },
+  L: {
+    SIZE: 26 * reducer,
+    HEIGHT: 32 * reducer,
+  },
+  XL: {
+    SIZE: 36 * reducer,
+    HEIGHT: 40 * reducer,
+  },
+  XXL: {
+    SIZE: 42 * reducer,
+    HEIGHT: 48 * reducer,
+  },
+};
+
+export const FONT_WEIGHT = {
+  THIN: '300',
+  NORMAL: '400',
+  MEDIUM: '500',
+  BOLD: '600',
+  EXTRA: '700',
+};
+
 const COLORS = {
   WHITE: '#E1E1E6',
   BACKGROUND_DARK: 'rgb(24, 23, 25)',
