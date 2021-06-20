@@ -6,6 +6,7 @@ import {
   ChangePassword,
   Configuration,
   HeaderIcon,
+  NumberForm,
   Profile,
 } from 'components';
 
@@ -54,6 +55,14 @@ export function ProfileStack(): JSX.Element {
         ),
       })}
     >
+      <Stack.Screen
+        name="NumberForm"
+        component={NumberForm}
+        options={{
+          headerTitle: 'Cadastrar número',
+        }}
+      />
+
       <Stack.Screen
         name="Configuration"
         component={Configuration}

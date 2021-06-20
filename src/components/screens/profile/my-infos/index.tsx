@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from 'react';
+import { ScrollView } from 'react-native';
 import DeviceInfo from 'react-native-device-info';
 
-import { Section, Small } from 'components';
+import { Section, Small, Tiny } from 'components';
+
 import { useAuth } from 'hooks';
+
 import { Company } from 'types';
+
 import { api } from 'services';
-import { Body } from 'components/ui';
-import { ScrollView } from 'react-native';
 
 export function MyInfos(): JSX.Element {
   const [version] = useState(DeviceInfo.getReadableVersion());
@@ -24,31 +26,23 @@ export function MyInfos(): JSX.Element {
     <Section flex paddingHorizontal paddingVertical>
       <ScrollView>
         <Section background paddingHorizontal paddingVertical marginBottom>
-          <Small dark>Nome completo</Small>
-          <Body dark bold>
-            {user.name}
-          </Body>
+          <Tiny dark>Nome completo</Tiny>
+          <Small dark>{user.name}</Small>
         </Section>
 
         <Section background paddingHorizontal paddingVertical marginBottom>
-          <Small dark>Email</Small>
-          <Body dark bold>
-            {user.email}
-          </Body>
+          <Tiny dark>Email</Tiny>
+          <Small dark>{user.email}</Small>
         </Section>
 
         <Section background paddingHorizontal paddingVertical marginBottom>
-          <Small dark>Empresa</Small>
-          <Body dark bold>
-            {company.name}
-          </Body>
+          <Tiny dark>Empresa</Tiny>
+          <Small dark>{company.name}</Small>
         </Section>
 
         <Section background paddingHorizontal paddingVertical>
-          <Small dark>Versão do aplicativo</Small>
-          <Body dark bold>
-            {version}
-          </Body>
+          <Tiny dark>Versão do aplicativo</Tiny>
+          <Small dark>{version}</Small>
         </Section>
       </ScrollView>
     </Section>

@@ -46,19 +46,6 @@ export function CustomerForm({ route }: CustomerChangeProps): JSX.Element {
     }
   }, [navigation, route.params?.customer]);
 
-  useEffect(() => {
-    const parent = navigation.dangerouslyGetParent();
-
-    parent?.setOptions({
-      tabBarVisible: false,
-    });
-
-    return () =>
-      parent?.setOptions({
-        tabBarVisible: true,
-      });
-  }, [navigation]);
-
   const handleSubmit = useCallback(
     async data => {
       setLoading(true);
@@ -66,7 +53,7 @@ export function CustomerForm({ route }: CustomerChangeProps): JSX.Element {
         formRef.current?.setErrors({});
 
         const schema = Yup.object().shape({
-          name: Yup.string().required('E-mail obrigatório'),
+          name: Yup.string().required('Nome obrigatório'),
         });
 
         await schema.validate(data, { abortEarly: false });
