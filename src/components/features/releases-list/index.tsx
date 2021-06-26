@@ -108,7 +108,7 @@ export function ReleasesList(): JSX.Element {
                     navigation.navigate('ReleasesStack', {
                       screen: 'ReleaseDetails',
                       params: {
-                        release,
+                        release_id: release.id,
                       },
                     });
                   }}

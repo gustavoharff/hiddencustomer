@@ -9,7 +9,7 @@ import { ListHeader } from 'components';
 
 import { colors } from 'styles';
 
-import { api } from 'services';
+import { api, getRealm } from 'services';
 
 import { ReleaseAnnotations } from '../../../features/release-anotations';
 import { ReleaseDates } from '../release-dates';
@@ -17,21 +17,35 @@ import { ReleaseGroups } from '../release-groups';
 
 type Params = {
   ReleaseDetails: {
-    release: Release;
+    release_id: string;
   };
 };
 
 type Props = StackScreenProps<Params, 'ReleaseDetails'>;
 
 export function ReleaseDetails({ route }: Props): JSX.Element {
-  const [release, setRelease] = useState(route.params.release);
+  const [release, setRelease] = useState({} as Release);
   const [tabIndex, setTabIndex] = useState(0);
 
   useEffect(() => {
-    api.get(`/release/${route.params.release.id}`).then(response => {
-      setRelease(response.data);
-    });
-  }, [route.params.release]);
+    api
+      .get(`/release/${route.params.release_id}`)
+      .then(response => {
+        setRelease(response.data);
+      })
+      .catch(() => {
+        getRealm().then(realm => {
+          setRelease(
+            realm.objectForPrimaryKey(
+              'Release',
+              route.params.release_id,
+            ) as Release,
+          );
+
+          realm.close();
+        });
+      });
+  }, [route.params.release_id]);
 
   const tabRoutes = [
     { key: 'groups', title: 'Grupos' },

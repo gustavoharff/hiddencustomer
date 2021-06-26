@@ -2,7 +2,6 @@ module.exports = {
   preset: 'react-native',
   setupFiles: [
     './node_modules/react-native-gesture-handler/jestSetup.js',
-    './src/setupTests.ts',
   ],
   transformIgnorePatterns: [
     'node_modules/(?!(jest-)?@?react-native|@react-native-community|@react-native-picker|@react-navigation)',
@@ -14,6 +13,6 @@ module.exports = {
     'src/hooks/*.tsx',
     '!src/hooks/app.tsx',
   ],
-  setupFilesAfterEnv: ['@testing-library/jest-native/extend-expect'],
+  setupFilesAfterEnv: ['./src/setupTests.ts'],
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
 };

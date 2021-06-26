@@ -18,9 +18,12 @@
     "@react-navigation/bottom-tabs": "^5.11.8",
     "@react-navigation/native": "^5.9.4",
     "@react-navigation/stack": "^5.14.5",
+    "@testing-library/jest-native": "^4.0.1",
+    "@testing-library/react-native": "^7.2.0",
     "@unform/core": "^2.1.4",
     "@unform/mobile": "^2.1.4",
     "axios": "^0.21.1",
+    "date-fns": "^2.22.1",
     "immer": "^8.0.1",
     "moment": "^2.29.1",
     "polished": "^4.1.0",
@@ -36,7 +39,7 @@
     "react-native-picker-select": "^8.0.4",
     "react-native-reanimated": "^2.2.0",
     "react-native-safe-area-context": "^3.2.0",
-    "react-native-screens": "^3.3.0",
+    "react-native-screens": "^3.4.0",
     "react-native-tab-view": "^2.15.2",
     "react-native-vector-icons": "^8.0.0",
     "react-query": "^3.15.1",
@@ -48,9 +51,7 @@
     "@babel/core": "^7.12.9",
     "@babel/preset-react": "^7.12.13",
     "@babel/runtime": "^7.12.5",
-    "@testing-library/jest-native": "^4.0.1",
-    "@testing-library/react-native": "^7.2.0",
-    "@types/jest": "25.2.3",
+    "@types/jest": "26.0.23",
     "@types/react": "^17.0.0",
     "@types/react-native": "0.64.0",
     "@types/react-native-calendars": "^1.505.2",
@@ -74,6 +75,6 @@
     "metro-react-native-babel-preset": "^0.64.0",
     "prettier": "^2.2.1",
     "react-test-renderer": "17.0.1",
-    "typescript": "4.2.3"
+    "typescript": "4.2.4"
   }
 }

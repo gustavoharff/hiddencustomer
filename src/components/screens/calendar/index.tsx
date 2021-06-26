@@ -1,15 +1,18 @@
 import { useCallback, useEffect, useState } from 'react';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Calendar as RNCalendar } from 'react-native-calendars';
+import { Agenda } from 'react-native-calendars';
 
 import './helper';
 
 import { HeaderIcon } from 'components';
 
-import { formatMarkedCalendar } from 'utils';
+import { markedDates, itemsDates } from 'utils';
 
-import { SPACING } from 'styles';
+import { COLORS, SPACING } from 'styles';
 import { api } from 'services';
+import { Body, Small } from 'components/ui';
+import moment from 'moment';
 
 export function Calendar(): JSX.Element {
   const [dates, setDates] = useState([]);
@@ -19,6 +22,7 @@ export function Calendar(): JSX.Element {
       setDates(response.data);
     });
   }, []);
+
   const navigation = useNavigation();
 
   const onRefresh = useCallback(async () => {
@@ -40,18 +44,72 @@ export function Calendar(): JSX.Element {
   }, [navigation, onRefresh]);
 
   return (
-    <>
-      <RNCalendar
-        current={new Date()}
-        markedDates={formatMarkedCalendar(dates)}
-        theme={{
-          arrowColor: '#DC1637',
-          dotStyle: {
-            padding: 3,
-            borderRadius: 9999,
-          },
-        }}
-      />
-    </>
+    <Agenda
+      rowHasChanged={(r1, r2) => {
+        return r1.name !== r2.name;
+      }}
+      renderEmptyData={() => {
+        return (
+          <View style={styles.emptyData}>
+            <Body dark>Não há lançamentos para essa data!</Body>
+          </View>
+        );
+      }}
+      renderItem={(item, firstItemInDay) => {
+        return (
+          <>
+            {firstItemInDay && <View style={styles.separator} />}
+            <TouchableOpacity
+              activeOpacity={0.7}
+              onPress={() => {
+                navigation.navigate('ReleasesStack', {
+                  screen: 'ReleaseDetails',
+                  params: {
+                    release_id: item.name.split('&')[0],
+                  },
+                });
+              }}
+            >
+              <View style={styles.item}>
+                <Small dark>Lançamento: {item.name.split('&')[1]}</Small>
+                <Small dark>
+                  Horário: {moment(item.name.split('&')[2]).format('LT')}
+                </Small>
+              </View>
+            </TouchableOpacity>
+          </>
+        );
+      }}
+      renderEmptyDate={() => {
+        return (
+          <View style={styles.item}>
+            <Small>Não há lançamentos para essa data!</Small>
+          </View>
+        );
+      }}
+      markedDates={markedDates(dates)}
+      items={itemsDates(dates)}
+    />
   );
 }
+
+const styles = StyleSheet.create({
+  emptyData: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  separator: {
+    marginTop: 30,
+    borderTopWidth: 1,
+    borderColor: COLORS.FONT,
+  },
+  item: {
+    backgroundColor: 'white',
+    flex: 1,
+    borderRadius: 5,
+    padding: 10,
+    marginRight: 10,
+    marginTop: 17,
+  },
+});
