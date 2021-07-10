@@ -81,6 +81,8 @@ export function ReleaseGroupsProvider({
           })),
         );
       });
+    } finally {
+      realm.close();
     }
     setRefreshing(false);
   }, []);
@@ -105,6 +107,8 @@ export function ReleaseGroupsProvider({
       realm.write(() => {
         realm.create('ReleaseGroup', response.data, UpdateMode.All);
       });
+
+      realm.close();
     },
     [],
   );
@@ -132,6 +136,8 @@ export function ReleaseGroupsProvider({
       realm.write(() => {
         realm.create('ReleaseGroup', response.data, UpdateMode.Modified);
       });
+
+      realm.close();
     },
     [],
   );
@@ -146,6 +152,8 @@ export function ReleaseGroupsProvider({
       const data = realm.objectForPrimaryKey('ReleaseGroup', group_id);
       realm.delete(data);
     });
+
+    realm.close();
   }, []);
 
   return (

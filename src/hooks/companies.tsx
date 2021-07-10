@@ -50,6 +50,8 @@ export function CompaniesProvider({
           })),
         );
       });
+    } finally {
+      realm.close();
     }
   }, []);
 

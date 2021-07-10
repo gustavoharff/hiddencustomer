@@ -71,6 +71,8 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
         }
       });
 
+      realm.close();
+
       setLoading(false);
     }
 
@@ -95,6 +97,8 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
       realm.create('Auth', auth);
     });
 
+    realm.close();
+
     api.defaults.headers.authorization = `Bearer ${token}`;
 
     setData({ token, user });
@@ -116,6 +120,8 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
       realm.deleteAll();
     });
 
+    realm.close();
+
     setData({} as AuthState);
     if (Platform.OS === 'android') {
       OneSignal.logoutEmail();
@@ -131,6 +137,8 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
 
         realm.delete(authData);
       });
+
+      realm.close();
 
       setData({
         token: data.token,

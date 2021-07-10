@@ -58,6 +58,8 @@ export function CustomerProvider({
           updated_at: customer.updated_at,
         })),
       );
+    } finally {
+      realm.close();
     }
     setRefreshing(false);
   }, []);
@@ -74,6 +76,8 @@ export function CustomerProvider({
     realm.write(() => {
       realm.create('Customer', response.data, UpdateMode.All);
     });
+
+    realm.close();
   }, []);
 
   const updateCustomer = useCallback(
@@ -98,6 +102,8 @@ export function CustomerProvider({
       realm.write(() => {
         realm.create('Customer', response.data, UpdateMode.Modified);
       });
+
+      realm.close();
     },
     [customers],
   );
@@ -111,6 +117,8 @@ export function CustomerProvider({
     realm.write(() => {
       realm.delete(realm.objectForPrimaryKey('Customer', customerId));
     });
+
+    realm.close();
   }, []);
 
   return (

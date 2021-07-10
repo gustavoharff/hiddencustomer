@@ -81,6 +81,8 @@ export function ReleaseDatesProvider({
           ),
         );
       });
+    } finally {
+      realm.close();
     }
   }, []);
 
@@ -97,6 +99,8 @@ export function ReleaseDatesProvider({
       realm.write(() => {
         realm.create('ReleaseDate', response.data, UpdateMode.All);
       });
+
+      realm.close();
     },
     [],
   );
@@ -111,6 +115,8 @@ export function ReleaseDatesProvider({
       const data = realm.objectForPrimaryKey('ReleaseDate', date_id);
       realm.delete(data);
     });
+
+    realm.close();
   }, []);
 
   return (

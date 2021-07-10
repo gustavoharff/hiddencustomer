@@ -126,6 +126,8 @@ export function ReleasesProvider({
           ),
         );
       });
+    } finally {
+      realm.close();
     }
   }, [applyFilters]);
 
@@ -144,6 +146,8 @@ export function ReleasesProvider({
       realm.write(() => {
         realm.create('Release', response.data, UpdateMode.All);
       });
+
+      realm.close();
     },
     [],
   );
@@ -174,6 +178,8 @@ export function ReleasesProvider({
       realm.write(() => {
         realm.create('Release', response.data, UpdateMode.Modified);
       });
+
+      realm.close();
     },
     [],
   );
@@ -182,6 +188,15 @@ export function ReleasesProvider({
     await api.delete(`/release/${release_id}`);
 
     setReleases(state => state.filter(release => release.id !== release_id));
+
+    const realm = await getRealm();
+
+    realm.write(() => {
+      const release = realm.objectForPrimaryKey<Release>('Release', release_id);
+      realm.delete(release);
+    });
+
+    realm.close();
   }, []);
 
   return (
