@@ -9,13 +9,13 @@ export const DEFAULT = {
   cardStyle: {
     backgroundColor: colors.white,
   },
-  headerTitleAlign: 'left',
+  headerTitleAlign: 'center',
   headerTintColor: colors.white,
   headerTitleStyle: {
-    fontSize: 20,
+    fontSize: 16,
   },
   headerStyle: {
-    height: 100,
+    height: 64,
     backgroundColor: colors.gray[900],
     shadowColor: 'transparent',
     elevation: 0,

@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState, useMemo } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import RNBootSplash from 'react-native-bootsplash';
-import { Image, ActivityIndicator, View } from 'react-native';
+import { Image, ActivityIndicator } from 'react-native';
 
-import { CircularButton } from 'components';
+import { CircularButton, HeaderIcon, Section, Small } from 'components';
 
 import { useAuth, ReleasesContext } from 'hooks';
 
@@ -11,11 +11,9 @@ import rocketPlusImg from 'assets/icons/rocket-plus-outline.png';
 
 import { colors, SPACING } from 'styles';
 
-import { HeaderIcon, Section, Small } from 'components/ui';
-
 import { ReleasesList } from '../../../features/releases-list';
 
-import { Container } from './styles';
+import { Container, Filters } from './styles';
 
 export function Releases(): JSX.Element {
   const { refresh, setReleases, activeFilter, customerFilter } = useContext(
@@ -49,20 +47,15 @@ export function Releases(): JSX.Element {
   useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
-        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-          <Small style={{ marginRight: SPACING.S }}>
-            {filters} filtro(s) aplicados
-          </Small>
-          <HeaderIcon
-            name="filter-outline"
-            onPress={() =>
-              navigation.navigate('ReleasesStack', {
-                screen: 'ReleasesFilter',
-              })
-            }
-            style={{ marginRight: SPACING.S }}
-          />
-        </View>
+        <HeaderIcon
+          name="filter-outline"
+          onPress={() =>
+            navigation.navigate('ReleasesStack', {
+              screen: 'ReleasesFilter',
+            })
+          }
+          style={{ marginRight: SPACING.S }}
+        />
       ),
     });
   }, [filters, navigation]);
@@ -83,6 +76,9 @@ export function Releases(): JSX.Element {
 
   return (
     <Container>
+      <Filters>
+        <Small dark>{filters} filtro(s) aplicados</Small>
+      </Filters>
       <ReleasesList />
 
       {user.permission !== 'user' && (
