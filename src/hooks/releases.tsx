@@ -7,12 +7,13 @@ import React, {
   useCallback,
   useEffect,
 } from 'react';
-
 import { UpdateMode } from 'realm';
 
-import { api, getRealm } from 'services';
+import { api } from 'services';
 
 import { Release } from 'types';
+
+import { useRealm } from './realm';
 
 interface CreateReleaseData {
   name: string;
@@ -52,6 +53,8 @@ export const ReleasesContext = createContext<ReleasesContextData>(
 export function ReleasesProvider({
   children,
 }: ReleasesProviderProps): JSX.Element {
+  const { realm } = useRealm();
+
   const [releases, setReleases] = useState<Release[]>([]);
   const [activeFilter, setActiveFilter] = useState(false);
   const [customerFilter, setCustomerFilter] = useState('');
@@ -91,8 +94,6 @@ export function ReleasesProvider({
   );
 
   const refresh = useCallback(async () => {
-    const realm = await getRealm();
-
     try {
       const response = await api.get<Release[]>('/releases');
       setReleases(applyFilters(response.data));
@@ -126,10 +127,8 @@ export function ReleasesProvider({
           ),
         );
       });
-    } finally {
-      realm.close();
     }
-  }, [applyFilters]);
+  }, [applyFilters, realm]);
 
   const createRelease = useCallback(
     async ({ name, paid, customer_id }: CreateReleaseData) => {
@@ -141,15 +140,11 @@ export function ReleasesProvider({
 
       setReleases(state => [response.data, ...state]);
 
-      const realm = await getRealm();
-
       realm.write(() => {
         realm.create('Release', response.data, UpdateMode.All);
       });
-
-      realm.close();
     },
-    [],
+    [realm],
   );
 
   const updateRelease = useCallback(
@@ -173,31 +168,29 @@ export function ReleasesProvider({
         ),
       );
 
-      const realm = await getRealm();
-
       realm.write(() => {
         realm.create('Release', response.data, UpdateMode.Modified);
       });
-
-      realm.close();
     },
-    [],
+    [realm],
   );
 
-  const deleteRelease = useCallback(async (release_id: string) => {
-    await api.delete(`/release/${release_id}`);
+  const deleteRelease = useCallback(
+    async (release_id: string) => {
+      await api.delete(`/release/${release_id}`);
 
-    setReleases(state => state.filter(release => release.id !== release_id));
+      setReleases(state => state.filter(release => release.id !== release_id));
 
-    const realm = await getRealm();
-
-    realm.write(() => {
-      const release = realm.objectForPrimaryKey<Release>('Release', release_id);
-      realm.delete(release);
-    });
-
-    realm.close();
-  }, []);
+      realm.write(() => {
+        const release = realm.objectForPrimaryKey<Release>(
+          'Release',
+          release_id,
+        );
+        realm.delete(release);
+      });
+    },
+    [realm],
+  );
 
   return (
     <ReleasesContext.Provider

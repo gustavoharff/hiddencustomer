@@ -1,9 +1,10 @@
 import React, { createContext, useState, useCallback, ReactNode } from 'react';
 import { UpdateMode } from 'realm';
 
-import { api, getRealm } from 'services';
+import { api } from 'services';
 
 import { Customer } from 'types';
+import { useRealm } from './realm';
 
 interface UpdateCustomerData {
   customer_id: string;
@@ -30,12 +31,13 @@ export const CustomersContext = createContext<CustomersContextData>(
 export function CustomerProvider({
   children,
 }: CustomerProviderProps): JSX.Element {
+  const { realm } = useRealm();
+
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
   const refresh = useCallback(async () => {
     setRefreshing(true);
-    const realm = await getRealm();
     try {
       const response = await api.get<Customer[]>('/customers/me');
       setCustomers(response.data);
@@ -58,32 +60,27 @@ export function CustomerProvider({
           updated_at: customer.updated_at,
         })),
       );
-    } finally {
-      realm.close();
     }
     setRefreshing(false);
-  }, []);
+  }, [realm]);
 
-  const createCustomer = useCallback(async (name: string) => {
-    const response = await api.post('/customers', {
-      name,
-    });
+  const createCustomer = useCallback(
+    async (name: string) => {
+      const response = await api.post('/customers', {
+        name,
+      });
 
-    setCustomers(state => [response.data, ...state]);
+      setCustomers(state => [response.data, ...state]);
 
-    const realm = await getRealm();
-
-    realm.write(() => {
-      realm.create('Customer', response.data, UpdateMode.All);
-    });
-
-    realm.close();
-  }, []);
+      realm.write(() => {
+        realm.create('Customer', response.data, UpdateMode.All);
+      });
+    },
+    [realm],
+  );
 
   const updateCustomer = useCallback(
     async ({ customer_id, name }: UpdateCustomerData) => {
-      const realm = await getRealm();
-
       const response = await api.put(`/customer/${customer_id}`, {
         name,
       });
@@ -102,24 +99,23 @@ export function CustomerProvider({
       realm.write(() => {
         realm.create('Customer', response.data, UpdateMode.Modified);
       });
-
-      realm.close();
     },
-    [customers],
+    [customers, realm],
   );
 
-  const deleteCustomer = useCallback(async (customerId: string) => {
-    await api.delete(`/customer/${customerId}`);
-    setCustomers(state => state.filter(customer => customer.id !== customerId));
+  const deleteCustomer = useCallback(
+    async (customerId: string) => {
+      await api.delete(`/customer/${customerId}`);
+      setCustomers(state =>
+        state.filter(customer => customer.id !== customerId),
+      );
 
-    const realm = await getRealm();
-
-    realm.write(() => {
-      realm.delete(realm.objectForPrimaryKey('Customer', customerId));
-    });
-
-    realm.close();
-  }, []);
+      realm.write(() => {
+        realm.delete(realm.objectForPrimaryKey('Customer', customerId));
+      });
+    },
+    [realm],
+  );
 
   return (
     <CustomersContext.Provider

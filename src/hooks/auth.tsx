@@ -9,10 +9,12 @@ import React, {
 import { Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import OneSignal from 'react-native-onesignal';
+import Realm from 'realm';
 
 import { User, Auth } from 'types';
 
-import { api, getRealm } from 'services';
+import { api } from 'services';
+import { useRealm } from './realm';
 
 interface AuthState {
   token: string;
@@ -42,13 +44,13 @@ export const AuthContext = createContext<AuthContextData>(
 );
 
 export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
+  const { realm } = useRealm();
+
   const [data, setData] = useState<AuthState>({} as AuthState);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function loadStoragedData(): Promise<void> {
-      const realm = await getRealm();
-
       realm.write(() => {
         const [user] = realm.objects<Auth>('Auth');
 
@@ -71,42 +73,40 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
         }
       });
 
-      realm.close();
-
       setLoading(false);
     }
-
-    loadStoragedData();
-  }, []);
-
-  const signIn = useCallback(async ({ email, password }) => {
-    const response = await api.post('auth', {
-      email,
-      password,
-    });
-    const { token, user } = response.data;
-
-    const realm = await getRealm();
-
-    const auth = {
-      ...user,
-      token,
-    };
-
-    realm.write(() => {
-      realm.create('Auth', auth);
-    });
-
-    realm.close();
-
-    api.defaults.headers.authorization = `Bearer ${token}`;
-
-    setData({ token, user });
-
-    if (Platform.OS === 'android') {
-      OneSignal.setEmail(user.email);
+    if (realm instanceof Realm) {
+      loadStoragedData();
     }
-  }, []);
+  }, [realm]);
+
+  const signIn = useCallback(
+    async ({ email, password }) => {
+      const response = await api.post('auth', {
+        email,
+        password,
+      });
+      const { token, user } = response.data;
+
+      const auth = {
+        ...user,
+        token,
+      };
+
+      realm.write(() => {
+        realm.create('Auth', auth);
+      });
+
+      api.defaults.headers.authorization = `Bearer ${token}`;
+
+      setData({ token, user });
+
+      if (Platform.OS === 'android') {
+        OneSignal.setEmail(user.email);
+      }
+    },
+    [realm],
+  );
 
   const signOut = useCallback(async () => {
     try {
@@ -114,38 +114,31 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
     } catch (e) {
       //
     }
-    const realm = await getRealm();
 
     realm.write(() => {
       realm.deleteAll();
     });
 
-    realm.close();
-
     setData({} as AuthState);
     if (Platform.OS === 'android') {
       OneSignal.logoutEmail();
     }
-  }, []);
+  }, [realm]);
 
   const updateUser = useCallback(
     async (user: User) => {
-      const realm = await getRealm();
-
       realm.write(() => {
         const [authData] = realm.objects('Auth');
 
         realm.delete(authData);
       });
 
-      realm.close();
-
       setData({
         token: data.token,
         user,
       });
     },
-    [data.token],
+    [data.token, realm],
   );
 
   return (

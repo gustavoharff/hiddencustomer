@@ -7,10 +7,11 @@ import React, {
 } from 'react';
 import { UpdateMode } from 'realm';
 
-import { api, getRealm } from 'services';
+import { api } from 'services';
 
 import { User } from 'types';
 import { AuthContext } from './auth';
+import { useRealm } from './realm';
 
 interface CreateUserData {
   name: string;
@@ -46,12 +47,12 @@ export const UsersContext = createContext<UsersContextData>(
 );
 
 export function UsersProvider({ children }: UsersProviderProps): JSX.Element {
+  const { realm } = useRealm();
+
   const [users, setUsers] = useState<User[]>([]);
   const { user: authUser } = useContext(AuthContext);
 
   const refresh = useCallback(async () => {
-    const realm = await getRealm();
-
     try {
       const response = await api.get<User[]>('/users');
 
@@ -84,7 +85,7 @@ export function UsersProvider({ children }: UsersProviderProps): JSX.Element {
         );
       });
     }
-  }, [authUser?.id]);
+  }, [authUser?.id, realm]);
 
   const createUser = useCallback(
     async ({
@@ -94,8 +95,6 @@ export function UsersProvider({ children }: UsersProviderProps): JSX.Element {
       company_id,
       permission,
     }: CreateUserData) => {
-      const realm = await getRealm();
-
       const response = await api.post('/users', {
         name,
         email,
@@ -110,7 +109,7 @@ export function UsersProvider({ children }: UsersProviderProps): JSX.Element {
         realm.create('User', response.data, UpdateMode.All);
       });
     },
-    [],
+    [realm],
   );
 
   const updateUser = useCallback(
@@ -136,13 +135,11 @@ export function UsersProvider({ children }: UsersProviderProps): JSX.Element {
         state.map(user => (user.id === user_id ? response.data : user)),
       );
 
-      const realm = await getRealm();
-
       realm.write(() => {
         realm.create('User', response.data, UpdateMode.Modified);
       });
     },
-    [],
+    [realm],
   );
 
   return (

@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 
 import {
+  RealmProvider,
   AuthProvider,
   CustomerProvider,
   CompaniesProvider,
@@ -16,18 +17,20 @@ interface AppProviderProps {
 
 export function AppProvider({ children }: AppProviderProps): JSX.Element {
   return (
-    <AuthProvider>
-      <CompaniesProvider>
-        <UsersProvider>
-          <CustomerProvider>
-            <ReleasesProvider>
-              <ReleaseGroupsProvider>
-                <ReleaseDatesProvider>{children}</ReleaseDatesProvider>
-              </ReleaseGroupsProvider>
-            </ReleasesProvider>
-          </CustomerProvider>
-        </UsersProvider>
-      </CompaniesProvider>
-    </AuthProvider>
+    <RealmProvider>
+      <AuthProvider>
+        <CompaniesProvider>
+          <UsersProvider>
+            <CustomerProvider>
+              <ReleasesProvider>
+                <ReleaseGroupsProvider>
+                  <ReleaseDatesProvider>{children}</ReleaseDatesProvider>
+                </ReleaseGroupsProvider>
+              </ReleasesProvider>
+            </CustomerProvider>
+          </UsersProvider>
+        </CompaniesProvider>
+      </AuthProvider>
+    </RealmProvider>
   );
 }

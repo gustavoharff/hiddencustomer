@@ -1,8 +1,9 @@
 import React, { createContext, ReactNode, useCallback, useState } from 'react';
 import { UpdateMode } from 'realm';
-import { api, getRealm } from 'services';
+import { api } from 'services';
 
 import { ReleaseGroup } from 'types';
+import { useRealm } from './realm';
 
 interface ReleasesGroupsContextData {
   groups: ReleaseGroup[];
@@ -38,54 +39,56 @@ export const ReleasesGroupsContext = createContext<ReleasesGroupsContextData>(
 export function ReleaseGroupsProvider({
   children,
 }: ReleasesGroupsProviderProps): JSX.Element {
+  const { realm } = useRealm();
+
   const [groups, setGroups] = useState<ReleaseGroup[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
-  const refresh = useCallback(async (release_id: string) => {
-    const realm = await getRealm();
-    setRefreshing(true);
-    try {
-      const response = await api.get<ReleaseGroup[]>(
-        `/release/groups/${release_id}`,
-      );
-
-      realm.write(() => {
-        const data = realm
-          .objects('ReleaseGroup')
-          .filtered(`release_id = '${release_id}'`);
-        realm.delete(data);
-
-        response.data.forEach(group => {
-          realm.create('ReleaseGroup', group, UpdateMode.All);
-        });
-      });
-
-      setGroups(response.data);
-    } catch {
-      realm.write(() => {
-        const data = realm
-          .objects<ReleaseGroup>('ReleaseGroup')
-          .filtered(`release_id = '${release_id}'`);
-
-        setGroups(
-          data.map(group => ({
-            id: group.id,
-            name: group.name,
-            type: group.type,
-            release_date_id: group.release_date_id,
-            release_date: group.release_date,
-            company_id: group.company_id,
-            release_id: group.release_id,
-            created_at: group.created_at,
-            updated_at: group.updated_at,
-          })),
+  const refresh = useCallback(
+    async (release_id: string) => {
+      setRefreshing(true);
+      try {
+        const response = await api.get<ReleaseGroup[]>(
+          `/release/groups/${release_id}`,
         );
-      });
-    } finally {
-      realm.close();
-    }
-    setRefreshing(false);
-  }, []);
+
+        realm.write(() => {
+          const data = realm
+            .objects('ReleaseGroup')
+            .filtered(`release_id = '${release_id}'`);
+          realm.delete(data);
+
+          response.data.forEach(group => {
+            realm.create('ReleaseGroup', group, UpdateMode.All);
+          });
+        });
+
+        setGroups(response.data);
+      } catch {
+        realm.write(() => {
+          const data = realm
+            .objects<ReleaseGroup>('ReleaseGroup')
+            .filtered(`release_id = '${release_id}'`);
+
+          setGroups(
+            data.map(group => ({
+              id: group.id,
+              name: group.name,
+              type: group.type,
+              release_date_id: group.release_date_id,
+              release_date: group.release_date,
+              company_id: group.company_id,
+              release_id: group.release_id,
+              created_at: group.created_at,
+              updated_at: group.updated_at,
+            })),
+          );
+        });
+      }
+      setRefreshing(false);
+    },
+    [realm],
+  );
 
   const createReleaseGroup = useCallback(
     async ({
@@ -94,7 +97,6 @@ export function ReleaseGroupsProvider({
       release_id,
       release_date_id,
     }: CreateReleaseGroupData) => {
-      const realm = await getRealm();
       const response = await api.post<ReleaseGroup>('/release/groups', {
         name,
         type,
@@ -107,10 +109,8 @@ export function ReleaseGroupsProvider({
       realm.write(() => {
         realm.create('ReleaseGroup', response.data, UpdateMode.All);
       });
-
-      realm.close();
     },
-    [],
+    [realm],
   );
 
   const updateReleaseGroup = useCallback(
@@ -120,7 +120,6 @@ export function ReleaseGroupsProvider({
       type,
       release_date_id,
     }: UpdateReleaseGroupData) => {
-      const realm = await getRealm();
       const response = await api.put(`/release/groups/${groupId}`, {
         name,
         type,
@@ -136,25 +135,22 @@ export function ReleaseGroupsProvider({
       realm.write(() => {
         realm.create('ReleaseGroup', response.data, UpdateMode.Modified);
       });
-
-      realm.close();
     },
-    [],
+    [realm],
   );
 
-  const deleteReleseGroup = useCallback(async (group_id: string) => {
-    await api.delete(`/release/groups/${group_id}`);
-    setGroups(state => state.filter(group => group.id !== group_id));
+  const deleteReleseGroup = useCallback(
+    async (group_id: string) => {
+      await api.delete(`/release/groups/${group_id}`);
+      setGroups(state => state.filter(group => group.id !== group_id));
 
-    const realm = await getRealm();
-
-    realm.write(() => {
-      const data = realm.objectForPrimaryKey('ReleaseGroup', group_id);
-      realm.delete(data);
-    });
-
-    realm.close();
-  }, []);
+      realm.write(() => {
+        const data = realm.objectForPrimaryKey('ReleaseGroup', group_id);
+        realm.delete(data);
+      });
+    },
+    [realm],
+  );
 
   return (
     <ReleasesGroupsContext.Provider

@@ -1,12 +1,14 @@
 import React from 'react';
 import { ActivityIndicator, View } from 'react-native';
+import Realm from 'realm';
 
-import { useAuth } from 'hooks';
+import { useAuth, useRealm } from 'hooks';
 
 import { AuthRoutes } from './auth.routes';
 import { AppStack } from './app.routes';
 
 export function Routes(): JSX.Element {
+  const { realm } = useRealm();
   const { user, loading } = useAuth();
 
   if (loading) {
@@ -17,5 +19,5 @@ export function Routes(): JSX.Element {
     );
   }
 
-  return user ? <AppStack /> : <AuthRoutes />;
+  return user && realm instanceof Realm ? <AppStack /> : <AuthRoutes />;
 }

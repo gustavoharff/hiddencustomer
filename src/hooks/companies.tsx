@@ -1,8 +1,9 @@
 import React, { createContext, useState, ReactNode, useCallback } from 'react';
 
-import { api, getRealm } from 'services';
+import { api } from 'services';
 
 import { Company } from 'types';
+import { useRealm } from './realm';
 
 interface CompaniesContextData {
   companies: Company[];
@@ -20,11 +21,11 @@ export const CompanyContext = createContext<CompaniesContextData>(
 export function CompaniesProvider({
   children,
 }: CompaniesProviderProps): JSX.Element {
+  const { realm } = useRealm();
+
   const [companies, setCompanies] = useState<Company[]>([]);
 
   const refresh = useCallback(async () => {
-    const realm = await getRealm();
-
     try {
       const response = await api.get<Company[]>('/companies');
 
@@ -50,10 +51,8 @@ export function CompaniesProvider({
           })),
         );
       });
-    } finally {
-      realm.close();
     }
-  }, []);
+  }, [realm]);
 
   return (
     <CompanyContext.Provider
