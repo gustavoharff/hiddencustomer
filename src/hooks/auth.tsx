@@ -6,15 +6,24 @@ import React, {
   useEffect,
   ReactNode,
 } from 'react';
-import { Platform } from 'react-native';
+import { Alert, Platform } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import OneSignal from 'react-native-onesignal';
 import Realm from 'realm';
+import { GoogleSignin } from '@react-native-google-signin/google-signin';
 
 import { User, Auth } from 'types';
 
 import { api } from 'services';
 import { useRealm } from './realm';
+
+GoogleSignin.configure({
+  iosClientId:
+    '1049420482327-6e43h0vdumuns5s144uadmrtg5jf0tgm.apps.googleusercontent.com',
+  webClientId:
+    '407713481057-iln18snjt9ehfm637d11cj2id9joo5hp.apps.googleusercontent.com',
+  scopes: ['openid', 'email', 'profile'],
+});
 
 interface AuthState {
   token: string;
@@ -31,6 +40,7 @@ interface AuthContextData {
   token: string;
   loading: boolean;
   signIn(credentials: SignInCredentials): Promise<void>;
+  googleSignIn(): Promise<void>;
   signOut(): Promise<void>;
   updateUser(user: User): void;
 }
@@ -62,6 +72,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
             permission: user.permission,
             active: user.active,
             token: user.token,
+            avatar_url: user.avatar_url,
             company_id: user.company_id,
             created_at: user.created_at,
             updated_at: user.updated_at,
@@ -108,6 +119,43 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
     [realm],
   );
 
+  const googleSignIn = useCallback(async () => {
+    await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
+    const userInfo = await GoogleSignin.signIn();
+
+    console.log(userInfo);
+
+    try {
+      const response = await api.post('auth/oauth', {
+        googleToken: userInfo?.idToken,
+      });
+
+      const { token, user } = response.data;
+
+      const auth = {
+        ...user,
+        token,
+      };
+
+      realm.write(() => {
+        realm.create('Auth', auth);
+      });
+
+      api.defaults.headers.authorization = `Bearer ${token}`;
+
+      setData({ token, user });
+
+      if (Platform.OS === 'android') {
+        OneSignal.setEmail(user.email);
+      }
+    } catch (err) {
+      if (err.response.status === 404) {
+        Alert.alert('Atenção', 'Usuário não encontrado!');
+      }
+      console.log(err.response.data);
+    }
+  }, [realm]);
+
   const signOut = useCallback(async () => {
     try {
       await AsyncStorage.clear();
@@ -146,6 +194,7 @@ export function AuthProvider({ children }: AuthProviderProps): JSX.Element {
       value={{
         user: data.user,
         signIn,
+        googleSignIn,
         signOut,
         token: data.token,
         updateUser,

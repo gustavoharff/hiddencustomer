@@ -1,0 +1,70 @@
+{
+  "project_info": {
+    "project_number": "407713481057",
+    "project_id": "cliente-oculto-d26e2",
+    "storage_bucket": "cliente-oculto-d26e2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:407713481057:android:4a8be660b4242e878fc520",
+        "android_client_info": {
+          "package_name": "dev.harff.hiddencustomer"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "407713481057-3176onob0egn9ppena2v8ej9tj5r0p9s.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "dev.harff.hiddencustomer",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "407713481057-qim1u4umj7hisc5thcpgv5pc34t60s0l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "dev.harff.hiddencustomer",
+            "certificate_hash": "a36e5e8bf86f8cc7b931a6cc52c23d9924b3b9f5"
+          }
+        },
+        {
+          "client_id": "407713481057-u4dgt0ciu0t5krhq0ncl93e03v8rqq51.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "dev.harff.hiddencustomer",
+            "certificate_hash": "ff40eec1d8975c2e53ebd3c94ca8e824991c4557"
+          }
+        },
+        {
+          "client_id": "407713481057-iln18snjt9ehfm637d11cj2id9joo5hp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAmIxITlrAMFGE4InLBiZtoS84giMh2ijY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "407713481057-iln18snjt9ehfm637d11cj2id9joo5hp.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "407713481057-g72ok740aogh485qbb1qo6vqsr59fs4j.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "dev.harff.hiddencustomer"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
