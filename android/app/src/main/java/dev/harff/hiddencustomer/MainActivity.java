@@ -1,4 +1,4 @@
-package com.hiddencustomer;
+package dev.harff.hiddencustomer;
 
 import android.os.Bundle;
 

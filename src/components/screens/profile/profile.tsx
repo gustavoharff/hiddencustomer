@@ -6,12 +6,14 @@ import { Avatar, Section } from 'components';
 
 import { colors, SPACING } from 'styles';
 
+import { useAuth } from 'hooks';
 import { AvatarContainer } from './styles';
 
 import { MyInfos } from './my-infos';
 import { MyNumbers } from './my-numbers';
 
 export function Profile(): JSX.Element {
+  const { user } = useAuth();
   const [tabIndex, setTabIndex] = useState(0);
 
   const tabRoutes = [
@@ -37,7 +39,10 @@ export function Profile(): JSX.Element {
     <Section flex>
       <AvatarContainer>
         <Avatar
-          url="https://iupac.org/wp-content/uploads/2018/05/default-avatar.png"
+          url={
+            user.avatar_url ??
+            'https://iupac.org/wp-content/uploads/2018/05/default-avatar.png'
+          }
           size={SPACING.XL * 6}
         />
       </AvatarContainer>

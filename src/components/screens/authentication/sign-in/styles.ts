@@ -1,7 +1,8 @@
 import { Form } from '@unform/mobile';
 import styled from 'styled-components/native';
+import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
 
-import { COLORS } from 'styles';
+import { COLORS, SPACING } from 'styles';
 
 export const Container = styled.View`
   flex: 1;
@@ -34,5 +35,12 @@ export const Unform = styled(Form)`
 
 export const ForgotPassword = styled.Text`
   color: #fff;
+  margin-top: 15px;
+`;
+
+export const GoogleButton = styled(GoogleSigninButton)`
+  height: ${SPACING.XXL * 2}px;
+  width: 90%;
+
   margin-top: 15px;
 `;

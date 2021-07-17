@@ -6,19 +6,20 @@ import { FormHandles } from '@unform/core';
 import * as Yup from 'yup';
 import { useNavigation } from '@react-navigation/native';
 
-import { Button, Input, Logo } from 'components';
+import { Button, Input, Logo, Screen } from 'components';
 
 import { useAuth } from 'hooks';
 
 import { getValidationErrors } from 'utils';
 
-import { Screen } from 'components/ui';
+import { GoogleSigninButton } from '@react-native-google-signin/google-signin';
 import {
   Container,
   HeaderTitle,
   HeaderContent,
   Unform,
   ForgotPassword,
+  GoogleButton,
 } from './styles';
 
 type SignInFormData = {
@@ -33,7 +34,7 @@ export function SignIn(): JSX.Element {
     hide({ fade: true }); // fade
   }, []);
 
-  const { signIn } = useAuth();
+  const { signIn, googleSignIn } = useAuth();
 
   const formRef = useRef<FormHandles>(null);
   const passwordInputRef = useRef<TextInput>(null);
@@ -131,6 +132,12 @@ export function SignIn(): JSX.Element {
         <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
           <ForgotPassword>Esqueci minha senha</ForgotPassword>
         </TouchableOpacity>
+
+        <GoogleButton
+          size={GoogleSigninButton.Size.Wide}
+          color={GoogleSigninButton.Color.Light}
+          onPress={googleSignIn}
+        />
       </Container>
     </Screen>
   );
