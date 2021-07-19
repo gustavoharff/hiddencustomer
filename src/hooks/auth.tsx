@@ -19,7 +19,7 @@ import { useRealm } from './realm';
 
 GoogleSignin.configure({
   iosClientId:
-    '1049420482327-6e43h0vdumuns5s144uadmrtg5jf0tgm.apps.googleusercontent.com',
+    '407713481057-g72ok740aogh485qbb1qo6vqsr59fs4j.apps.googleusercontent.com',
   webClientId:
     '407713481057-iln18snjt9ehfm637d11cj2id9joo5hp.apps.googleusercontent.com',
   scopes: ['openid', 'email', 'profile'],
