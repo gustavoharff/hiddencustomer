@@ -12,6 +12,8 @@ target 'hiddencustomer' do
     :hermes_enabled => false
   )
 
+  pod 'Firebase/Analytics'
+
 
   target 'hiddencustomerTests' do
     inherit! :complete
