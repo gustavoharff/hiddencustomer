@@ -1,4 +1,10 @@
-import React, { useContext, useEffect, useState, useMemo } from 'react';
+import React, {
+  useContext,
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+} from 'react';
 import { useNavigation } from '@react-navigation/native';
 import RNBootSplash from 'react-native-bootsplash';
 import { Image, ActivityIndicator } from 'react-native';
@@ -14,8 +20,11 @@ import { colors, SPACING } from 'styles';
 import { ReleasesList } from '../../../features/releases-list';
 
 import { Container, Filters } from './styles';
+import { ReleasesFilter } from '../releases-filter';
 
 export function Releases(): JSX.Element {
+  const [filtersOpen, setFiltersOpen] = useState(false);
+
   const { refresh, setReleases, activeFilter, customerFilter } = useContext(
     ReleasesContext,
   );
@@ -49,11 +58,7 @@ export function Releases(): JSX.Element {
       headerRight: () => (
         <HeaderIcon
           name="filter-outline"
-          onPress={() =>
-            navigation.navigate('ReleasesStack', {
-              screen: 'ReleasesFilter',
-            })
-          }
+          onPress={() => setFiltersOpen(true)}
           style={{ marginRight: SPACING.S }}
         />
       ),
@@ -64,6 +69,10 @@ export function Releases(): JSX.Element {
     setTimeout(() => {
       RNBootSplash.hide({ fade: true });
     }, 300);
+  }, []);
+
+  const closeFilters = useCallback(() => {
+    setFiltersOpen(false);
   }, []);
 
   if (loading) {
@@ -96,6 +105,8 @@ export function Releases(): JSX.Element {
           }
         />
       )}
+
+      <ReleasesFilter isVisible={filtersOpen} closeFilters={closeFilters} />
     </Container>
   );
 }

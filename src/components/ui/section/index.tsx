@@ -8,6 +8,7 @@ interface SectionProps extends ViewProps {
   flex?: boolean;
   alignCenter?: boolean;
   justifyCenter?: boolean;
+  paddingHorizontalSize?: keyof typeof SPACING;
   paddingHorizontal?: boolean;
   paddingVertical?: boolean;
   background?: boolean;
@@ -24,6 +25,7 @@ export function Section({
   justifyCenter,
   paddingHorizontal,
   paddingVertical,
+  paddingHorizontalSize = 'L',
   background,
   marginVertical,
   marginHorizontal,
@@ -32,8 +34,8 @@ export function Section({
   style,
 }: SectionProps): JSX.Element {
   const stylesList = [
-    paddingHorizontal && { paddingHorizontal: SPACING.L },
-    paddingVertical && { paddingVertical: SPACING.L },
+    paddingHorizontal && { paddingHorizontal: SPACING[paddingHorizontalSize] },
+    paddingVertical && { paddingVertical: SPACING[paddingHorizontalSize] },
     alignCenter && { alignItems: 'center' },
     justifyCenter && { justifyContent: 'center' },
     flex && { flex: 1 },
