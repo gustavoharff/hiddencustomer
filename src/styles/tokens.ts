@@ -1,77 +1,68 @@
-import { Dimensions } from 'react-native';
-
-const { height } = Dimensions.get('window');
-
-let reducer = 1;
-if (height < 620) {
-  reducer = 0.8;
-}
-
 const SPACING = {
-  XXS: 2 * reducer,
-  XS: 4 * reducer,
-  S: 8 * reducer,
-  M: 12 * reducer,
-  L: 16 * reducer,
-  XL: 20 * reducer,
-  XXL: 24 * reducer,
+  XXS: 2,
+  XS: 4,
+  S: 8,
+  M: 12,
+  L: 16,
+  XL: 20,
+  XXL: 24,
 };
 
 const BODY = {
   XXS: {
-    SIZE: 8 * reducer,
-    HEIGHT: 12 * reducer,
+    SIZE: 8,
+    HEIGHT: 12,
   },
   XS: {
-    SIZE: 11 * reducer,
-    HEIGHT: 16 * reducer,
+    SIZE: 11,
+    HEIGHT: 16,
   },
   S: {
-    SIZE: 14 * reducer,
-    HEIGHT: 20 * reducer,
+    SIZE: 14,
+    HEIGHT: 20,
   },
   M: {
-    SIZE: 16 * reducer,
-    HEIGHT: 24 * reducer,
+    SIZE: 16,
+    HEIGHT: 24,
   },
   L: {
-    SIZE: 20 * reducer,
-    HEIGHT: 24 * reducer,
+    SIZE: 20,
+    HEIGHT: 24,
   },
   XL: {
-    SIZE: 24 * reducer,
-    HEIGHT: 28 * reducer,
+    SIZE: 24,
+    HEIGHT: 28,
   },
   XXL: {
-    SIZE: 28 * reducer,
-    HEIGHT: 32 * reducer,
+    SIZE: 28,
+    HEIGHT: 32,
   },
 };
 
 export const TITLE = {
   XS: {
-    SIZE: 12 * reducer,
-    HEIGHT: 16 * reducer,
+    SIZE: 12,
+    HEIGHT: 16,
   },
   S: {
-    SIZE: 18 * reducer,
-    HEIGHT: 24 * reducer,
+    SIZE: 18,
+    HEIGHT: 24,
   },
   M: {
-    SIZE: 22 * reducer,
-    HEIGHT: 28 * reducer,
+    SIZE: 22,
+    HEIGHT: 28,
   },
   L: {
-    SIZE: 26 * reducer,
-    HEIGHT: 32 * reducer,
+    SIZE: 26,
+    HEIGHT: 32,
   },
   XL: {
-    SIZE: 36 * reducer,
-    HEIGHT: 40 * reducer,
+    SIZE: 36,
+    HEIGHT: 40,
   },
   XXL: {
-    SIZE: 42 * reducer,
-    HEIGHT: 48 * reducer,
+    SIZE: 42,
+    HEIGHT: 48,
   },
 };
 

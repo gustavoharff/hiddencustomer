@@ -9,7 +9,7 @@ import { HeaderIcon } from 'components';
 
 import { markedDates, itemsDates } from 'utils';
 
-import { COLORS, SPACING } from 'styles';
+import { colors, COLORS, SPACING } from 'styles';
 import { api } from 'services';
 import { Body, Small } from 'components/ui';
 import moment from 'moment';
@@ -89,6 +89,10 @@ export function Calendar(): JSX.Element {
       }}
       markedDates={markedDates(dates)}
       items={itemsDates(dates)}
+      theme={{
+        selectedDayBackgroundColor: colors.gray[900],
+        todayTextColor: colors.red[500],
+      }}
     />
   );
 }

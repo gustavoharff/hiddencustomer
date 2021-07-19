@@ -1,6 +1,9 @@
 import React from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createStackNavigator } from '@react-navigation/stack';
+import {
+  CardStyleInterpolators,
+  createStackNavigator,
+} from '@react-navigation/stack';
 
 import { TabBarIcon, Calendar, Loggout } from 'components';
 
@@ -125,7 +128,13 @@ export function AppStack(): JSX.Element {
     >
       <Stack.Screen name="Tab" component={TabStack} />
 
-      <Stack.Screen name="ReleasesStack" component={ReleasesStack} />
+      <Stack.Screen
+        name="ReleasesStack"
+        component={ReleasesStack}
+        options={{
+          cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
+        }}
+      />
 
       <Stack.Screen name="CustomersStack" component={CustomersStack} />
 

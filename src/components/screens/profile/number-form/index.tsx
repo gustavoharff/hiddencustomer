@@ -88,6 +88,7 @@ export function NumberForm({ route }: NumberFormProps): JSX.Element {
           />
         </Form>
       </Section>
+
       <Button
         title="Cadastrar"
         style={{ marginBottom: SPACING.L }}

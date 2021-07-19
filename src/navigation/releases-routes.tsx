@@ -1,4 +1,5 @@
 import React from 'react';
+import { Dimensions } from 'react-native';
 import {
   CardStyleInterpolators,
   createStackNavigator,
@@ -18,6 +19,8 @@ import {
 
 import { SPACING } from 'styles';
 import { DEFAULT } from './helper';
+
+const { height } = Dimensions.get('window');
 
 const Stack = createStackNavigator();
 
@@ -129,11 +132,27 @@ export function ReleasesStack(): JSX.Element {
           ),
         })}
       />
+    </Stack.Navigator>
+  );
+}
 
+export function ReleasesVerticalStack(): JSX.Element {
+  return (
+    <Stack.Navigator
+      screenOptions={{
+        ...DEFAULT,
+      }}
+      mode="modal"
+    >
       <Stack.Screen
         name="ReleasesFilter"
         component={ReleasesFilter}
         options={({ navigation }) => ({
+          cardStyle: {
+            maxHeight: height * 0.8,
+            marginTop: 'auto',
+            backgroundColor: 'transparent',
+          },
           cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
           headerTitle: 'Filtrar lançamentos',
           headerLeft: () => (

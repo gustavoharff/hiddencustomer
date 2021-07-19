@@ -15,7 +15,7 @@ export const Container = styled.View`
 
   position: absolute;
   right: 4%;
-  bottom: 4%;
+  bottom: 20px;
 
   z-index: 2;
 
@@ -26,7 +26,4 @@ export const Button = styled(TouchableOpacity)`
   flex: 1;
   align-items: center;
   justify-content: center;
-
-  margin-top: auto;
-  padding: ${SPACING.M}px;
 `;

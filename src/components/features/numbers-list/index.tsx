@@ -79,7 +79,7 @@ export function NumbersList({
               }}
             >
               <Section background paddingVertical paddingHorizontal>
-                <Tiny dark>{number.name}</Tiny>
+                {number.name ? <Tiny dark>{number.name}</Tiny> : null}
                 <Small dark>{formatTelephone(number.phone_number)}</Small>
               </Section>
             </Swipeable>

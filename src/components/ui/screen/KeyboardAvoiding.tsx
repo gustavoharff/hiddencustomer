@@ -29,9 +29,11 @@ export function KeyboardAvoiding({
       style={{ flex: 1 }}
       enabled
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-      contentContainerStyle={{ flex: 1 }}
+      // contentContainerStyle={{ flex: 1 }}
       keyboardVerticalOffset={
-        keyboardVerticalOffset && headerHeight ? 64 + headerHeight / 2 : 0
+        keyboardVerticalOffset && Number(headerHeight)
+          ? 64 + Number(headerHeight) / 2.5
+          : 0
       }
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>

@@ -25,22 +25,45 @@ export function MyInfos(): JSX.Element {
   return (
     <Section flex paddingHorizontal paddingVertical>
       <ScrollView>
-        <Section background paddingHorizontal paddingVertical marginBottom>
+        <Section
+          background
+          paddingHorizontalSize="M"
+          paddingHorizontal
+          paddingVertical
+          marginBottom
+        >
           <Tiny dark>Nome completo</Tiny>
           <Small dark>{user.name}</Small>
         </Section>
 
-        <Section background paddingHorizontal paddingVertical marginBottom>
+        <Section
+          background
+          paddingHorizontalSize="M"
+          paddingHorizontal
+          paddingVertical
+          marginBottom
+        >
           <Tiny dark>Email</Tiny>
           <Small dark>{user.email}</Small>
         </Section>
 
-        <Section background paddingHorizontal paddingVertical marginBottom>
+        <Section
+          background
+          paddingHorizontalSize="M"
+          paddingHorizontal
+          paddingVertical
+          marginBottom
+        >
           <Tiny dark>Empresa</Tiny>
           <Small dark>{company.name}</Small>
         </Section>
 
-        <Section background paddingHorizontal paddingVertical>
+        <Section
+          background
+          paddingHorizontalSize="M"
+          paddingHorizontal
+          paddingVertical
+        >
           <Tiny dark>Versão do aplicativo</Tiny>
           <Small dark>{version}</Small>
         </Section>
